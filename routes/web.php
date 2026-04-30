@@ -7,6 +7,8 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 
 // ── Halaman utama → explore
 Route::get('/', fn() => redirect()->route('explore'));
@@ -31,9 +33,25 @@ Route::middleware('auth')->group(function () {
     Route::post('/projects/{id}/bookmark', [BookmarkController::class,'toggle'])->name('bookmarks.toggle');
 });
 
-// ── Auth manual
-Route::get('/login',     fn() => view('auth.login'))->name('login');
-Route::get('/register',  fn() => view('auth.register'))->name('register');
-Route::post('/login',    [\App\Http\Controllers\Auth\LoginController::class,   'login'])->name('login.post');
-Route::post('/logout',   [\App\Http\Controllers\Auth\LoginController::class,   'logout'])->name('logout');
-Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class,'register'])->name('register.post');
+// ── Auth Manual (Sudah Diperbaiki) ──
+// Route untuk menampilkan halaman (View)
+Route::get('/login',    fn() => view('auth.login'))->name('login');
+Route::get('/register', fn() => view('auth.register'))->name('register');
+
+// Route untuk memproses data (Logic)
+Route::post('/login',    [LoginController::class, 'login'])->name('login.post');
+Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
+Route::get('/register2', fn() => view('auth.register2'))->name('register2');
+
+// ── Resources & Hire (Tetap Sama) ──
+Route::get('/resources',            fn() => view('resources.overview'))->name('resources.overview');
+Route::get('/resources/guides',     fn() => view('resources.guides'))->name('resources.guides');
+Route::get('/resources/commissioned', fn() => view('resources.commissioned'))->name('resources.commissioned');
+Route::get('/resources/creative',   fn() => view('resources.creative'))->name('resources.creative');
+
+Route::get('/hire/my-jobs',  fn() => view('hire.my-jobs'))->name('hire.my-jobs');
+Route::get('/hire/freelance', fn() => view('hire.freelance'))->name('hire.freelance');
+Route::get('/hire/hiring',    fn() => view('hire.hiring'))->name('hire.hiring');
+
+Route::get('landing',    fn() => view('landing'))->name('landing');
+Route::get('jobs',    fn() => view('jobs'))->name('jobs');
