@@ -59,19 +59,41 @@
             color: var(--color-text);
             letter-spacing: -0.5px;
         }
-
-        /* ─── SUBNAV ─── */
+/* ─── SUBNAV (Hire tabs) ─── */
         .subnav {
-            display: flex; justify-content: center; gap: 0;
-            border-bottom: 1px solid var(--color-border); background: #fff;
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            border-bottom: 1px solid var(--color-border);
+            background: #fff;
         }
         .subnav a {
-            display: flex; align-items: center; gap: 8px; padding: 14px 24px;
-            font-size: 14px; font-weight: 600; color: var(--color-muted);
-            border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+            border-bottom: 2px solid transparent;
+            transition: color .15s, border-color .15s;
+            white-space: nowrap;
         }
         .subnav a:hover { color: var(--color-text); }
-        .subnav a.active { color: var(--color-primary); border-bottom: 2px solid var(--color-primary); }
+        .subnav a.active {
+    color: var(--color-primary);
+    background: #e8f0fb;
+    border-radius: 30px;
+    border-bottom: 2px solid transparent;
+}
+        .subnav-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
 
         /* ─── HERO SECTION ─── */
         .hero-section {
@@ -81,59 +103,72 @@
             margin: 0 auto;
         }
         .hero-section h1 {
-            font-size: 54px; font-weight: 900; letter-spacing: -1.5px;
+            font-size: 64px; font-weight: 900; letter-spacing: -1.5px;
             line-height: 1.05; color: var(--color-text); margin-bottom: 20px;
         }
         .hero-section p {
-            font-size: 16px; color: var(--color-muted); margin-bottom: 32px; line-height: 1.6;
+            font-size: 16px; color: var(--color-text); margin-bottom: 32px; line-height: 1.6;
         }
         .hero-section p a { text-decoration: underline; color: var(--color-text); }
 
         /* Search bar */
         .search-bar-wrap {
-            display: flex; align-items: center;
-            border: 1.5px solid var(--color-border);
-            border-radius: 30px; background: #fff;
-            max-width: 640px; margin: 0 auto 16px; overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0,0,0,.06);
-        }
-        .search-label {
-            padding: 14px 0 14px 22px; font-size: 15px; font-weight: 700;
-            color: var(--color-primary); white-space: nowrap; flex-shrink: 0;
-        }
-        .search-bar-wrap input {
-            flex: 1; border: none; outline: none; font-size: 15px;
-            font-family: var(--font-main); color: var(--color-muted);
-            padding: 14px 12px; background: transparent;
-        }
-        .search-submit {
-            width: 42px; height: 42px; border-radius: 50%; background: var(--color-primary);
-            border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            margin: 6px; flex-shrink: 0; transition: background .15s;
-        }
-        .search-submit:hover { background: var(--color-primary-hover); }
-        .search-submit svg { width: 18px; height: 18px; color: #fff; }
-        .search-terms { font-size: 13px; color: var(--color-muted); text-align: center; margin-bottom: 56px; }
-        .search-terms a { text-decoration: underline; color: var(--color-text); }
+    display: flex; align-items: center;
+    border: 1.5px solid var(--color-border);
+    border-radius: 30px; background: #fff;
+    max-width: 640px; margin: 0 auto 16px; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+.search-label {
+    margin: 6px 0 6px 6px;
+    padding: 8px 16px;
+    font-size: 15px; font-weight: 700;
+    color: var(--color-primary);
+    background: #dce8fa;
+    border-radius: 20px;
+    white-space: nowrap; flex-shrink: 0;
+}
+.search-bar-wrap input {
+    flex: 1; border: none; outline: none; font-size: 15px;
+    font-family: var(--font-main); color: var(--color-muted);
+    padding: 14px 12px; background: transparent;
+}
+.search-submit {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: #c2d4f5;
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    margin: 6px; flex-shrink: 0; transition: background .15s;
+}
+.search-submit:hover { background: var(--color-primary); }
+.search-submit svg { width: 18px; height: 18px; color: var(--color-primary); }
+.search-submit:hover svg { color: #fff; }
+.search-terms { font-size: 11px; color: var(--color-muted); text-align: center; margin-bottom: 56px; }
+.search-terms a { text-decoration: underline; color: var(--color-text); }
 
         /* ─── CATEGORY GRID ─── */
         .category-grid {
             display: grid; grid-template-columns: repeat(4, 1fr);
             gap: 12px; max-width: 1100px; margin: 0 auto; padding: 0 24px 24px;
         }
-        .cat-card {
-            position: relative; border-radius: 8px; overflow: hidden;
-            aspect-ratio: 4/3; cursor: pointer; display: flex;
-            align-items: flex-end; padding: 16px;
-        }
+       .cat-card {
+    position: relative; border-radius: 8px; overflow: hidden;
+    aspect-ratio: 4/3; cursor: pointer; display: flex;
+    align-items: center;      
+    justify-content: center; 
+    padding: 16px;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+.cat-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 12px 32px rgba(0,0,0,.25);
+}
         .cat-card::after {
             content: ''; position: absolute; inset: 0;
             background: linear-gradient(to top, rgba(0,0,0,.65) 0%, rgba(0,0,0,.15) 60%, transparent 100%);
         }
-        .cat-card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
         .cat-card h3 {
             position: relative; z-index: 1; font-size: 17px; font-weight: 700;
-            color: #fff; line-height: 1.2;
+            color: #fff; text-align: center;
         }
         .browse-all-wrap {
             display: flex; justify-content: center;
@@ -410,6 +445,36 @@
 
 @include('partials.navbar')
 
+<nav class="subnav">
+    <a href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-linecap="round"/>
+            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke-linecap="round"/>
+        </svg>
+        My Jobs
+    </a>
+    <a href="{{ route('hire.freelance') }}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+        </svg>
+        Freelancers
+    </a>
+    <a href="{{ route('hire.hiring') }}" class="active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v4M12 16h.01" stroke-linecap="round"/>
+        </svg>
+        Hiring on Behance
+    </a>
+    <a href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v8M8 12h8" stroke-linecap="round"/>
+        </svg>
+        Create New Job
+    </a>
+</nav>
+
 <body class="antialiased tracking-tight">
 
 
@@ -427,7 +492,7 @@
                 </svg>
             </button>
         </div>
-        <p class="search-terms">By using Behance, you are agreeing to the Adobe <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a></p>
+        <p class="search-terms" style="font-size: 13px;">By using Behance, you are agreeing to the Adobe <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a></p>
     </div>
 
     {{-- Category cards --}}
@@ -443,20 +508,18 @@
             ['label' => 'Photography',        'colors' => ['#2a1a2a','#1a0a1a','#3a2a3a','#1a1a2a']],
         ];
     @endphp
-    <div class="category-grid">
-        @foreach($catCards as $card)
-        <div class="cat-card" style="background: {{ $card['colors'][0] }};">
-            <div class="cat-card-bg" style="
-                background: linear-gradient(135deg,
-                    {{ $card['colors'][0] }} 0%,
-                    {{ $card['colors'][1] }} 40%,
-                    {{ $card['colors'][2] }} 70%,
-                    {{ $card['colors'][3] }} 100%);
-            "></div>
-            <h3>{{ $card['label'] }}</h3>
-        </div>
-        @endforeach
+   <div class="category-grid">
+    @foreach($catCards as $card)
+    <div class="cat-card" style="
+        background-image: url('{{ $card['img'] ?? '' }}');
+        background-size: cover;
+        background-position: center;
+        background-color: #1a1a2a;
+    ">
+        <h3>{{ $card['label'] }}</h3>
     </div>
+    @endforeach
+</div>
     <div class="browse-all-wrap">
         <a href="#" class="btn-browse-all">Browse All Categories</a>
     </div>
@@ -585,10 +648,10 @@
         @foreach($topFreelancers as $fl)
         <div class="fl-card">
             <div class="fl-card-cover">
-                @foreach(array_slice($fl['colors'], 0, 4) as $col)
-                <div class="fl-cover-thumb" style="background: {{ $col }};"></div>
-                @endforeach
-            </div>
+    @foreach(array_slice($fl['colors'], 0, 4) as $col)
+    <div class="fl-cover-thumb" style="background: {{ $col }};"></div>
+    @endforeach
+</div>
             <div class="fl-card-body">
                 <div class="fl-avatar-wrap">
                     <div class="fl-avatar" style="background: {{ $fl['color'] }};">

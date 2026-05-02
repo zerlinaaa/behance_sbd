@@ -75,16 +75,18 @@
             padding: 14px 24px;
             font-size: 14px;
             font-weight: 600;
-            color: var(--color-muted);
+            color: var(--color-text);
             border-bottom: 2px solid transparent;
             transition: color .15s, border-color .15s;
             white-space: nowrap;
         }
         .subnav a:hover { color: var(--color-text); }
         .subnav a.active {
-            color: var(--color-primary);
-            border-bottom: 2px solid var(--color-primary);
-        }
+    color: var(--color-primary);
+    background: #e8f0fb;
+    border-radius: 30px;
+    border-bottom: 2px solid transparent;
+}
         .subnav-icon {
             width: 16px;
             height: 16px;
@@ -324,25 +326,37 @@
         .main-content { padding: 24px 28px; }
 
         /* Top bar */
-        .content-topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            gap: 16px;
-        }
-        .content-topbar h2 { font-size: 20px; font-weight: 700; }
-        .search-sort { display: flex; align-items: center; gap: 12px; }
-        .search-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            padding: 8px 14px;
-            background: #fff;
-            width: 240px;
-        }
+       .content-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    gap: 16px;
+}
+
+.content-topbar h2 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.search-sort {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 26px;
+    padding: 8px 14px;
+    background: #fff;
+    width: 300px; 
+    height: 46px;
+}
         .search-box input {
             border: none;
             outline: none;
@@ -360,68 +374,80 @@
         }
         .sort-wrap label { color: var(--color-muted); font-size: 13px; }
         .sort-select {
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            padding: 7px 28px 7px 10px;
-            font-size: 13px;
-            font-family: var(--font-main);
-            color: var(--color-text);
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236e6e6e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
-            appearance: none;
-            cursor: pointer;
-        }
+    border: 1px solid var(--color-border);
+    border-radius: 26px;
+    padding: 10px 38px 10px 16px;
+    min-height: 44px;
+    font-size: 14px;
+    font-family: var(--font-main);
+    color: var(--color-text);
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236e6e6e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+    appearance: none;
+    cursor: pointer;
+}
 
         /* Category pills */
-        .cat-pills {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 24px;
-            overflow-x: auto;
-            scrollbar-width: none;
-            padding-bottom: 4px;
-        }
-        .cat-pills::-webkit-scrollbar { display: none; }
-        .cat-pill {
-            flex-shrink: 0;
-            padding: 8px 18px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            background: #2c2c2c;
-            color: #fff;
-            transition: opacity .15s;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .cat-pill::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.45);
-        }
-        .cat-pill span { position: relative; z-index: 1; }
-        .cat-pill.active { background: var(--color-primary); }
+       .cat-pills {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 26px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+}
+
+.cat-pills::-webkit-scrollbar {
+    display: none;
+}
+
+.cat-pill {
+    flex-shrink: 0;
+    height: 42px;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    background: #1f1f1f;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.cat-pill::before {
+    display: none; 
+}
+
+.cat-pill span {
+    position: static;
+}
+
+.cat-pill.active {
+    background: var(--color-primary);
+}
+
         .cat-pill.active::before { display: none; }
         .cat-pill:hover { opacity: 0.85; }
-        .pill-nav {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 1px solid var(--color-border);
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            font-size: 16px;
-            color: var(--color-text);
-        }
+       .pill-nav {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 20px;
+    color: var(--color-text);
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
 
         /* Freelancer Cards */
         .freelancer-list { display: flex; flex-direction: column; gap: 0; }
@@ -443,19 +469,27 @@
         }
         .freelancer-info { display: flex; align-items: center; gap: 14px; }
         .avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: var(--color-card-bg);
-            object-fit: cover;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            font-weight: 700;
-            color: #fff;
-        }
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--color-card-bg);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
         .freelancer-meta h3 {
             font-size: 18px;
             font-weight: 700;
@@ -463,15 +497,7 @@
             align-items: center;
             gap: 8px;
         }
-        .badge-pro {
-            font-size: 10px;
-            font-weight: 700;
-            background: #2c2c2c;
-            color: #fff;
-            padding: 2px 7px;
-            border-radius: 3px;
-            letter-spacing: .04em;
-        }
+
         .link-icon {
             color: var(--color-muted);
             font-size: 14px;
@@ -487,12 +513,7 @@
             margin-top: 4px;
         }
         .freelancer-location svg { width: 13px; height: 13px; }
-        .available-badge {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--color-green);
-            margin-left: 8px;
-        }
+    
         .btn-send-inquiry {
             display: flex;
             align-items: center;
@@ -500,7 +521,7 @@
             background: var(--color-primary);
             color: #fff;
             border: none;
-            border-radius: 6px;
+            border-radius: 24px;
             padding: 10px 18px;
             font-size: 14px;
             font-weight: 700;
@@ -519,14 +540,15 @@
             gap: 8px;
             margin-bottom: 18px;
         }
-        .skill-tag {
-            padding: 5px 12px;
-            border: 1px solid var(--color-border);
-            border-radius: 4px;
-            font-size: 13px;
-            color: var(--color-text);
-            background: #fff;
-        }
+       .skill-tag {
+    padding: 5px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text);
+    background: #fff;
+}
         .skill-tag-more {
             padding: 5px 10px;
             font-size: 13px;
@@ -534,66 +556,97 @@
         }
 
         /* Work gallery */
-        .work-section { }
-        .work-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-        .work-header span { font-size: 14px; font-weight: 700; }
-        .work-nav { display: flex; gap: 6px; }
-        .work-nav-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 1px solid var(--color-border);
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 14px;
-            color: var(--color-text);
-        }
-        .work-gallery {
-            display: flex;
-            gap: 6px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .work-gallery::-webkit-scrollbar { display: none; }
-        .work-thumb {
-            width: 140px;
-            height: 90px;
-            flex-shrink: 0;
-            border-radius: 4px;
-            object-fit: cover;
-            background: var(--color-card-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .work-thumb img { width: 100%; height: 100%; object-fit: cover; }
+       /* Work gallery */
+.work-section {
+    position: relative;
+}
+
+.work-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.work-header span {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.work-nav {
+    display: flex;
+    gap: 8px;
+}
+
+.work-nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--color-text);
+    transition: background .15s;
+}
+
+.work-nav-btn:hover {
+    background: #f5f5f5;
+}
+
+.work-gallery-wrap {
+    overflow: hidden;
+    width: 100%;
+}
+
+.work-gallery {
+    display: flex;
+    gap: 8px;
+    transition: transform .35s ease;
+    will-change: transform;
+}
+
+.work-thumb {
+    flex: 0 0 calc((100% - 32px) / 5); /* 5 card */
+    height: 140px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--color-card-bg);
+}
+
+.work-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
         /* Jobs completed */
-        .jobs-completed {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 14px;
-            font-size: 13px;
-            color: var(--color-muted);
-        }
-        .jobs-num {
-            background: var(--color-primary);
-            color: #fff;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 3px;
-        }
+       .jobs-completed {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 13px;
+}
+
+.jobs-num {
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px; 
+    line-height: 1.2;
+    display: inline-block;
+}
+
+.jobs-text {
+    color: var(--color-text);
+    font-weight: 700;
+}
         .jobs-completed a {
             color: var(--color-primary);
             font-weight: 600;
@@ -626,6 +679,37 @@
 </head>
 
 @include('partials.navbar')
+
+<nav class="subnav">
+    <a href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-linecap="round"/>
+            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke-linecap="round"/>
+        </svg>
+        My Jobs
+    </a>
+     </a>
+    <a href="{{ route('hire.freelance') }}" class="active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v4M12 16h.01" stroke-linecap="round"/>
+        </svg>
+       Freelancers
+    </a>
+    <a href="{{ route('hire.hiring') }}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+        </svg>
+       Hiring on Behance
+    </a>
+    <a href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v8M8 12h8" stroke-linecap="round"/>
+        </svg>
+        Create New Job
+    </a>
+</nav>
 
 <body class="antialiased tracking-tight">
 
@@ -793,10 +877,10 @@
                 <div class="sort-wrap">
                     <label>Sort</label>
                     <select class="sort-select">
-                        <option>Recommended</option>
-                        <option>Most Reviews</option>
-                        <option>Newest</option>
-                    </select>
+    <option selected>Recommended</option>
+    <option>Most Followed</option>
+    <option>Most Appreciated</option>
+</select>
                 </div>
             </div>
         </div>
@@ -811,144 +895,90 @@
                 ];
             @endphp
             @foreach($pillCats as $pill)
-            <button class="cat-pill" style="background: #3a3a3a;">
-                <span>{{ $pill }}</span>
-            </button>
-            @endforeach
+    <button class="cat-pill">
+        <span>{{ $pill }}</span>
+    </button>
+@endforeach
             <button class="pill-nav">›</button>
         </div>
 
         {{-- Freelancer Cards --}}
         <div class="freelancer-list">
-            @php
-                $freelancers = [
-                    [
-                        'name'     => 'Opedia Studio',
-                        'pro'      => true,
-                        'location' => 'Dhaka, Bangladesh',
-                        'skills'   => ['Logo Design','Branding Services','Packaging Design','Website Design','App Design'],
-                        'jobs'     => 363,
-                        'avatar'   => null,
-                        'initials' => 'OS',
-                        'color'    => '#1a1a1a',
-                        'works'    => [
-                            ['bg'=>'#1a2a1a','label'=>'Spaces'],
-                            ['bg'=>'#0a2a4a','label'=>'GravAI'],
-                            ['bg'=>'#1a2a3a','label'=>'UI'],
-                            ['bg'=>'#0a0a1a','label'=>'Mobile'],
-                            ['bg'=>'#1a3a2a','label'=>'Apps'],
-                            ['bg'=>'#2a1a1a','label'=>'Charts'],
-                        ],
-                    ],
-                    [
-                        'name'     => 'Numan Qadir',
-                        'pro'      => true,
-                        'location' => 'London, United Kingdom',
-                        'skills'   => ['Logo Design','Stationery Design','Fonts & Typography','Branding Services','Packaging Design'],
-                        'jobs'     => 140,
-                        'avatar'   => null,
-                        'initials' => 'NQ',
-                        'color'    => '#2a4a3a',
-                        'works'    => [
-                            ['bg'=>'#2a4a2a','label'=>'Better'],
-                            ['bg'=>'#3a2a1a','label'=>'Svatej'],
-                            ['bg'=>'#1a1a2a','label'=>'City'],
-                            ['bg'=>'#3a2a1a','label'=>'Box'],
-                            ['bg'=>'#1a2a1a','label'=>'Code'],
-                            ['bg'=>'#1a1a3a','label'=>'Ember'],
-                        ],
-                    ],
-                    [
-                        'name'     => 'Laurentiu Gabriel Dumitru',
-                        'pro'      => true,
-                        'location' => 'Bucharest, Romania',
-                        'skills'   => ['Logo Design','Book Design','Album Cover Design','Poster Design','Icon Design'],
-                        'jobs'     => 87,
-                        'avatar'   => null,
-                        'initials' => 'LG',
-                        'color'    => '#3a1a2a',
-                        'works'    => [
-                            ['bg'=>'#2a1a3a','label'=>'Logo'],
-                            ['bg'=>'#1a2a3a','label'=>'Book'],
-                            ['bg'=>'#3a2a1a','label'=>'Album'],
-                            ['bg'=>'#1a3a2a','label'=>'Poster'],
-                            ['bg'=>'#2a1a1a','label'=>'Icon'],
-                            ['bg'=>'#1a1a2a','label'=>'Art'],
-                        ],
-                    ],
-                ];
-            @endphp
 
-            @foreach($freelancers as $f)
-            <div class="freelancer-card">
-                <div class="freelancer-header">
-                    <div class="freelancer-info">
-                        <div class="avatar" style="background: {{ $f['color'] }};">
-                            {{ $f['initials'] }}
-                        </div>
-                        <div class="freelancer-meta">
-                            <h3>
-                                {{ $f['name'] }}
-                                @if($f['pro'])
-                                <span class="badge-pro">PRO</span>
-                                @endif
-                                <a href="#" class="link-icon">
-                                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path d="M6 3H3a1 1 0 00-1 1v9a1 1 0 001 1h9a1 1 0 001-1v-3M9 1h6m0 0v6m0-6L7 9" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </a>
-                            </h3>
-                            <div class="freelancer-location">
-                                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                                    <path d="M8 1a5 5 0 015 5c0 3.5-5 9-5 9S3 9.5 3 6a5 5 0 015-5z"/>
-                                    <circle cx="8" cy="6" r="1.5"/>
-                                </svg>
-                                {{ $f['location'] }}
-                                <span class="available-badge">Available now</span>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-send-inquiry">
-                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M1 8l14-7-7 14-2-5-5-2z" stroke-linejoin="round"/>
-                        </svg>
-                        Send Inquiry
-                    </a>
-                </div>
 
-                <div class="skill-tags">
-                    @foreach(array_slice($f['skills'], 0, 4) as $skill)
-                    <span class="skill-tag">{{ $skill }}</span>
-                    @endforeach
-                    @if(count($f['skills']) > 4)
-                    <span class="skill-tag-more">+{{ count($f['skills']) - 4 }}</span>
-                    @endif
-                </div>
+           @foreach($freelancers as $f)
+<div class="freelancer-card">
+    <div class="freelancer-header">
+        <div class="freelancer-info">
 
-                <div class="work-section">
-                    <div class="work-header">
-                        <span>Work</span>
-                        <div class="work-nav">
-                            <button class="work-nav-btn">‹</button>
-                            <button class="work-nav-btn">›</button>
-                        </div>
-                    </div>
-                    <div class="work-gallery">
-                        @foreach($f['works'] as $work)
-                        <div class="work-thumb" style="background: {{ $work['bg'] }};">
-                            <span style="color:rgba(255,255,255,0.3); font-size:12px; font-weight:600;">{{ $work['label'] }}</span>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
+            {{-- Avatar --}}
+            <div class="avatar">
+                @if($f->profilephoto)
+                    <img src="{{ $f->profilephoto }}">
+                @else
+                    {{ strtoupper(substr($f->name, 0, 2)) }}
+                @endif
+            </div>
 
-                <div class="jobs-completed">
-                    <span class="jobs-num">{{ $f['jobs'] }}</span>
-                    <span>Freelance Jobs completed on Behance –</span>
-                    <a href="#">Read Reviews ›</a>
+            <div class="freelancer-meta">
+                <h3>
+                    {{ $f->name }}
+                </h3>
+
+                <div class="freelancer-location">
+                    {{ $f->locate }}
                 </div>
             </div>
-            @endforeach
+        </div>
+
+        <a href="#" class="btn-send-inquiry">
+            Send Inquiry
+        </a>
+    </div>
+
+    {{-- SKILLS (kategori1 - kategori5) --}}
+    <div class="skill-tags">
+        @for($i = 1; $i <= 5; $i++)
+            @php $field = 'kategori'.$i; @endphp
+            @if($f->$field)
+                <span class="skill-tag">{{ $f->$field }}</span>
+            @endif
+        @endfor
+    </div>
+
+    {{-- WORK IMAGES --}}
+    <div class="work-section">
+    <div class="work-header">
+        <span>Work</span>
+
+        <div class="work-nav">
+            <button class="work-nav-btn" onclick="slideWork(this, -1)">‹</button>
+            <button class="work-nav-btn" onclick="slideWork(this, 1)">›</button>
+        </div>
+    </div>
+
+    <div class="work-gallery-wrap">
+        <div class="work-gallery" data-index="0">
+            @for($i = 1; $i <= 10; $i++)
+                @php $img = 'image'.$i; @endphp
+                @if($f->$img)
+                    <div class="work-thumb">
+                        <img src="{{ $f->$img }}">
+                    </div>
+                @endif
+            @endfor
+        </div>
+    </div>
+</div>
+
+    {{-- JOBS --}}
+   <div class="jobs-completed">
+    <span class="jobs-num">{{ $f->freelancenumber }}</span>
+    <span class="jobs-text">Freelance Jobs completed on Behance</span>
+</div>
+
+</div>
+@endforeach
 
         </div>
     </main>
@@ -1012,7 +1042,29 @@ function removeLocation(value) {
     const tag = document.querySelector(`#selected-locations [data-value="${value}"]`);
     if (tag) tag.remove();
 }
+
+function slideWork(button, direction) {
+    const section = button.closest('.work-section');
+    const gallery = section.querySelector('.work-gallery');
+    const items = gallery.querySelectorAll('.work-thumb');
+
+    const visible = 5;
+    const maxIndex = Math.max(0, Math.ceil(items.length / visible) - 1);
+
+    let index = parseInt(gallery.dataset.index || 0);
+
+    index += direction;
+
+    if (index < 0) index = 0;
+    if (index > maxIndex) index = maxIndex;
+
+    gallery.dataset.index = index;
+
+    const movePercent = index * 100;
+    gallery.style.transform = `translateX(-${movePercent}%)`;
+}
 </script>
+
 
 </body>
 </html>

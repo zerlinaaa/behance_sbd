@@ -9,6 +9,7 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\HireController;
 
 // ── Halaman utama → explore
 Route::get('/', fn() => redirect()->route('explore'));
@@ -49,9 +50,9 @@ Route::get('/resources/guides',     fn() => view('resources.guides'))->name('res
 Route::get('/resources/commissioned', fn() => view('resources.commissioned'))->name('resources.commissioned');
 Route::get('/resources/creative',   fn() => view('resources.creative'))->name('resources.creative');
 
-Route::get('/hire/my-jobs',  fn() => view('hire.my-jobs'))->name('hire.my-jobs');
-Route::get('/hire/freelance', fn() => view('hire.freelance'))->name('hire.freelance');
-Route::get('/hire/hiring',    fn() => view('hire.hiring'))->name('hire.hiring');
+Route::get('/hire/my-jobs', [HireController::class, 'myJobs'])->name('hire.my-jobs');
+Route::get('/hire/hiring', [HireController::class, 'hiring'])->name('hire.hiring');
+Route::get('/hire/freelancers', [HireController::class, 'freelance'])->name('hire.freelance');
 
 Route::get('landing',    fn() => view('landing'))->name('landing');
 Route::get('jobs',    fn() => view('jobs'))->name('jobs');

@@ -19,77 +19,73 @@
 
         body {
             font-family: var(--font-main);
-            background: #2a7a72;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
+        /* Mountain background image */
         .bg-wrap {
             position: fixed;
             inset: 0;
-            background: linear-gradient(135deg, #1a6b65 0%, #2a8a80 30%, #1a5a55 60%, #0f4a45 100%);
+            background-image: url('https://images.unsplash.com/photo-1776679768423-114637549209?w=1920&auto=format&fit=crop&q=85&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDUxfGJvOGpRS1RhRTBZfHxlbnwwfHx8fHw%3D');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             z-index: 0;
         }
-
-        .bg-leaf {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
-        }
-        .leaf-shape {
+        .bg-wrap::after {
+            content: '';
             position: absolute;
-            border-radius: 50% 0 50% 0;
-            opacity: 0.18;
+            inset: 0;
+            background: rgba(5, 15, 30, 0.50);
         }
-        .leaf-1 { width: 520px; height: 700px; background: #0a3a35; top: -80px; left: -60px; transform: rotate(-20deg); opacity: 0.35; }
-        .leaf-2 { width: 400px; height: 600px; background: #0a4a40; top: 100px; left: 180px; transform: rotate(10deg); opacity: 0.25; }
-        .leaf-3 { width: 300px; height: 500px; background: #1a5a50; top: 200px; left: -30px; transform: rotate(-35deg); opacity: 0.2; }
-        .leaf-4 { width: 200px; height: 350px; background: #0f3a30; bottom: 0; left: 300px; transform: rotate(5deg); opacity: 0.3; }
 
+        /* Behance brand bottom-left */
         .brand-label {
             position: fixed;
-            bottom: 48px;
+            bottom: 56px;
             left: 48px;
             display: flex;
             align-items: center;
             gap: 14px;
-            z-index: 1;
+            z-index: 2;
         }
         .brand-logo-box {
-            width: 42px; height: 42px;
-            background: #2c2c2c;
+            width: 40px; height: 40px;
+            background: #fff;
             border-radius: 6px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 18px; font-weight: 900; color: #fff;
+            font-size: 18px; font-weight: 900; color: #1b1b1b;
             letter-spacing: -1px;
         }
         .brand-label span {
             font-size: 22px; font-weight: 700; color: #fff;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.3px;
         }
+
+
 
         .page-main {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            padding: 40px 10% 40px 48px;
+            padding: 40px 8% 40px 48px;
             position: relative;
             z-index: 1;
         }
 
         .auth-card {
             background: #fff;
-            border-radius: 4px;
-            padding: 40px 44px 44px;
-            width: 440px;
-            box-shadow: 0 8px 40px rgba(0,0,0,.18);
+            border-radius: 6px;
+            padding: 44px 48px 48px;
+            width: 448px;
+            box-shadow: 0 12px 48px rgba(0,0,0,.28);
         }
 
         .auth-card h1 {
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 700;
             color: var(--color-text);
             margin-bottom: 10px;
@@ -119,7 +115,7 @@
             width: 100%;
             padding: 10px 12px;
             border: 1.5px solid var(--color-border);
-            border-radius: 3px;
+            border-radius: 4px;
             font-size: 15px;
             font-family: var(--font-main);
             color: var(--color-text);
@@ -127,7 +123,10 @@
             transition: border-color .15s;
             background: #fff;
         }
-        .form-group input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(20,115,230,.15); }
+        .form-group input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px rgba(20,115,230,.15);
+        }
 
         .btn-continue {
             display: block;
@@ -136,7 +135,7 @@
             color: #fff;
             border: none;
             border-radius: 20px;
-            padding: 10px 28px;
+            padding: 10px 30px;
             font-size: 15px;
             font-weight: 700;
             font-family: var(--font-main);
@@ -150,7 +149,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin: 28px 0;
+            margin: 28px 0 20px;
             color: var(--color-muted);
             font-size: 13px;
         }
@@ -161,15 +160,16 @@
             background: var(--color-border);
         }
 
+        /* Rounded pill social buttons like screenshot */
         .social-btn {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
             width: 100%;
-            padding: 11px 16px;
+            padding: 12px 16px;
             border: 1.5px solid var(--color-border);
-            border-radius: 3px;
+            border-radius: 30px;
             font-size: 15px;
             font-weight: 600;
             color: var(--color-text);
@@ -181,11 +181,31 @@
             text-decoration: none;
         }
         .social-btn:hover { background: #f5f5f5; border-color: #bbb; }
-        .social-icon { width: 20px; height: 20px; flex-shrink: 0; }
+        .social-icon { width: 22px; height: 22px; flex-shrink: 0; }
+
+        /* Facebook icon */
+        .fb-icon {
+            width: 22px; height: 22px;
+            background: #1877F2;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .fb-icon svg { width: 13px; height: 13px; fill: #fff; }
+
+        /* LINE icon */
+        .line-icon {
+            width: 22px; height: 22px;
+            background: #06C755;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .line-icon svg { width: 15px; height: 15px; fill: #fff; }
 
         .more-options, .help-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 18px;
         }
         .more-options a, .help-link a {
             font-size: 13px;
@@ -196,13 +216,13 @@
 
         .page-footer {
             position: relative;
-            z-index: 10;
+            z-index: 2;
             background: #fff;
-            padding: 14px 24px;
+            padding: 13px 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 24px;
+            gap: 20px;
             font-size: 12px;
             color: #6e6e6e;
             flex-wrap: wrap;
@@ -215,13 +235,8 @@
 <body>
 
     <div class="bg-wrap"></div>
-    <div class="bg-leaf">
-        <div class="leaf-shape leaf-1"></div>
-        <div class="leaf-shape leaf-2"></div>
-        <div class="leaf-shape leaf-3"></div>
-        <div class="leaf-shape leaf-4"></div>
-    </div>
 
+    <!-- Behance Brand -->
     <div class="brand-label">
         <div class="brand-logo-box">Be</div>
         <span>Behance</span>
@@ -232,11 +247,9 @@
             <h1>Sign in</h1>
             <p class="subtitle">New user? <a href="{{ route('register') }}">Create an account</a></p>
 
-            {{-- Target route diubah ke login.post sesuai web.php temanmu --}}
             <form method="POST" action="{{ route('login.post') }}">
                 @csrf
-                
-                {{-- Input Email --}}
+
                 <div class="form-group">
                     <label for="email">Email address</label>
                     <input type="email" id="email" name="email" autocomplete="email" autofocus
@@ -246,14 +259,6 @@
                     @enderror
                 </div>
 
-                {{-- Input Password (Baru ditambahkan sesuai DB) --}}
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                    @error('password')
-                        <p style="color:#eb1000;font-size:12px;margin-top:4px;">{{ $message }}</p>
-                    @enderror
-                </div>
 
                 <div style="display:flex; justify-content:flex-end;">
                     <button type="submit" class="btn-continue">Continue</button>
@@ -262,7 +267,7 @@
 
             <div class="divider">Or</div>
 
-            {{-- Link social ini pastikan routenya sudah dibuat temanmu --}}
+            <!-- Google -->
             <a href="#" class="social-btn">
                 <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -273,11 +278,31 @@
                 Continue with Google
             </a>
 
+            <!-- Facebook -->
+            <a href="#" class="social-btn">
+                <div class="fb-icon">
+                    <svg viewBox="0 0 10 18" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6.5 18V10h2.7l.4-3H6.5V5.1c0-.87.24-1.46 1.5-1.46H9.7V.11C9.39.08 8.38 0 7.21 0 4.8 0 3.15 1.49 3.15 4.22V7H.5v3h2.65v8h3.35z"/>
+                    </svg>
+                </div>
+                Continue with Facebook
+            </a>
+
+            <!-- LINE -->
+            <a href="#" class="social-btn">
+                <div class="line-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.365 9.89c.50 0 .91.41.91.91s-.41.91-.91.91h-2.28v1.37h2.28c.50 0 .91.41.91.91s-.41.91-.91.91h-3.19c-.5 0-.91-.41-.91-.91V9.89c0-.5.41-.91.91-.91h3.19zm-11.46 4.1c0 .5-.41.91-.91.91s-.91-.41-.91-.91V9.89c0-.5.41-.91.91-.91s.91.41.91.91v4.1zm2.74.91c-.38 0-.71-.23-.85-.59l-1.98-4.1a.91.91 0 011.68-.71l1.14 2.36 1.14-2.36a.91.91 0 011.68.71l-1.98 4.1c-.14.36-.47.59-.85.59zM24 10.26C24 4.6 18.62 0 12 0S0 4.6 0 10.26c0 5.07 4.5 9.32 10.58 10.13.41.09.97.27 1.11.62.13.32.08.82.04 1.14l-.18 1.08c-.05.32-.25 1.26 1.1.69 1.36-.58 7.32-4.31 9.99-7.38A9.12 9.12 0 0024 10.26z"/>
+                    </svg>
+                </div>
+                Continue with LINE
+            </a>
+
             <div class="more-options">
                 <a href="#">More sign-in options</a>
             </div>
 
-            <div class="help-link">
+            <div class="more-options">
                 <a href="#">Get help signing in</a>
             </div>
         </div>
@@ -291,6 +316,8 @@
         <a href="#">Cookie preferences</a>
         <span class="page-footer-sep">|</span>
         <a href="#">Privacy</a>
+        <span class="page-footer-sep">|</span>
+        <a href="#">Do not sell or share my personal information</a>
     </footer>
 
 </body>
