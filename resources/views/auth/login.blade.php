@@ -24,7 +24,6 @@
             flex-direction: column;
         }
 
-        /* Mountain background image */
         .bg-wrap {
             position: fixed;
             inset: 0;
@@ -41,7 +40,6 @@
             background: rgba(5, 15, 30, 0.50);
         }
 
-        /* Behance brand bottom-left */
         .brand-label {
             position: fixed;
             bottom: 56px;
@@ -63,8 +61,6 @@
             font-size: 22px; font-weight: 700; color: #fff;
             letter-spacing: -0.3px;
         }
-
-
 
         .page-main {
             flex: 1;
@@ -160,7 +156,6 @@
             background: var(--color-border);
         }
 
-        /* Rounded pill social buttons like screenshot */
         .social-btn {
             display: flex;
             align-items: center;
@@ -183,7 +178,6 @@
         .social-btn:hover { background: #f5f5f5; border-color: #bbb; }
         .social-icon { width: 22px; height: 22px; flex-shrink: 0; }
 
-        /* Facebook icon */
         .fb-icon {
             width: 22px; height: 22px;
             background: #1877F2;
@@ -193,26 +187,16 @@
         }
         .fb-icon svg { width: 13px; height: 13px; fill: #fff; }
 
-        /* LINE icon */
-        .line-icon {
-            width: 22px; height: 22px;
-            background: #06C755;
-            border-radius: 6px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-        .line-icon svg { width: 15px; height: 15px; fill: #fff; }
-
-        .more-options, .help-link {
+        .more-options {
             text-align: center;
             margin-top: 18px;
         }
-        .more-options a, .help-link a {
+        .more-options a {
             font-size: 13px;
             color: var(--color-primary);
             text-decoration: none;
         }
-        .more-options a:hover, .help-link a:hover { text-decoration: underline; }
+        .more-options a:hover { text-decoration: underline; }
 
         .page-footer {
             position: relative;
@@ -230,13 +214,22 @@
         .page-footer a { color: #6e6e6e; text-decoration: none; }
         .page-footer a:hover { text-decoration: underline; }
         .page-footer-sep { color: #ccc; }
+
+        .alert-error {
+            background: #fff2f2;
+            border: 1px solid #eb1000;
+            border-radius: 4px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #eb1000;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
     <div class="bg-wrap"></div>
 
-    <!-- Behance Brand -->
     <div class="brand-label">
         <div class="brand-logo-box">Be</div>
         <span>Behance</span>
@@ -247,20 +240,46 @@
             <h1>Sign in</h1>
             <p class="subtitle">New user? <a href="{{ route('register') }}">Create an account</a></p>
 
+            {{-- Error Message --}}
+            @if($errors->any())
+            <div class="alert-error">
+                {{ $errors->first() }}
+            </div>
+            @endif
+
             <form method="POST" action="{{ route('login.post') }}">
                 @csrf
 
+                {{-- Email --}}
                 <div class="form-group">
                     <label for="email">Email address</label>
-                    <input type="email" id="email" name="email" autocomplete="email" autofocus
-                        value="{{ old('email') }}" required>
+                    <input type="email" id="email" name="email"
+                           autocomplete="email" autofocus
+                           value="{{ old('email') }}" required>
                     @error('email')
                         <p style="color:#eb1000;font-size:12px;margin-top:4px;">{{ $message }}</p>
                     @enderror
                 </div>
 
+                {{-- Password --}}
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password"
+                           autocomplete="current-password" required>
+                    @error('password')
+                        <p style="color:#eb1000;font-size:12px;margin-top:4px;">{{ $message }}</p>
+                    @enderror
+                </div>
 
-                <div style="display:flex; justify-content:flex-end;">
+                {{-- Remember me & Forgot password --}}
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;color:#6e6e6e">
+                        <input type="checkbox" name="remember"> Remember me
+                    </label>
+                    <a href="#" style="font-size:13px;color:#1473e6;text-decoration:none">Forgot password?</a>
+                </div>
+
+                <div style="display:flex;justify-content:flex-end;">
                     <button type="submit" class="btn-continue">Continue</button>
                 </div>
             </form>
@@ -286,16 +305,6 @@
                     </svg>
                 </div>
                 Continue with Facebook
-            </a>
-
-            <!-- LINE -->
-            <a href="#" class="social-btn">
-                <div class="line-icon">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19.365 9.89c.50 0 .91.41.91.91s-.41.91-.91.91h-2.28v1.37h2.28c.50 0 .91.41.91.91s-.41.91-.91.91h-3.19c-.5 0-.91-.41-.91-.91V9.89c0-.5.41-.91.91-.91h3.19zm-11.46 4.1c0 .5-.41.91-.91.91s-.91-.41-.91-.91V9.89c0-.5.41-.91.91-.91s.91.41.91.91v4.1zm2.74.91c-.38 0-.71-.23-.85-.59l-1.98-4.1a.91.91 0 011.68-.71l1.14 2.36 1.14-2.36a.91.91 0 011.68.71l-1.98 4.1c-.14.36-.47.59-.85.59zM24 10.26C24 4.6 18.62 0 12 0S0 4.6 0 10.26c0 5.07 4.5 9.32 10.58 10.13.41.09.97.27 1.11.62.13.32.08.82.04 1.14l-.18 1.08c-.05.32-.25 1.26 1.1.69 1.36-.58 7.32-4.31 9.99-7.38A9.12 9.12 0 0024 10.26z"/>
-                    </svg>
-                </div>
-                Continue with LINE
             </a>
 
             <div class="more-options">

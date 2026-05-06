@@ -79,11 +79,11 @@ class ExploreController extends Controller
         // ⑤ SUBQUERY EXISTS — hanya project yang punya gambar
         //    Penting: project tanpa gambar tidak ditampilkan
         // ════════════════════════════════════════════════════
-        $query->whereExists(function ($sub) {
-            $sub->select(DB::raw(1))
-                 ->from('project_images')
-                 ->whereColumn('project_images.project_id', 'p.id');
-        });
+        // $query->whereExists(function ($sub) {
+        //    $sub->select(DB::raw(1))
+        //         ->from('project_images')
+        //         ->whereColumn('project_images.project_id', 'p.id');
+        // });
 
         // ════════════════════════════════════════════════════
         // ⑥ Jalankan query dengan pagination (24 per halaman)

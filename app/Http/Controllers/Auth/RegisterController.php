@@ -31,4 +31,27 @@ class RegisterController extends Controller
         Auth::login($user);
         return redirect()->route('explore');
     }
+
+    public function register2(Request $request)
+{
+    $request->validate([
+        'first_name'  => 'required|string|max:50',
+        'last_name'   => 'required|string|max:50',
+        'birth_month' => 'required|integer|min:1|max:12',
+        'birth_year'  => 'required|integer|min:1900|max:'.date('Y'),
+        'country'     => 'required|string|max:100',
+    ]);
+
+    // Ambil user yang baru register dari session atau auth
+    $user = Auth::user();
+
+    if ($user) {
+        $user->update([
+            'name'     => $request->first_name . ' ' . $request->last_name,
+            'location' => $request->country,
+        ]);
+    }
+
+    return redirect()->route('explore');
+}
 }

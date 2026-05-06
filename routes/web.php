@@ -38,6 +38,9 @@ Route::middleware('auth')->group(function () {
 // Route untuk menampilkan halaman (View)
 Route::get('/login',    fn() => view('auth.login'))->name('login');
 Route::get('/register', fn() => view('auth.register'))->name('register');
+Route::post('/login',    [LoginController::class, 'login'])->name('login.post');
+Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
+Route::post('/logout',   [LoginController::class, 'logout'])->name('logout'); // ← tambah ini
 
 // Route untuk memproses data (Logic)
 Route::post('/login',    [LoginController::class, 'login'])->name('login.post');
@@ -56,3 +59,5 @@ Route::get('/hire/freelancers', [HireController::class, 'freelance'])->name('hir
 
 Route::get('landing',    fn() => view('landing'))->name('landing');
 Route::get('jobs',    fn() => view('jobs'))->name('jobs');
+
+Route::post('/register2', [RegisterController::class, 'register2'])->name('register2.post');
