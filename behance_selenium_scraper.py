@@ -2,13 +2,12 @@
 ============================================================
 BEHANCE SCRAPER — Laravel Ready (500–700 data)
 ============================================================
-Perbaikan:
-- Selector lebih robust dengan multiple fallback
-- Stats parsing dari elemen DOM, bukan regex body text
-- Slug unik pakai UUID pendek
-- Auto-scroll lebih stabil
-- Error handling lebih detail
-- Progress auto-save tiap 10 item
+Fix:
+- buat_driver() ditambah flag anti-blokir jaringan
+- Hapus --headless (sering bikin ERR_ADDRESS_UNREACHABLE)
+- Tambah --disable-web-security & proxy bypass
+- Tambah retry otomatis kalau page gagal load
+- WebDriverWait lebih toleran
 ============================================================
 """
 
@@ -22,7 +21,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import (
-    TimeoutException, NoSuchElementException, StaleElementReferenceException
+    TimeoutException, NoSuchElementException, StaleElementReferenceException,
+    WebDriverException
 )
 
 try:
@@ -37,9 +37,10 @@ except ImportError:
 # =========================
 TARGET      = 700
 OUTPUT_FILE = "behance_data.json"
-DELAY_MIN   = 2.0
-DELAY_MAX   = 4.0
-SCROLL_ROUNDS = 12   # lebih banyak scroll = lebih banyak URL
+DELAY_MIN   = 2.5
+DELAY_MAX   = 4.5
+SCROLL_ROUNDS = 12
+MAX_RETRY   = 3   # retry per URL kalau gagal load
 
 
 # =========================
@@ -68,26 +69,57 @@ def make_slug(title: str) -> str:
     safe  = re.sub(r"[^a-zA-Z0-9\s]", "", title)
     base  = safe.strip().lower().replace(" ", "-")
     base  = re.sub(r"-{2,}", "-", base)[:60]
-    uid   = uuid.uuid4().hex[:8]          # 8 karakter hex → hampir nol duplikat
+    uid   = uuid.uuid4().hex[:8]
     return f"{base}-{uid}" if base else f"project-{uid}"
 
 
+# =========================
+# DRIVER — PERBAIKAN UTAMA
+# =========================
 def buat_driver(headless: bool = False):
     options = webdriver.ChromeOptions()
-    options.add_argument("--start-maximized")
+
+    # ── Anti-deteksi ──────────────────────────────────────
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("useAutomationExtension", False)
 
+    # ── Fix jaringan (utama penyebab ERR_ADDRESS_UNREACHABLE) ──
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-proxy-server")              # bypass proxy sistem
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-software-rasterizer")
+    options.add_argument("--ignore-certificate-errors")
+    options.add_argument("--allow-running-insecure-content")
+    options.add_argument("--disable-web-security")
+
+    # ── User-Agent biar kelihatan browser biasa ───────────
+    options.add_argument(
+        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/147.0.0.0 Safari/537.36"
+    )
+
+    options.add_argument("--start-maximized")
+
+    # Headless DINONAKTIFKAN secara default — penyebab utama error jaringan
+    # Aktifkan hanya jika sudah dipastikan jaringan OK
     if headless:
         options.add_argument("--headless=new")
         options.add_argument("--window-size=1920,1080")
 
     if USE_WDM:
-        driver = webdriver.Chrome(
-            service=Service(ChromeDriverManager().install()),
-            options=options
-        )
+        try:
+            driver = webdriver.Chrome(
+                service=Service(ChromeDriverManager().install()),
+                options=options
+            )
+        except Exception as e:
+            print(f"⚠ webdriver_manager gagal: {e}")
+            print("  Mencoba pakai chromedriver dari PATH...")
+            driver = webdriver.Chrome(options=options)
     else:
         driver = webdriver.Chrome(options=options)
 
@@ -95,6 +127,11 @@ def buat_driver(headless: bool = False):
     driver.execute_script(
         "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
     )
+
+    # Set timeout koneksi
+    driver.set_page_load_timeout(30)
+    driver.implicitly_wait(5)
+
     return driver
 
 
@@ -102,7 +139,16 @@ def buat_driver(headless: bool = False):
 # LOGIN MANUAL
 # =========================
 def login(driver):
-    driver.get("https://www.behance.net/")
+    for attempt in range(MAX_RETRY):
+        try:
+            driver.get("https://www.behance.net/")
+            break
+        except WebDriverException as e:
+            print(f"⚠ Gagal buka Behance (attempt {attempt+1}/{MAX_RETRY}): {e}")
+            if attempt == MAX_RETRY - 1:
+                raise
+            time.sleep(3)
+
     print("\n" + "="*50)
     print("Silakan LOGIN di browser yang terbuka.")
     print("Setelah berhasil login, kembali ke sini dan tekan ENTER.")
@@ -115,10 +161,6 @@ def login(driver):
 # KUMPUL URL PROJECT
 # =========================
 def get_urls(driver, target: int = TARGET) -> list:
-    """
-    Kumpulkan URL project dari halaman search.
-    Pakai beberapa keyword supaya data lebih beragam.
-    """
     urls = set()
 
     search_queries = [
@@ -136,16 +178,28 @@ def get_urls(driver, target: int = TARGET) -> list:
             break
 
         search_url = f"https://www.behance.net/search/projects?search={query.replace(' ', '+')}"
-        print(f"\n🔍 Searching: '{query}' | URL: {search_url}")
-        driver.get(search_url)
-        time.sleep(4)
+        print(f"\n🔍 Searching: '{query}'")
+
+        # Retry load halaman search
+        loaded = False
+        for attempt in range(MAX_RETRY):
+            try:
+                driver.get(search_url)
+                time.sleep(4)
+                loaded = True
+                break
+            except WebDriverException as e:
+                print(f"   ⚠ Gagal load search page (attempt {attempt+1}): {e}")
+                time.sleep(3)
+
+        if not loaded:
+            print(f"   ❌ Skip query '{query}' — halaman tidak bisa diload")
+            continue
 
         for scroll_i in range(SCROLL_ROUNDS):
-            # Scroll ke bawah
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(2.5)
 
-            # Ambil semua link gallery
             cards = driver.find_elements(By.CSS_SELECTOR, "a[href*='/gallery/']")
             for c in cards:
                 try:
@@ -170,14 +224,10 @@ def get_urls(driver, target: int = TARGET) -> list:
 # HELPER: AMBIL TEKS AMAN
 # =========================
 def safe_text(driver, selectors: list, attr: str = None) -> str:
-    """Coba beberapa selector, return teks/atribut pertama yang berhasil."""
     for sel in selectors:
         try:
             el = driver.find_element(By.CSS_SELECTOR, sel)
-            if attr:
-                val = el.get_attribute(attr)
-            else:
-                val = el.text.strip()
+            val = el.get_attribute(attr) if attr else el.text.strip()
             if val:
                 return val
         except (NoSuchElementException, Exception):
@@ -186,190 +236,183 @@ def safe_text(driver, selectors: list, attr: str = None) -> str:
 
 
 def safe_stat(driver, selectors: list) -> int:
-    """Ambil angka statistik dari elemen, return int."""
     text = safe_text(driver, selectors)
     return parse_number(text) if text else 0
 
 
 # =========================
-# SCRAPE SATU PROJECT
+# SCRAPE SATU PROJECT (+ RETRY)
 # =========================
 def scrape(driver, url: str) -> dict | None:
-    try:
-        driver.get(url)
-
-        # Tunggu konten utama muncul
+    for attempt in range(MAX_RETRY):
         try:
-            WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.TAG_NAME, "h1"))
-            )
-        except TimeoutException:
-            print("   ⚠ Timeout tunggu h1")
+            driver.get(url)
 
-        time.sleep(2)  # beri waktu lazy-load
+            try:
+                WebDriverWait(driver, 12).until(
+                    EC.presence_of_element_located((By.TAG_NAME, "h1"))
+                )
+            except TimeoutException:
+                print("   ⚠ Timeout tunggu h1")
 
-        # ── TITLE ──────────────────────────────────────────────
-        title = safe_text(driver, [
-            "h1",
-            "h1.ProjectInfo-projectName-YC8",
-            "[class*='projectName']",
-            "[class*='project-name']",
-            "title",
-        ]) or "Untitled"
+            time.sleep(2)
 
-        # Bersihkan karakter aneh
-        title = re.sub(r"\s+", " ", title).strip()
+            # ── TITLE ──────────────────────────────────────────────
+            title = safe_text(driver, [
+                "h1",
+                "h1.ProjectInfo-projectName-YC8",
+                "[class*='projectName']",
+                "[class*='project-name']",
+            ]) or "Untitled"
+            title = re.sub(r"\s+", " ", title).strip()
 
-        # ── DESCRIPTION ────────────────────────────────────────
-        description = safe_text(driver, [
-            "[class*='project-description']",
-            "[class*='ProjectInfo-projectDescription']",
-            "[class*='description']",
-            "meta[name='description']",          # fallback meta
-        ])
-
-        # Jika gagal ambil dari DOM, coba meta tag
-        if not description:
+            # ── DESCRIPTION ────────────────────────────────────────
             description = safe_text(driver, [
-                "meta[name='description']",
-                "meta[property='og:description']",
+                "[class*='project-description']",
+                "[class*='ProjectInfo-projectDescription']",
+                "[class*='description']",
+            ])
+            if not description:
+                description = safe_text(driver, [
+                    "meta[name='description']",
+                    "meta[property='og:description']",
+                ], attr="content")
+
+            # ── COVER IMAGE ────────────────────────────────────────
+            cover_image = safe_text(driver, [
+                "meta[property='og:image']",
+                "meta[name='twitter:image']",
             ], attr="content")
 
-        # ── COVER IMAGE ────────────────────────────────────────
-        cover_image = safe_text(driver, [
-            "meta[property='og:image']",
-            "meta[name='twitter:image']",
-        ], attr="content")
+            if not cover_image:
+                try:
+                    img = driver.find_element(By.CSS_SELECTOR,
+                        "img[src*='mir-s3-cdn-cf.behance.net'], img[src*='behance.net']")
+                    cover_image = img.get_attribute("src") or ""
+                except NoSuchElementException:
+                    cover_image = ""
 
-        # Fallback: gambar pertama di project
-        if not cover_image:
-            try:
-                img = driver.find_element(By.CSS_SELECTOR,
-                    "img[src*='mir-s3-cdn-cf.behance.net'], img[src*='behance.net']")
-                cover_image = img.get_attribute("src") or ""
-            except NoSuchElementException:
-                cover_image = ""
+            # ── STATS ──────────────────────────────────────────────
+            views_count = safe_stat(driver, [
+                "[class*='stats-views'] span",
+                "[class*='ProjectStats-views']",
+                "[data-testid='views-count']",
+                "span[class*='Views'] span",
+                "span[class*='view']",
+            ])
 
-        # ── STATS (Views / Likes / Comments) ───────────────────
-        #
-        # Behance menyimpan stats di elemen dengan atribut data-* atau
-        # class yang mengandung kata kunci. Kita coba beberapa varian.
+            likes_count = safe_stat(driver, [
+                "[class*='stats-appreciations'] span",
+                "[class*='ProjectStats-appreciations']",
+                "[data-testid='appreciations-count']",
+                "span[class*='Appreciate'] span",
+                "[class*='appreciation']",
+            ])
 
-        views_count = safe_stat(driver, [
-            "[class*='stats-views'] span",
-            "[class*='ProjectStats-views']",
-            "[data-testid='views-count']",
-            "span[class*='Views'] span",
-            "span[class*='view']",
-        ])
+            comments_count = safe_stat(driver, [
+                "[class*='stats-comments'] span",
+                "[class*='ProjectStats-comments']",
+                "[data-testid='comments-count']",
+                "span[class*='Comment'] span",
+                "[class*='comment-count']",
+            ])
 
-        likes_count = safe_stat(driver, [
-            "[class*='stats-appreciations'] span",
-            "[class*='ProjectStats-appreciations']",
-            "[data-testid='appreciations-count']",
-            "span[class*='Appreciate'] span",
-            "[class*='appreciation']",
-        ])
+            # Fallback regex dari body text
+            if views_count == 0 or likes_count == 0 or comments_count == 0:
+                body = driver.find_element(By.TAG_NAME, "body").text
+                if views_count == 0:
+                    m = re.search(r"([\d.,]+[km]?)\s*views", body, re.I)
+                    views_count = parse_number(m.group(1)) if m else 0
+                if likes_count == 0:
+                    m = re.search(r"([\d.,]+[km]?)\s*(appreciation|likes?)", body, re.I)
+                    likes_count = parse_number(m.group(1)) if m else 0
+                if comments_count == 0:
+                    m = re.search(r"([\d.,]+[km]?)\s*comments?", body, re.I)
+                    comments_count = parse_number(m.group(1)) if m else 0
 
-        comments_count = safe_stat(driver, [
-            "[class*='stats-comments'] span",
-            "[class*='ProjectStats-comments']",
-            "[data-testid='comments-count']",
-            "span[class*='Comment'] span",
-            "[class*='comment-count']",
-        ])
+            return {
+                "user_id":        1,
+                "title":          title,
+                "description":    description,
+                "cover_image":    cover_image,
+                "slug":           make_slug(title),
+                "status":         "published",
+                "views_count":    views_count,
+                "likes_count":    likes_count,
+                "comments_count": comments_count,
+            }
 
-        # Fallback regex dari visible text jika elemen tidak ditemukan
-        if views_count == 0 or likes_count == 0:
-            body = driver.find_element(By.TAG_NAME, "body").text
+        except WebDriverException as e:
+            print(f"   ⚠ WebDriverException attempt {attempt+1}/{MAX_RETRY}: {e}")
+            if attempt < MAX_RETRY - 1:
+                time.sleep(4)
+            else:
+                print(f"   ❌ Gagal setelah {MAX_RETRY} percobaan: {url}")
+                return None
 
-            if views_count == 0:
-                m = re.search(r"([\d.,]+[km]?)\s*views", body, re.I)
-                views_count = parse_number(m.group(1)) if m else 0
-
-            if likes_count == 0:
-                m = re.search(r"([\d.,]+[km]?)\s*(appreciation|likes?)", body, re.I)
-                likes_count = parse_number(m.group(1)) if m else 0
-
-            if comments_count == 0:
-                m = re.search(r"([\d.,]+[km]?)\s*comments?", body, re.I)
-                comments_count = parse_number(m.group(1)) if m else 0
-
-        # ── SLUG ───────────────────────────────────────────────
-        slug = make_slug(title)
-
-        return {
-            "user_id":        1,
-            "title":          title,
-            "description":    description,
-            "cover_image":    cover_image,
-            "slug":           slug,
-            "status":         "published",
-            "views_count":    views_count,
-            "likes_count":    likes_count,
-            "comments_count": comments_count,
-        }
-
-    except Exception as e:
-        print(f"   ❌ Error scraping {url}: {e}")
-        return None
+        except Exception as e:
+            print(f"   ❌ Error scraping {url}: {e}")
+            return None
 
 
 # =========================
 # MAIN
 # =========================
 def main():
-    driver = buat_driver(headless=False)   # headless=True jika tidak perlu lihat browser
-
-    login(driver)
-
-    urls = get_urls(driver, TARGET)
-    print(f"\nMulai scraping {len(urls)} project...\n")
-
-    data      = []
-    failed    = []
-    start_time = time.time()
-
-    for i, url in enumerate(urls, 1):
-        print(f"[{i:>3}/{len(urls)}] {url[:80]}")
-
-        item = scrape(driver, url)
-
-        if item:
-            data.append(item)
-            print(f"   ✔ {item['title'][:50]} | 👁{item['views_count']} ❤{item['likes_count']} 💬{item['comments_count']}")
-        else:
-            failed.append(url)
-
-        # Auto-save tiap 10 item
-        if i % 10 == 0:
-            _save(data, OUTPUT_FILE)
-            elapsed = time.time() - start_time
-            print(f"   💾 Auto-saved {len(data)} item ({elapsed:.0f}s elapsed)")
-
-        jeda()
-
-        if len(data) >= TARGET:
-            print("\n🎯 Target tercapai!")
-            break
-
-    # Simpan final
-    _save(data, OUTPUT_FILE)
-
-    # Laporan
-    print("\n" + "="*50)
-    print(f"✅ SELESAI")
-    print(f"   Berhasil : {len(data)}")
-    print(f"   Gagal    : {len(failed)}")
-    print(f"   Output   : {OUTPUT_FILE}")
+    print("="*50)
+    print("  BEHANCE SCRAPER — Starting")
     print("="*50)
 
-    if failed:
-        with open("failed_urls.txt", "w") as f:
-            f.write("\n".join(failed))
-        print(f"   URL gagal disimpan di failed_urls.txt")
+    driver = buat_driver(headless=False)  # Jangan headless dulu!
 
-    driver.quit()
+    try:
+        login(driver)
+
+        urls = get_urls(driver, TARGET)
+        print(f"\nMulai scraping {len(urls)} project...\n")
+
+        data       = []
+        failed     = []
+        start_time = time.time()
+
+        for i, url in enumerate(urls, 1):
+            print(f"[{i:>3}/{len(urls)}] {url[:80]}")
+
+            item = scrape(driver, url)
+
+            if item:
+                data.append(item)
+                print(f"   ✔ {item['title'][:50]} | 👁{item['views_count']} ❤{item['likes_count']} 💬{item['comments_count']}")
+            else:
+                failed.append(url)
+
+            if i % 10 == 0:
+                _save(data, OUTPUT_FILE)
+                elapsed = time.time() - start_time
+                print(f"   💾 Auto-saved {len(data)} item ({elapsed:.0f}s elapsed)")
+
+            jeda()
+
+            if len(data) >= TARGET:
+                print("\n🎯 Target tercapai!")
+                break
+
+    finally:
+        _save(data, OUTPUT_FILE)
+
+        print("\n" + "="*50)
+        print(f"✅ SELESAI")
+        print(f"   Berhasil : {len(data)}")
+        print(f"   Gagal    : {len(failed)}")
+        print(f"   Output   : {OUTPUT_FILE}")
+        print("="*50)
+
+        if failed:
+            with open("failed_urls.txt", "w") as f:
+                f.write("\n".join(failed))
+            print(f"   URL gagal disimpan di failed_urls.txt")
+
+        driver.quit()
 
 
 def _save(data: list, path: str):
