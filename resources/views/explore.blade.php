@@ -1,22 +1,31 @@
 @extends('layouts.app')
 @section('title', 'Explore')
 
-{{-- ═══════════════════════════════════════════════════════════
-     ROW 2 + ROW 3 injected into app.blade via @stack('subnav')
-═══════════════════════════════════════════════════════════ --}}
 @push('subnav')
-
-{{-- ── ROW 2: Filter | Search Behance | Projects People Assets Images | AI | Recommended ── --}}
 <div class="bh-nav2">
-
-    <button class="bh-filter-btn">
+    <button class="bh-filter-btn" onclick="openFilter()">
         <i class="fas fa-sliders-h"></i>
         <span>Filter</span>
     </button>
 
     <form method="GET" action="{{ route('explore') }}" id="explore-form" class="bh-nav2-search">
-        <input type="hidden" name="category" value="{{ request('category') }}">
         <input type="hidden" name="sort" value="{{ request('sort', 'trending') }}">
+        <input type="hidden" name="category" value="{{ request('category') }}">
+        @foreach((array)request('fields', []) as $f)
+            <input type="hidden" name="fields[]" value="{{ $f }}">
+        @endforeach
+        @foreach((array)request('availability', []) as $a)
+            <input type="hidden" name="availability[]" value="{{ $a }}">
+        @endforeach
+        @foreach((array)request('location', []) as $l)
+            <input type="hidden" name="location[]" value="{{ $l }}">
+        @endforeach
+        @foreach((array)request('tools', []) as $t)
+            <input type="hidden" name="tools[]" value="{{ $t }}">
+        @endforeach
+        @if(request('color'))
+            <input type="hidden" name="color" value="{{ request('color') }}">
+        @endif
         <div class="bh-nav2-search-box">
             <i class="fas fa-search"></i>
             <input type="text" name="q"
@@ -26,7 +35,6 @@
         </div>
     </form>
 
-    {{-- Projects / People / Assets / Images --}}
     <div class="bh-content-tabs">
         <a href="{{ route('explore', array_merge(request()->except('type'), ['type'=>'projects'])) }}"
            class="bh-content-tab {{ (!request('type') || request('type')==='projects') ? 'active' : '' }}">
@@ -46,12 +54,10 @@
         </a>
     </div>
 
-    {{-- AI / sparkle icon --}}
     <button class="bh-ai-btn" title="AI Search">
         <i class="fas fa-wand-magic-sparkles"></i>
     </button>
 
-    {{-- Recommended dropdown --}}
     <div class="bh-recommended-wrap">
         @php
             $sortLabels = [
@@ -76,30 +82,20 @@
             @endforeach
         </div>
     </div>
+</div>
 
-</div>{{-- /.bh-nav2 --}}
-
-{{-- ── ROW 3: For You | Following | Best of Behance | Graphic Design | … | ▶ ── --}}
 <div class="bh-nav3">
     <div class="bh-nav3-scroll" id="bh-pills-scroll">
-
-        {{-- For You (blue when active) --}}
         <a href="{{ route('explore', array_merge(request()->except('category','page'), [])) }}"
            class="bh-pill {{ !request('category') ? 'active' : '' }}">
             <span class="pill-icon">☆</span> For You
         </a>
-
-        {{-- Following (dark) --}}
         <a href="{{ route('explore', ['sort'=>'newest']) }}" class="bh-pill dark">
             <span class="pill-icon">♡</span> Following
         </a>
-
-        {{-- Best of Behance (dark with icon) --}}
         <a href="{{ route('explore', ['sort'=>'popular']) }}" class="bh-pill dark">
             <span class="pill-icon">✦</span> Best of Behance
         </a>
-
-        {{-- DB categories --}}
         @foreach($categories as $cat)
             <a href="{{ route('explore', array_merge(request()->except('category','page'), ['category'=>$cat->slug])) }}"
                class="bh-pill {{ request('category')===$cat->slug ? 'active' : '' }}">
@@ -110,23 +106,143 @@
                 @endif
             </a>
         @endforeach
-
-        {{-- Arrow scroll button --}}
         <div class="bh-nav3-arrow">
             <button class="bh-nav3-arrow-btn" onclick="document.getElementById('bh-pills-scroll').scrollBy({left:200,behavior:'smooth'})">
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
-
     </div>
-</div>{{-- /.bh-nav3 --}}
-
+</div>
 @endpush
 
 @push('styles')
 <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { background: #fff; }
+
+    /* ── LAYOUT UTAMA ── */
+    .bh-page-wrapper {
+        display: flex;
+        transition: all .28s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── FILTER SIDEBAR ── */
+    .bh-filter-sidebar {
+        position: fixed;
+        top: 0; left: -360px;
+        width: 320px; height: 100vh;
+        background: #fff;
+        z-index: 9999;
+        overflow-y: auto;
+        transition: left .28s cubic-bezier(.4,0,.2,1);
+        box-shadow: 4px 0 24px rgba(0,0,0,.12);
+        display: flex; flex-direction: column;
+    }
+    .bh-filter-sidebar.open { left: 0; }
+
+    /* Overlay gelap di belakang sidebar */
+    .bh-filter-overlay {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,.35);
+        z-index: 9998;
+        opacity: 0; pointer-events: none;
+        transition: opacity .25s;
+    }
+    .bh-filter-overlay.open { opacity: 1; pointer-events: all; }
+
+    /* Konten utama geser saat sidebar buka */
+    .bh-main-content {
+        flex: 1;
+        transition: margin-left .28s cubic-bezier(.4,0,.2,1);
+        min-width: 0;
+    }
+    .bh-main-content.sidebar-open {
+        margin-left: 320px;
+    }
+
+    .bh-filter-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 20px 24px; border-bottom: 1px solid #f0f0f0;
+        position: sticky; top: 0; background: #fff; z-index: 1;
+    }
+    .bh-filter-header h3 { font-size: 16px; font-weight: 800; color: #111; margin: 0; }
+    .bh-filter-close {
+        background: none; border: none; font-size: 18px;
+        cursor: pointer; color: #999; padding: 4px; transition: color .14s;
+    }
+    .bh-filter-close:hover { color: #111; }
+
+    .bh-filter-body { padding: 8px 0; flex: 1; }
+
+    .bh-filter-section { border-bottom: 1px solid #f0f0f0; }
+    .bh-filter-section-btn {
+        width: 100%; background: none; border: none;
+        padding: 18px 24px; display: flex; align-items: center;
+        justify-content: space-between; cursor: pointer;
+        font-size: 14px; font-weight: 700; color: #111;
+        font-family: 'Nunito', sans-serif; transition: background .14s;
+    }
+    .bh-filter-section-btn:hover { background: #f8f8f8; }
+    .bh-filter-section-btn i { font-size: 12px; color: #999; transition: transform .2s; }
+    .bh-filter-section-btn.open i { transform: rotate(180deg); }
+
+    .bh-filter-section-body { display: none; padding: 4px 24px 16px; }
+    .bh-filter-section-body.open { display: block; }
+
+    .bh-filter-item {
+        display: flex; align-items: center; gap: 10px;
+        padding: 7px 0; cursor: pointer;
+        font-size: 13px; color: #333; font-weight: 600;
+        transition: color .14s;
+    }
+    .bh-filter-item:hover { color: #0057ff; }
+    .bh-filter-item input[type="checkbox"] {
+        width: 16px; height: 16px; accent-color: #0057ff;
+        cursor: pointer; flex-shrink: 0;
+    }
+
+    .bh-filter-search {
+        width: 100%; padding: 8px 12px; border: 1.5px solid #e0e0e0;
+        border-radius: 8px; font-size: 13px; font-family: 'Nunito', sans-serif;
+        margin-bottom: 10px; outline: none; transition: border-color .14s;
+    }
+    .bh-filter-search:focus { border-color: #0057ff; }
+
+    .bh-color-grid {
+        display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+        margin-top: 4px;
+    }
+    .bh-color-swatch {
+        width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+        border: 2px solid transparent; transition: all .15s; position: relative;
+    }
+    .bh-color-swatch:hover { transform: scale(1.15); }
+    .bh-color-swatch.active { border-color: #0057ff; }
+    .bh-color-swatch.active::after {
+        content: '✓'; position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 14px; font-weight: 900;
+        text-shadow: 0 1px 3px rgba(0,0,0,.5);
+    }
+
+    .bh-filter-footer {
+        padding: 16px 24px; border-top: 1px solid #f0f0f0;
+        display: flex; gap: 10px;
+        position: sticky; bottom: 0; background: #fff;
+    }
+    .bh-filter-apply {
+        flex: 1; padding: 11px; background: #0057ff; color: #fff;
+        border: none; border-radius: 40px; font-size: 14px; font-weight: 800;
+        cursor: pointer; font-family: 'Nunito', sans-serif; transition: background .14s;
+    }
+    .bh-filter-apply:hover { background: #0041cc; }
+    .bh-filter-reset {
+        padding: 11px 20px; background: none; color: #666;
+        border: 1.5px solid #e0e0e0; border-radius: 40px;
+        font-size: 14px; font-weight: 700; cursor: pointer;
+        font-family: 'Nunito', sans-serif; transition: all .14s;
+    }
+    .bh-filter-reset:hover { border-color: #999; color: #111; }
 
     /* ── HERO ── */
     .bh-hero {
@@ -182,16 +298,12 @@
 
     /* ── MASONRY GRID ── */
     .bh-grid-wrap { max-width: 1380px; margin: 0 auto; padding: 0 20px 48px; }
-
     .bh-grid { columns: 4; column-gap: 4px; }
     @media (max-width: 1200px) { .bh-grid { columns: 3; } }
     @media (max-width: 860px)  { .bh-grid { columns: 2; } }
     @media (max-width: 500px)  { .bh-grid { columns: 1; } }
 
-    /* LIST VIEW */
-    .bh-grid.list-view {
-        columns: 1; display: flex; flex-direction: column; gap: 2px;
-    }
+    .bh-grid.list-view { columns: 1; display: flex; flex-direction: column; gap: 2px; }
     .bh-grid.list-view .bh-card { display: flex; flex-direction: row; margin-bottom: 0; }
     .bh-grid.list-view .bh-card-img-wrap { width: 160px; height: 100px; flex-shrink: 0; }
     .bh-grid.list-view .bh-card-img { width: 100%; height: 100%; object-fit: cover; }
@@ -207,7 +319,6 @@
         position: relative; text-decoration: none;
     }
     .bh-card:hover { text-decoration: none; }
-
     .bh-card-img-wrap { position: relative; overflow: hidden; background: #ddd; line-height: 0; }
     .bh-card-img {
         width: 100%; height: auto; display: block;
@@ -228,8 +339,7 @@
         background: rgba(255,255,255,.96); border: none; border-radius: 20px;
         padding: 5px 11px; font-size: 12px; font-weight: 700; cursor: pointer;
         display: flex; align-items: center; gap: 4px;
-        font-family: 'Nunito', sans-serif; color: #111; line-height: 1;
-        transition: all .14s;
+        font-family: 'Nunito', sans-serif; color: #111; line-height: 1; transition: all .14s;
     }
     .bh-overlay-btn:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,.25); }
     .bh-overlay-btn.liked      { background: #e74c3c; color: #fff; }
@@ -237,8 +347,7 @@
     .bh-overlay-btn i { font-size: 10px; }
     .bh-overlay-views {
         margin-left: auto; color: rgba(255,255,255,.9);
-        font-size: 11px; font-weight: 700;
-        display: flex; align-items: center; gap: 4px;
+        font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px;
     }
 
     .bh-card-body { padding: 8px 10px 12px; background: #fff; }
@@ -253,14 +362,12 @@
     }
     .bh-card-author {
         font-size: 12px; font-weight: 600; color: #555; flex: 1;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        transition: color .14s;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .14s;
     }
     .bh-card:hover .bh-card-author { color: #0057ff; }
     .bh-card-likes {
         display: flex; align-items: center; gap: 3px;
-        font-size: 11px; color: #999; font-weight: 700;
-        flex-shrink: 0; margin-left: auto;
+        font-size: 11px; color: #999; font-weight: 700; flex-shrink: 0; margin-left: auto;
     }
     .bh-card-likes i { color: #ddd; font-size: 10px; transition: color .2s; }
     .bh-card:hover .bh-card-likes i { color: #e74c3c; }
@@ -289,136 +396,257 @@
     .bh-pagination-wrap .pagination li.active span { background: #0057ff; color: #fff; border-color: #0057ff; }
     .bh-pagination-wrap .pagination li.disabled { opacity: .4; pointer-events: none; }
 
-    @media (max-width: 768px) { .bh-hero h1 { font-size: 30px; } }
+    @media (max-width: 768px) {
+        .bh-hero h1 { font-size: 30px; }
+        .bh-main-content.sidebar-open { margin-left: 0; }
+    }
 </style>
 @endpush
 
 @section('content')
 
-{{-- ── HERO (no filter active) ── --}}
-@if(!request('q') && !request('category'))
-<div class="bh-hero">
-    <h1>The World's<br><span>Best Creators</span><br>Are On Behance</h1>
-    <p>Platform lengkap untuk membantu perekrut dan kreator menavigasi dunia kreatif — dari menemukan inspirasi hingga terhubung satu sama lain.</p>
-    <div class="bh-hero-btns">
-        @auth
-            <a href="{{ route('projects.create') }}" class="bh-btn-blue">Upload Project</a>
-            <a href="{{ route('dashboard') }}" class="bh-btn-ghost">Lihat Dashboard</a>
-        @else
-            <a href="{{ route('register') }}" class="bh-btn-blue">Daftar Gratis</a>
-            <a href="{{ route('login') }}" class="bh-btn-ghost">Masuk</a>
-        @endauth
+{{-- ── OVERLAY (klik untuk tutup sidebar) ── --}}
+<div class="bh-filter-overlay" id="filter-overlay" onclick="closeFilter()"></div>
+
+{{-- ── FILTER SIDEBAR ── --}}
+<div class="bh-filter-sidebar" id="filter-sidebar">
+    <div class="bh-filter-header">
+        <h3><i class="fas fa-sliders-h" style="margin-right:8px;color:#0057ff"></i>Filter</h3>
+        <button class="bh-filter-close" onclick="closeFilter()">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
-</div>
-@endif
 
-{{-- ── TOOLBAR ── --}}
-<div class="bh-toolbar">
-    <div class="bh-toolbar-left">
-        <h2 class="bh-section-title">
-            @if(request('category'))
-                {{ $categories->firstWhere('slug', request('category'))->name ?? 'Kategori' }}
-            @elseif(request('q'))
-                Hasil untuk "{{ request('q') }}"
-            @else
-                Recommended Projects
-            @endif
-        </h2>
-        <span class="bh-result-count">{{ number_format($projects->total()) }} project</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:4px">
-        <div class="bh-view-toggle">
-            <button class="bh-view-btn active" id="btn-grid" onclick="setView('grid')" title="Grid">
-                <i class="fas fa-th"></i>
-            </button>
-            <button class="bh-view-btn" id="btn-list" onclick="setView('list')" title="List">
-                <i class="fas fa-list"></i>
-            </button>
-        </div>
-    </div>
-</div>
+    <form method="GET" action="{{ route('explore') }}" id="filter-form">
+        <input type="hidden" name="q" value="{{ request('q') }}">
+        <input type="hidden" name="sort" value="{{ request('sort', 'trending') }}">
+        <input type="hidden" name="category" value="{{ request('category') }}">
 
-{{-- ── MASONRY GRID ── --}}
-<div class="bh-grid-wrap">
+        <div class="bh-filter-body">
 
-    @if($projects->isEmpty())
-        <div class="bh-empty">
-            <div class="bh-empty-icon"><i class="fas fa-search"></i></div>
-            <h3>Tidak ada project ditemukan</h3>
-            <p>Coba kata kunci lain atau lihat semua project</p>
-            <a href="{{ route('explore') }}" class="bh-btn-blue" style="margin:0 auto;">
-                Lihat Semua Project
-            </a>
-        </div>
-    @else
+            {{-- ① Creative Fields --}}
+            <div class="bh-filter-section">
+                <button type="button" class="bh-filter-section-btn open" onclick="toggleSection(this)">
+                    Creative Fields <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="bh-filter-section-body open">
+                    @forelse($categories->take(10) as $cat)
+                    <label class="bh-filter-item">
+                        <input type="checkbox" name="fields[]" value="{{ $cat->slug }}"
+                            {{ in_array($cat->slug, (array)request('fields', [])) ? 'checked' : '' }}>
+                        @if($cat->icon)<span>{{ $cat->icon }}</span>@endif
+                        {{ $cat->name }}
+                        <span style="margin-left:auto;color:#bbb;font-size:11px">{{ number_format($cat->project_count) }}</span>
+                    </label>
+                    @empty
+                    <p style="color:#aaa;font-size:13px">Tidak ada kategori</p>
+                    @endforelse
+                </div>
+            </div>
 
-    <div class="bh-grid" id="projects-grid">
-        @foreach($projects as $project)
-        <a href="{{ route('projects.show', $project->slug) }}" class="bh-card">
+            {{-- ② Availability --}}
+            <div class="bh-filter-section">
+                <button type="button" class="bh-filter-section-btn" onclick="toggleSection(this)">
+                    Availability <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="bh-filter-section-body">
+                    @foreach($availabilityOptions as $val => $label)
+                    <label class="bh-filter-item">
+                        <input type="checkbox" name="availability[]" value="{{ $val }}"
+                            {{ in_array($val, (array)request('availability', [])) ? 'checked' : '' }}>
+                        {{ $label }}
+                    </label>
+                    @endforeach
+                </div>
+            </div>
 
-            <div class="bh-card-img-wrap">
-                <img
-                    src="{{ $project->cover_image
-                            ? (Str::startsWith($project->cover_image, 'http')
-                                ? $project->cover_image
-                                : asset('storage/' . $project->cover_image))
-                            : 'https://picsum.photos/seed/' . $project->id . '/480/340' }}"
-                    alt="{{ $project->title }}"
-                    class="bh-card-img"
-                    loading="lazy"
-                    onerror="this.src='https://picsum.photos/seed/{{ $project->id }}x/480/340'">
-
-                <div class="bh-card-overlay">
-                    <div class="bh-overlay-row">
-                        @auth
-                        <button class="bh-overlay-btn {{ $project->is_liked ?? false ? 'liked' : '' }}"
-                                onclick="event.preventDefault(); toggleLike({{ $project->id }}, this)">
-                            <i class="fas fa-heart"></i>
-                            <span>{{ number_format($project->likes_count) }}</span>
-                        </button>
-                        <button class="bh-overlay-btn {{ $project->is_bookmarked ?? false ? 'bookmarked' : '' }}"
-                                onclick="event.preventDefault(); toggleBookmark({{ $project->id }}, this)">
-                            <i class="fas fa-bookmark"></i>
-                        </button>
-                        @endauth
-                        <span class="bh-overlay-views" style="{{ auth()->check() ? '' : 'margin-left:auto' }}">
-                            <i class="fas fa-eye"></i>
-                            {{ number_format($project->views_count) }}
-                        </span>
+            {{-- ③ Location --}}
+            <div class="bh-filter-section">
+                <button type="button" class="bh-filter-section-btn" onclick="toggleSection(this)">
+                    Location <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="bh-filter-section-body">
+                    <input type="text" class="bh-filter-search" id="location-search"
+                           placeholder="Cari lokasi..." oninput="filterLocations(this.value)">
+                    <div id="location-list">
+                        @forelse($locations as $loc)
+                        <label class="bh-filter-item location-item">
+                            <input type="checkbox" name="location[]" value="{{ $loc }}"
+                                {{ in_array($loc, (array)request('location', [])) ? 'checked' : '' }}>
+                            {{ $loc }}
+                        </label>
+                        @empty
+                        <p style="color:#aaa;font-size:13px">Tidak ada data lokasi</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
 
-            <div class="bh-card-body">
-                <div class="bh-card-title">{{ $project->title }}</div>
-                <div class="bh-card-meta">
-                    <img src="{{ $project->creator_avatar
-                                    ? (Str::startsWith($project->creator_avatar, 'http')
-                                        ? $project->creator_avatar
-                                        : asset('storage/' . $project->creator_avatar))
-                                    : 'https://i.pravatar.cc/44?u=' . $project->creator_username }}"
-                         alt="{{ $project->creator_name }}"
-                         class="bh-card-avatar"
-                         onerror="this.src='https://i.pravatar.cc/44?u={{ $project->creator_username }}'">
-                    <span class="bh-card-author">{{ $project->creator_name }}</span>
-                    <span class="bh-card-likes">
-                        <i class="fas fa-heart"></i>
-                        {{ number_format($project->likes_count) }}
-                    </span>
+            {{-- ④ Tools --}}
+            <div class="bh-filter-section">
+                <button type="button" class="bh-filter-section-btn" onclick="toggleSection(this)">
+                    Tools <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="bh-filter-section-body">
+                    @foreach($toolOptions as $tool)
+                    <label class="bh-filter-item">
+                        <input type="checkbox" name="tools[]" value="{{ $tool }}"
+                            {{ in_array($tool, (array)request('tools', [])) ? 'checked' : '' }}>
+                        {{ $tool }}
+                    </label>
+                    @endforeach
                 </div>
             </div>
 
-        </a>
-        @endforeach
-    </div>
+            {{-- ⑤ Color --}}
+            <div class="bh-filter-section">
+                <button type="button" class="bh-filter-section-btn" onclick="toggleSection(this)">
+                    Color <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="bh-filter-section-body">
+                    <div class="bh-color-grid">
+                        @foreach($colorOptions as $name => $hex)
+                        <div class="bh-color-swatch {{ request('color') === $name ? 'active' : '' }}"
+                             style="background:{{ $hex }}" title="{{ ucfirst($name) }}"
+                             onclick="selectColor('{{ $name }}', this)">
+                        </div>
+                        @endforeach
+                    </div>
+                    <input type="hidden" name="color" id="color-input" value="{{ request('color') }}">
+                </div>
+            </div>
 
-    <div class="bh-pagination-wrap">
-        {{ $projects->withQueryString()->links() }}
-    </div>
+        </div>{{-- /.bh-filter-body --}}
 
+        <div class="bh-filter-footer">
+            <button type="button" class="bh-filter-reset" onclick="resetFilter()">Reset</button>
+            <button type="submit" class="bh-filter-apply">Terapkan Filter</button>
+        </div>
+    </form>
+</div>{{-- /.bh-filter-sidebar --}}
+
+{{-- ── KONTEN UTAMA (geser saat sidebar buka) ── --}}
+<div class="bh-main-content" id="bh-main-content">
+
+    {{-- HERO --}}
+    @if(!request('q') && !request('category') && !request('fields') && !request('availability') && !request('location') && !request('tools') && !request('color'))
+    <div class="bh-hero">
+        <h1>The World's<br><span>Best Creators</span><br>Are On Behance</h1>
+        <p>Platform lengkap untuk membantu perekrut dan kreator menavigasi dunia kreatif — dari menemukan inspirasi hingga terhubung satu sama lain.</p>
+        <div class="bh-hero-btns">
+            @auth
+                <a href="{{ route('projects.create') }}" class="bh-btn-blue">Upload Project</a>
+                <a href="{{ route('dashboard') }}" class="bh-btn-ghost">Lihat Dashboard</a>
+            @else
+                <a href="{{ route('register') }}" class="bh-btn-blue">Daftar Gratis</a>
+                <a href="{{ route('login') }}" class="bh-btn-ghost">Masuk</a>
+            @endauth
+        </div>
+    </div>
     @endif
 
-</div>
+    {{-- TOOLBAR --}}
+    <div class="bh-toolbar">
+        <div class="bh-toolbar-left">
+            <h2 class="bh-section-title">
+                @if(request('category'))
+                    {{ $categories->firstWhere('slug', request('category'))->name ?? 'Kategori' }}
+                @elseif(request('q'))
+                    Hasil untuk "{{ request('q') }}"
+                @elseif(request('fields') || request('availability') || request('location') || request('tools') || request('color'))
+                    Hasil Filter
+                @else
+                    Recommended Projects
+                @endif
+            </h2>
+            <span class="bh-result-count">{{ number_format($projects->total()) }} project</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+            <div class="bh-view-toggle">
+                <button class="bh-view-btn active" id="btn-grid" onclick="setView('grid')" title="Grid">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="bh-view-btn" id="btn-list" onclick="setView('list')" title="List">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- MASONRY GRID --}}
+    <div class="bh-grid-wrap">
+        @if($projects->isEmpty())
+            <div class="bh-empty">
+                <div class="bh-empty-icon"><i class="fas fa-search"></i></div>
+                <h3>Tidak ada project ditemukan</h3>
+                <p>Coba kata kunci lain atau ubah filter</p>
+                <a href="{{ route('explore') }}" class="bh-btn-blue" style="margin:0 auto;">
+                    Lihat Semua Project
+                </a>
+            </div>
+        @else
+        <div class="bh-grid" id="projects-grid">
+            @foreach($projects as $project)
+            <a href="{{ route('projects.show', $project->slug) }}" class="bh-card">
+                <div class="bh-card-img-wrap">
+                    <img src="{{ $project->cover_image
+                                ? (Str::startsWith($project->cover_image, 'http')
+                                    ? $project->cover_image
+                                    : asset('storage/' . $project->cover_image))
+                                : 'https://picsum.photos/seed/' . $project->id . '/480/340' }}"
+                         alt="{{ $project->title }}"
+                         class="bh-card-img"
+                         loading="lazy"
+                         onerror="this.src='https://picsum.photos/seed/{{ $project->id }}x/480/340'">
+                    <div class="bh-card-overlay">
+                        <div class="bh-overlay-row">
+                            @auth
+                            <button class="bh-overlay-btn {{ $project->is_liked ?? false ? 'liked' : '' }}"
+                                    onclick="event.preventDefault(); toggleLike({{ $project->id }}, this)">
+                                <i class="fas fa-heart"></i>
+                                <span>{{ number_format($project->likes_count) }}</span>
+                            </button>
+                            <button class="bh-overlay-btn {{ $project->is_bookmarked ?? false ? 'bookmarked' : '' }}"
+                                    onclick="event.preventDefault(); toggleBookmark({{ $project->id }}, this)">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                            @endauth
+                            <span class="bh-overlay-views" style="{{ auth()->check() ? '' : 'margin-left:auto' }}">
+                                <i class="fas fa-eye"></i>
+                                {{ number_format($project->views_count) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bh-card-body">
+                    <div class="bh-card-title">{{ $project->title }}</div>
+                    <div class="bh-card-meta">
+                        <img src="{{ $project->creator_avatar
+                                        ? (Str::startsWith($project->creator_avatar, 'http')
+                                            ? $project->creator_avatar
+                                            : asset('storage/' . $project->creator_avatar))
+                                        : 'https://i.pravatar.cc/44?u=' . $project->creator_username }}"
+                             alt="{{ $project->creator_name }}"
+                             class="bh-card-avatar"
+                             onerror="this.src='https://i.pravatar.cc/44?u={{ $project->creator_username }}'">
+                        <span class="bh-card-author">{{ $project->creator_name }}</span>
+                        <span class="bh-card-likes">
+                            <i class="fas fa-heart"></i>
+                            {{ number_format($project->likes_count) }}
+                        </span>
+                    </div>
+                </div>
+            </a>
+            @endforeach
+        </div>
+
+        <div class="bh-pagination-wrap">
+            {{ $projects->withQueryString()->links() }}
+        </div>
+        @endif
+    </div>
+
+</div>{{-- /.bh-main-content --}}
 
 @endsection
 
@@ -426,6 +654,44 @@
 <script>
 const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
+// ── FILTER SIDEBAR ──
+function openFilter() {
+    document.getElementById('filter-sidebar').classList.add('open');
+    document.getElementById('filter-overlay').classList.add('open');
+    document.getElementById('bh-main-content').classList.add('sidebar-open');
+    document.body.style.overflow = 'hidden';
+}
+function closeFilter() {
+    document.getElementById('filter-sidebar').classList.remove('open');
+    document.getElementById('filter-overlay').classList.remove('open');
+    document.getElementById('bh-main-content').classList.remove('sidebar-open');
+    document.body.style.overflow = '';
+}
+function toggleSection(btn) {
+    btn.classList.toggle('open');
+    btn.nextElementSibling.classList.toggle('open');
+}
+function selectColor(name, el) {
+    const input = document.getElementById('color-input');
+    if (input.value === name) {
+        document.querySelectorAll('.bh-color-swatch').forEach(s => s.classList.remove('active'));
+        input.value = '';
+    } else {
+        document.querySelectorAll('.bh-color-swatch').forEach(s => s.classList.remove('active'));
+        el.classList.add('active');
+        input.value = name;
+    }
+}
+function filterLocations(val) {
+    document.querySelectorAll('.location-item').forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(val.toLowerCase()) ? '' : 'none';
+    });
+}
+function resetFilter() {
+    window.location.href = '{{ route('explore') }}';
+}
+
+// ── LIKE & BOOKMARK ──
 async function toggleLike(id, btn) {
     try {
         const res = await fetch(`/projects/${id}/like`, {
@@ -439,7 +705,6 @@ async function toggleLike(id, btn) {
         }
     } catch(e) { console.error(e); }
 }
-
 async function toggleBookmark(id, btn) {
     try {
         const res = await fetch(`/projects/${id}/bookmark`, {
@@ -453,6 +718,7 @@ async function toggleBookmark(id, btn) {
     } catch(e) { console.error(e); }
 }
 
+// ── VIEW TOGGLE ──
 function setView(mode) {
     const grid = document.getElementById('projects-grid');
     const btnG = document.getElementById('btn-grid');
@@ -473,7 +739,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('explore_view') === 'list') setView('list');
 });
 
-/* / shortcut = focus search */
+// Shortcut '/' untuk focus search
 document.addEventListener('keydown', e => {
     if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
         e.preventDefault();

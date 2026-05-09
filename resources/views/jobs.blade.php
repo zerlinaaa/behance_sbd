@@ -1,189 +1,908 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resources to grow your creative career | Behance</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@extends('layouts.app')
+@section('title', 'Find Creative Jobs :: Behance')
 
-        :root {
-            --color-primary: #1473e6;
-            --color-primary-hover: #0d66d0;
-            --color-accent: #eb1000;
-            --color-text: #2c2c2c;
-            --color-muted: #6e6e6e;
-            --color-border: #e1e1e1;
-            --color-bg: #ffffff;
-            --color-card-bg: #f5f5f5;
-            --color-orange: #e68619;
-            --font-main: 'Inter', sans-serif;
-            --radius: 6px;
-            --max-width: 1200px;
-        }
+@push('styles')
+<style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            font-family: var(--font-main);
-            -webkit-font-smoothing: antialiased;
-            color: var(--color-text);
-            background: var(--color-bg);
-            font-size: 16px;
-            line-height: 1.5;
-        }
+    /* ── HERO ── */
+    .jobs-hero {
+        position: relative;
+        height: 320px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: #111;
+    }
+    .jobs-hero img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: .6;
+    }
+    .jobs-hero-content {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        color: #fff;
+    }
+    .jobs-hero-content h1 {
+        font-size: 64px;
+        font-weight: 900;
+        line-height: 1.0;
+        letter-spacing: -2px;
+        margin-bottom: 12px;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-hero-content p {
+        font-size: 18px;
+        font-weight: 600;
+        opacity: .9;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-hero-credit {
+        position: absolute;
+        bottom: 12px;
+        right: 16px;
+        font-size: 11px;
+        color: rgba(255,255,255,.75);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .jobs-hero-credit img {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        object-fit: cover;
+        opacity: 1;
+        position: static;
+    }
 
-        a { text-decoration: none; color: inherit; }
+    /* ── LAYOUT ── */
+    .jobs-layout {
+        display: flex;
+        min-height: calc(100vh - 56px);
+        background: #f9f9f9;
+    }
 
-        .btn-trial {
-            background: var(--color-primary);
-            color: #fff;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            transition: background .15s;
-        }
-        .btn-trial:hover { background: var(--color-primary-hover); }
-        .btn-signin {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--color-primary);
-            cursor: pointer;
-        }
-        .adobe-logo {
-            font-size: 18px;
-            font-weight: 900;
-            color: var(--color-text);
-            letter-spacing: -0.5px;
-        }
-        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-    </style>
-</head>
-<body class="antialiased tracking-tight">
+    /* ── SIDEBAR ── */
+    .jobs-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        background: #fff;
+        border-right: 1px solid #efefef;
+        padding: 24px 20px;
+        position: sticky;
+        top: 56px;
+        height: calc(100vh - 56px);
+        overflow-y: auto;
+    }
+    .jobs-sidebar::-webkit-scrollbar { display: none; }
 
-    @include('partials.navbar')
+    .jobs-new-btn {
+        width: 100%;
+        background: #0057ff;
+        color: #fff;
+        padding: 13px;
+        border-radius: 40px;
+        font-size: 14px;
+        font-weight: 800;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 28px;
+        transition: background .14s;
+        font-family: 'Nunito', sans-serif;
+        text-decoration: none;
+    }
+    .jobs-new-btn:hover { background: #0041cc; color: #fff; }
 
-    <section class="relative h-[280px] flex items-center justify-center text-white overflow-hidden bg-zinc-900">
-        <img src="https://picsum.photos/seed/creative-jobs/1200/400" class="absolute inset-0 w-full h-full object-cover opacity-60">
-        <div class="relative z-10 text-center">
-            <h1 class="text-[52px] font-[900] leading-tight mb-2">Creative Jobs</h1>
-            <p class="text-[20px] font-bold opacity-90">Browse and discover your next opportunity</p>
+    .jobs-sidebar-section { margin-bottom: 24px; }
+
+    .jobs-sidebar-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: #111;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-sidebar-title i { font-size: 12px; color: #999; transition: transform .2s; }
+    .jobs-sidebar-title.open i { transform: rotate(180deg); }
+
+    .sidebar-icon {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .sidebar-icon i { font-size: 14px; color: #555; }
+
+    .jobs-cat-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #444;
+        padding: 5px 0;
+        cursor: pointer;
+        transition: color .14s;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-cat-label:hover { color: #0057ff; }
+    .jobs-cat-label input[type="radio"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #0057ff;
+        cursor: pointer;
+    }
+
+    .jobs-cat-group-label {
+        font-size: 10px;
+        font-weight: 900;
+        color: #aaa;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        margin: 14px 0 6px;
+        font-family: 'Nunito', sans-serif;
+    }
+
+    .jobs-view-all {
+        color: #0057ff;
+        font-size: 13px;
+        font-weight: 800;
+        margin-top: 12px;
+        cursor: pointer;
+        display: inline-block;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-view-all:hover { text-decoration: underline; }
+
+    .sidebar-divider { border: none; border-top: 1px solid #f0f0f0; margin: 20px 0; }
+
+    /* ── MAIN ── */
+    .jobs-main {
+        flex: 1;
+        padding: 32px;
+        min-width: 0;
+    }
+
+    /* ── SECTION HEADER ── */
+    .jobs-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    .jobs-section-title {
+        font-size: 15px;
+        font-weight: 900;
+        color: #111;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-section-title span { color: #aaa; font-weight: 700; margin-left: 6px; }
+
+    .jobs-section-right { display: flex; align-items: center; gap: 10px; }
+
+    .jobs-nav-btns { display: flex; gap: 6px; }
+    .jobs-nav-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid #e0e0e0;
+        background: none;
+        cursor: pointer;
+        font-size: 13px;
+        color: #555;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .14s;
+    }
+    .jobs-nav-btn:hover { border-color: #0057ff; color: #0057ff; }
+
+    .jobs-alert-btn {
+        background: #0057ff;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 40px;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'Nunito', sans-serif;
+        transition: background .14s;
+    }
+    .jobs-alert-btn:hover { background: #0041cc; }
+
+    /* ── FEATURED GRID (3 col like reference) ── */
+    .jobs-featured-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 40px;
+    }
+    @media (max-width: 1100px) { .jobs-featured-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 700px)  { .jobs-featured-grid { grid-template-columns: 1fr; } }
+
+    /* PRO Card */
+    .jobs-pro-card {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #f0f0f0;
+        box-shadow: 0 1px 4px rgba(0,0,0,.06);
+        padding: 24px;
+    }
+    .jobs-pro-badge {
+        background: #0057ff;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 900;
+        padding: 3px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        margin-bottom: 14px;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-pro-card h3 {
+        font-size: 20px;
+        font-weight: 900;
+        margin-bottom: 18px;
+        line-height: 1.2;
+        color: #111;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-pro-list { list-style: none; padding: 0; margin: 0 0 16px; }
+    .jobs-pro-list li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 0;
+        color: #333;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-pro-list li .check-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #0057ff;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        flex-shrink: 0;
+    }
+    .jobs-pro-more {
+        font-size: 12px;
+        color: #777;
+        font-weight: 600;
+        margin-bottom: 20px;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-pro-btn {
+        background: #0057ff;
+        color: #fff;
+        padding: 10px 28px;
+        border-radius: 40px;
+        font-size: 13px;
+        font-weight: 800;
+        border: none;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        transition: background .14s;
+    }
+    .jobs-pro-btn:hover { background: #0041cc; }
+
+    /* Featured Job Card */
+    .jobs-featured-card {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #f0f0f0;
+        box-shadow: 0 1px 4px rgba(0,0,0,.06);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+    }
+    .jobs-featured-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+    .jobs-tag {
+        font-size: 12px;
+        font-weight: 700;
+        color: #555;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-deadline {
+        font-size: 12px;
+        font-weight: 700;
+        color: #e67e22;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-deadline.urgent { color: #e74c3c; }
+    .jobs-featured-card h3 {
+        font-size: 17px;
+        font-weight: 900;
+        margin-bottom: 8px;
+        line-height: 1.3;
+        color: #111;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-budget {
+        font-size: 14px;
+        font-weight: 800;
+        color: #0057ff;
+        margin-bottom: 6px;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-budget-label {
+        font-size: 9px;
+        vertical-align: super;
+        font-weight: 700;
+    }
+    .jobs-time-row {
+        font-size: 12px;
+        color: #888;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 10px;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-desc {
+        font-size: 12px;
+        color: #888;
+        font-weight: 500;
+        line-height: 1.5;
+        flex: 1;
+        font-family: 'Nunito', sans-serif;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
+    .jobs-unlock-btn {
+        width: 100%;
+        border: 1.5px solid #0057ff;
+        color: #0057ff;
+        background: none;
+        padding: 10px;
+        border-radius: 40px;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all .14s;
+        margin-top: auto;
+    }
+    .jobs-unlock-btn:hover { background: #eef3ff; }
+
+    /* ── SEARCH BAR ── */
+    .jobs-search-wrap { position: relative; }
+    .jobs-search-wrap i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #aaa;
+        font-size: 13px;
+    }
+    .jobs-search-input {
+        background: #f5f5f5;
+        border: none;
+        border-radius: 40px;
+        padding: 9px 16px 9px 34px;
+        font-size: 13px;
+        font-weight: 700;
+        width: 240px;
+        outline: none;
+        font-family: 'Nunito', sans-serif;
+        transition: background .14s;
+    }
+    .jobs-search-input:focus { background: #efefef; }
+
+    /* ── JOB CARDS GRID ── */
+    .jobs-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+    @media (max-width: 1100px) { .jobs-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 700px)  { .jobs-grid { grid-template-columns: 1fr; } }
+
+    .jobs-card {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #f0f0f0;
+        box-shadow: 0 1px 4px rgba(0,0,0,.05);
+        padding: 20px;
+        cursor: pointer;
+        transition: box-shadow .18s, transform .18s;
+    }
+    .jobs-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.10); transform: translateY(-2px); }
+
+    .jobs-card-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+    .jobs-card-logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 900;
+        flex-shrink: 0;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-card-company {
+        font-size: 13px;
+        font-weight: 800;
+        color: #111;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-card-location {
+        font-size: 11px;
+        color: #aaa;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        margin-top: 2px;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-card-title {
+        font-size: 15px;
+        font-weight: 900;
+        line-height: 1.3;
+        color: #111;
+        margin-bottom: 8px;
+        min-height: 40px;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .jobs-card-tag {
+        font-size: 11px;
+        font-weight: 700;
+        color: #555;
+        background: #f5f5f5;
+        padding: 3px 9px;
+        border-radius: 20px;
+        font-family: 'Nunito', sans-serif;
+    }
+    .jobs-card-time {
+        font-size: 11px;
+        color: #bbb;
+        font-weight: 700;
+        font-family: 'Nunito', sans-serif;
+    }
+
+    /* ── VIEW MORE ── */
+    .jobs-view-more-wrap { display: flex; justify-content: center; margin: 8px 0 40px; }
+    .jobs-view-more-btn {
+        border: 2px solid #e0e0e0;
+        background: none;
+        padding: 11px 36px;
+        border-radius: 40px;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        color: #555;
+        transition: all .14s;
+    }
+    .jobs-view-more-btn:hover { border-color: #0057ff; color: #0057ff; }
+</style>
+@endpush
+
+@section('content')
+
+{{-- ── HERO ── --}}
+<div class="jobs-hero">
+    <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1400&q=80" alt="Creative Jobs">
+    <div class="jobs-hero-content">
+        <h1>Creative Jobs</h1>
+        <p>Browse and discover your next opportunity</p>
+    </div>
+    <div class="jobs-hero-credit">
+        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&fit=crop" alt="">
+        Image by <a href="https://www.behance.net/vgarciamor" style="color:rgba(255,255,255,.85);font-weight:700;margin-left:2px;">Vicente García Morillo</a>
+    </div>
+</div>
+
+{{-- ── LAYOUT ── --}}
+<div class="jobs-layout">
+
+    {{-- ── SIDEBAR ── --}}
+    <aside class="jobs-sidebar">
+
+        <button class="jobs-new-btn">
+            <i class="fas fa-plus"></i> New Job
+        </button>
+
+        {{-- Categories --}}
+        <div class="jobs-sidebar-section">
+            <div class="jobs-sidebar-title open" onclick="toggleSection(this)">
+                <span class="sidebar-icon">
+                    <i class="fas fa-th-large"></i> Categories
+                </span>
+                <i class="fas fa-chevron-up"></i>
+            </div>
+
+            <label class="jobs-cat-label">
+                <input type="radio" name="cat" value="" checked onchange="filterCategory('')"> All
+            </label>
+
+            <p class="jobs-cat-group-label">Popular</p>
+
+            <label class="jobs-cat-label">
+                <input type="radio" name="cat" value="Logo Design" onchange="filterCategory('Logo Design')"> Logo Design
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="cat" value="Branding Services" onchange="filterCategory('Branding Services')"> Branding Services
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="cat" value="Social Media Design" onchange="filterCategory('Social Media Design')"> Social Media Design
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="cat" value="Website Design" onchange="filterCategory('Website Design')"> Website Design
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="cat" value="Illustrations" onchange="filterCategory('Illustrations')"> Illustrations
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="cat" value="Packaging Design" onchange="filterCategory('Packaging Design')"> Packaging Design
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="cat" value="Landing Page Design" onchange="filterCategory('Landing Page Design')"> Landing Page Design
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="cat" value="UI/UX Design" onchange="filterCategory('UI/UX Design')"> UI/UX Design
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="cat" value="Architecture & Interior Design" onchange="filterCategory('Architecture &amp; Interior Design')"> Architecture & Interior Design
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="cat" value="Illustration" onchange="filterCategory('Illustration')"> Illustration
+            </label>
+
+            <span class="jobs-view-all">View All Categories</span>
         </div>
-        <div class="absolute bottom-4 right-6 flex items-center gap-2 text-[10px] font-bold opacity-70">
-            <span class="bg-white/20 p-1 rounded">📷</span> Image by Vicente García Morillo
+
+        <hr class="sidebar-divider">
+
+        {{-- Location --}}
+        <div class="jobs-sidebar-section">
+            <div class="jobs-sidebar-title open" onclick="toggleSection(this)">
+                <span class="sidebar-icon">
+                    <i class="fas fa-map-marker-alt"></i> Location
+                </span>
+                <i class="fas fa-chevron-up"></i>
+            </div>
+            <label class="jobs-cat-label">
+                <input type="radio" name="location" value="Anywhere" checked> Anywhere
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="location" value="United States"> United States
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="location" value="United Kingdom"> United Kingdom
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="location" value="India"> India
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="location" value="Canada"> Canada
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="location" value="Australia"> Australia
+            </label>
+            <label class="jobs-cat-label">
+                <input type="radio" name="location" value="Germany"> Germany
+            </label>
         </div>
-    </section>
 
-    <main class="flex min-h-screen bg-[#f9f9f9]">
-        
-        <aside class="w-[280px] bg-white border-r border-gray-100 p-6 sticky top-14 h-[calc(100vh-56px)] overflow-y-auto no-scrollbar hidden md:block">
-            <button class="w-full bg-[#0057ff] text-white py-3 rounded-full font-bold text-sm mb-8 flex items-center justify-center gap-2">
-                <span class="text-lg">+</span> New Job
-            </button>
+    </aside>
 
-            <div class="mb-8">
-                <h4 class="font-bold text-[13px] flex items-center justify-between mb-4">
-                    Categories <span class="text-lg">⌄</span>
-                </h4>
-                <div class="space-y-3">
-                    <label class="flex items-center gap-3 text-sm font-bold">
-                        <input type="radio" name="cat" checked class="w-4 h-4 accent-blue-600"> All
-                    </label>
-                    <p class="text-[10px] font-black text-gray-400 tracking-wider uppercase mt-4 mb-2">Popular</p>
-                    @foreach(['Logo Design', 'Branding Services', 'Social Media Design', 'Website Design', 'Illustrations', 'Packaging Design', 'Landing Page Design', 'UI/UX Design'] as $cat)
-                        <label class="flex items-center gap-3 text-sm font-medium text-gray-600 hover:text-black cursor-pointer">
-                            <input type="radio" name="cat" class="w-4 h-4 accent-blue-600"> {{ $cat }}
-                        </label>
-                    @endforeach
-                    <p class="text-blue-600 text-sm font-bold mt-4 cursor-pointer hover:underline">View All Categories</p>
+    {{-- ── MAIN ── --}}
+    <div class="jobs-main">
+
+        {{-- Recommended Freelance Jobs --}}
+        <div class="jobs-section-header">
+            <h2 class="jobs-section-title">Your Recommended Freelance Jobs</h2>
+            <div class="jobs-section-right">
+                <div class="jobs-nav-btns">
+                    <button class="jobs-nav-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button class="jobs-nav-btn"><i class="fas fa-chevron-right"></i></button>
                 </div>
+                <button class="jobs-alert-btn">
+                    <i class="fas fa-lock"></i> Set Email Alerts
+                </button>
+            </div>
+        </div>
+
+        <div class="jobs-featured-grid">
+
+            {{-- PRO Card --}}
+            <div class="jobs-pro-card">
+                <span class="jobs-pro-badge">PRO</span>
+                <h3>Get Behance Pro to Unlock</h3>
+                <ul class="jobs-pro-list">
+                    <li>
+                        <span class="check-icon"><i class="fas fa-check"></i></span>
+                        Access to exclusive opportunities
+                    </li>
+                    <li>
+                        <span class="check-icon"><i class="fas fa-check"></i></span>
+                        Insights on who's seen your work
+                    </li>
+                    <li>
+                        <span class="check-icon"><i class="fas fa-check"></i></span>
+                        3 month free trial of LinkedIn Premium
+                    </li>
+                </ul>
+                <p class="jobs-pro-more">+ Advanced stats, Adobe Portfolio, Profile Customization & more...</p>
+                <button class="jobs-pro-btn">Get Pro</button>
             </div>
 
-            <div class="border-t pt-6">
-                <h4 class="font-bold text-[13px] flex items-center justify-between mb-4">
-                    Location <span class="text-lg">⌄</span>
-                </h4>
-            </div>
-        </aside>
-
-        <div class="flex-1 p-8">
-            
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-[15px] font-[900]">Your Recommended Freelance Jobs</h2>
-                <div class="flex gap-2">
-                    <button class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center">‹</button>
-                    <button class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center">›</button>
+            {{-- Featured Card 1 --}}
+            <div class="jobs-featured-card">
+                <div class="jobs-featured-card-top">
+                    <span class="jobs-tag">Website Design</span>
+                    <span class="jobs-deadline">Ends in 7 days</span>
                 </div>
+                <h3>Manpower Recruitment Platform for Saudi Market</h3>
+                <p class="jobs-budget"><span class="jobs-budget-label">US$</span>2,500–5,000</p>
+                <p class="jobs-time-row"><i class="fas fa-clock"></i> Now</p>
+                <p class="jobs-desc">We need a specialized manpower recruitment platform tailored for the Saudi market to help streamline hiring and placement processes. The platform should address local recruitment needs an...</p>
+                <button class="jobs-unlock-btn">
+                    <i class="fas fa-lock"></i> Unlock with Behance Pro
+                </button>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-12">
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm relative">
-                    <span class="bg-blue-600 text-white text-[10px] font-black px-2 py-0.5 rounded absolute top-6 left-6">PRO</span>
-                    <h3 class="mt-8 font-black text-[18px] mb-4 leading-tight">Get Behance Pro to Unlock</h3>
-                    <ul class="space-y-3 mb-6">
-                        <li class="flex items-center gap-2 text-sm font-medium">✅ Access to exclusive opportunities</li>
-                        <li class="flex items-center gap-2 text-sm font-medium">✅ Insights on who's seen your work</li>
-                    </ul>
-                    <button class="bg-[#0057ff] text-white px-6 py-2 rounded-full font-bold text-sm">Get Pro</button>
+            {{-- Featured Card 2 --}}
+            <div class="jobs-featured-card">
+                <div class="jobs-featured-card-top">
+                    <span class="jobs-tag">Packaging Design</span>
+                    <span class="jobs-deadline">Ends in 14 days</span>
                 </div>
+                <h3>Packaging Design for Premium Kratom/Kava Brand</h3>
+                <p class="jobs-budget"><span class="jobs-budget-label">US$</span>5,000–10,000</p>
+                <p class="jobs-time-row"><i class="fas fa-clock"></i> Within the next few weeks</p>
+                <p class="jobs-desc">We're launching Dandy, a premium kratom and kava brand, into convenience stores and DTC e-commerce. Our hero product is 60ml shots, but we also sell capsules/ gummies/ powder. Our packaging...</p>
+                <button class="jobs-unlock-btn">
+                    <i class="fas fa-lock"></i> Unlock with Behance Pro
+                </button>
+            </div>
 
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                    <div class="flex justify-between items-start mb-4">
-                        <span class="text-[11px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded">Website Design</span>
-                        <span class="text-[11px] font-bold text-orange-400">Ends in 11 days</span>
+        </div>
+
+        {{-- Full-Time / Contract Jobs --}}
+        <div class="jobs-section-header">
+            <h2 class="jobs-section-title">Full-Time or Contract Jobs</h2>
+            <div class="jobs-search-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" class="jobs-search-input" placeholder="Search Jobs..." id="job-search">
+            </div>
+        </div>
+
+        <div class="jobs-grid" id="jobs-grid">
+
+            <div class="jobs-card" data-title="Sales Executive - Art & Design" data-company="The Artemist">
+                <div class="jobs-card-top">
+                    <div class="jobs-card-logo" style="background:#7b2d2d">A</div>
+                    <div>
+                        <div class="jobs-card-company">The Artemist</div>
+                        <div class="jobs-card-location"><i class="fas fa-map-marker-alt"></i> Kolkata, India</div>
                     </div>
-                    <h3 class="font-black text-[17px] mb-1">Website Redesign Service for Existing Website</h3>
-                    <p class="text-blue-600 font-bold text-sm mb-4">US$1,000-2,500</p>
-                    <button class="w-full border-2 border-blue-500 text-blue-600 py-2 rounded-full font-bold text-sm mt-4">Unlock with Behance Pro</button>
                 </div>
+                <div class="jobs-card-title">Sales Executive - Art & Design</div>
+                <div class="jobs-card-tags">
+                    <span class="jobs-card-tag">Sales</span>
+                    <span class="jobs-card-tag">Art</span>
+                </div>
+                <div class="jobs-card-time">2 hours ago</div>
             </div>
 
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-[15px] font-[900]">Full-Time or Contract Jobs <span class="text-gray-400 font-bold ml-1">(909)</span></h2>
-                <div class="relative">
-                    <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
-                    <input type="text" placeholder="Search Jobs..." class="bg-gray-100 rounded-full py-2 pl-9 pr-4 text-sm font-bold w-[250px] outline-none">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                @php
-                    $jobs = [
-                        ['The Artemist', 'Kolkata, India', 'Sales Executive - Art & Design', '2 hours ago', 'bg-red-900', 'A'],
-                        ['Highminded Agency', 'Anywhere', 'Senior Graphic Designer', '16 hours ago', 'bg-cyan-500', 'H'],
-                        ['Tractian', 'São Paulo, Brazil', 'Videomaker', '17 hours ago', 'bg-blue-600', 'AI'],
-                        ['Acroterion Labs', 'New Delhi, India', 'Interior Architect', 'a day ago', 'bg-slate-800', 'AL'],
-                        ['Seven Marine Phuket', 'Phuket, Thailand', 'Graphic Designer', '3 days ago', 'bg-blue-900', 'S'],
-                        ['EKO Agency', 'Cairo, Egypt', 'Motion graphic designer', '3 days ago', 'bg-black', 'EKO']
-                    ];
-                @endphp
-
-                @foreach($jobs as $j)
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="w-12 h-12 {{$j[4]}} rounded-full flex items-center justify-center text-white font-black text-xs">{{$j[5]}}</div>
-                        <div>
-                            <h4 class="font-bold text-[14px] leading-tight">{{$j[0]}}</h4>
-                            <p class="text-[11px] text-gray-400 font-bold flex items-center gap-1">📍 {{$j[1]}}</p>
-                        </div>
+            <div class="jobs-card" data-title="Senior Graphic Designer" data-company="Highminded Agency">
+                <div class="jobs-card-top">
+                    <div class="jobs-card-logo" style="background:#00bcd4">H</div>
+                    <div>
+                        <div class="jobs-card-company">Highminded Agency</div>
+                        <div class="jobs-card-location"><i class="fas fa-map-marker-alt"></i> Anywhere</div>
                     </div>
-                    <h3 class="font-[900] text-[16px] mb-2 leading-tight h-10">{{$j[2]}}</h3>
-                    <p class="text-[11px] text-gray-500 font-bold mt-4">{{$j[3]}}</p>
                 </div>
-                @endforeach
+                <div class="jobs-card-title">Senior Graphic Designer</div>
+                <div class="jobs-card-tags">
+                    <span class="jobs-card-tag">Graphic Design</span>
+                    <span class="jobs-card-tag">Remote</span>
+                </div>
+                <div class="jobs-card-time">16 hours ago</div>
             </div>
-            
-            <div class="flex justify-center mt-12 mb-20">
-                <button class="border-2 border-gray-200 px-8 py-2.5 rounded-full font-bold text-sm hover:bg-gray-50">View more jobs</button>
+
+            <div class="jobs-card" data-title="Videomaker" data-company="Tractian">
+                <div class="jobs-card-top">
+                    <div class="jobs-card-logo" style="background:#1565c0">T</div>
+                    <div>
+                        <div class="jobs-card-company">Tractian</div>
+                        <div class="jobs-card-location"><i class="fas fa-map-marker-alt"></i> São Paulo, Brazil</div>
+                    </div>
+                </div>
+                <div class="jobs-card-title">Videomaker</div>
+                <div class="jobs-card-tags">
+                    <span class="jobs-card-tag">Video</span>
+                    <span class="jobs-card-tag">Motion</span>
+                </div>
+                <div class="jobs-card-time">17 hours ago</div>
             </div>
+
+            <div class="jobs-card" data-title="Interior Architect" data-company="Acroterion Labs">
+                <div class="jobs-card-top">
+                    <div class="jobs-card-logo" style="background:#263238">AL</div>
+                    <div>
+                        <div class="jobs-card-company">Acroterion Labs</div>
+                        <div class="jobs-card-location"><i class="fas fa-map-marker-alt"></i> New Delhi, India</div>
+                    </div>
+                </div>
+                <div class="jobs-card-title">Interior Architect</div>
+                <div class="jobs-card-tags">
+                    <span class="jobs-card-tag">Architecture</span>
+                    <span class="jobs-card-tag">Interior</span>
+                </div>
+                <div class="jobs-card-time">a day ago</div>
+            </div>
+
+            <div class="jobs-card" data-title="Graphic Designer" data-company="Seven Marine Phuket">
+                <div class="jobs-card-top">
+                    <div class="jobs-card-logo" style="background:#0d47a1">S</div>
+                    <div>
+                        <div class="jobs-card-company">Seven Marine Phuket</div>
+                        <div class="jobs-card-location"><i class="fas fa-map-marker-alt"></i> Phuket, Thailand</div>
+                    </div>
+                </div>
+                <div class="jobs-card-title">Graphic Designer</div>
+                <div class="jobs-card-tags">
+                    <span class="jobs-card-tag">Graphic Design</span>
+                    <span class="jobs-card-tag">On-site</span>
+                </div>
+                <div class="jobs-card-time">3 days ago</div>
+            </div>
+
+            <div class="jobs-card" data-title="Motion Graphic Designer" data-company="EKO Agency">
+                <div class="jobs-card-top">
+                    <div class="jobs-card-logo" style="background:#111">EKO</div>
+                    <div>
+                        <div class="jobs-card-company">EKO Agency</div>
+                        <div class="jobs-card-location"><i class="fas fa-map-marker-alt"></i> Cairo, Egypt</div>
+                    </div>
+                </div>
+                <div class="jobs-card-title">Motion Graphic Designer</div>
+                <div class="jobs-card-tags">
+                    <span class="jobs-card-tag">Motion</span>
+                    <span class="jobs-card-tag">After Effects</span>
+                </div>
+                <div class="jobs-card-time">3 days ago</div>
+            </div>
+
+            <div class="jobs-card" data-title="Brand Designer" data-company="Studio Namma">
+                <div class="jobs-card-top">
+                    <div class="jobs-card-logo" style="background:#4a148c">SN</div>
+                    <div>
+                        <div class="jobs-card-company">Studio Namma</div>
+                        <div class="jobs-card-location"><i class="fas fa-map-marker-alt"></i> Bangalore, India</div>
+                    </div>
+                </div>
+                <div class="jobs-card-title">Brand Designer</div>
+                <div class="jobs-card-tags">
+                    <span class="jobs-card-tag">Branding</span>
+                    <span class="jobs-card-tag">Identity</span>
+                </div>
+                <div class="jobs-card-time">4 days ago</div>
+            </div>
+
+            <div class="jobs-card" data-title="UI/UX Designer" data-company="Pixel & Co">
+                <div class="jobs-card-top">
+                    <div class="jobs-card-logo" style="background:#00695c">P</div>
+                    <div>
+                        <div class="jobs-card-company">Pixel & Co</div>
+                        <div class="jobs-card-location"><i class="fas fa-map-marker-alt"></i> London, UK</div>
+                    </div>
+                </div>
+                <div class="jobs-card-title">UI/UX Designer</div>
+                <div class="jobs-card-tags">
+                    <span class="jobs-card-tag">UI/UX</span>
+                    <span class="jobs-card-tag">Figma</span>
+                </div>
+                <div class="jobs-card-time">5 days ago</div>
+            </div>
+
+            <div class="jobs-card" data-title="Motion Designer" data-company="Creative Lab">
+                <div class="jobs-card-top">
+                    <div class="jobs-card-logo" style="background:#e65100">CL</div>
+                    <div>
+                        <div class="jobs-card-company">Creative Lab</div>
+                        <div class="jobs-card-location"><i class="fas fa-map-marker-alt"></i> Berlin, Germany</div>
+                    </div>
+                </div>
+                <div class="jobs-card-title">Motion Designer</div>
+                <div class="jobs-card-tags">
+                    <span class="jobs-card-tag">Motion</span>
+                    <span class="jobs-card-tag">Cinema 4D</span>
+                </div>
+                <div class="jobs-card-time">1 week ago</div>
+            </div>
+
         </div>
-    </main>
 
-    @include('partials.footer')
+        <div class="jobs-view-more-wrap">
+            <button class="jobs-view-more-btn">View more jobs</button>
+        </div>
 
-</body>
-</html>
+    </div>{{-- /.jobs-main --}}
+</div>{{-- /.jobs-layout --}}
+
+@endsection
+
+@push('scripts')
+<script>
+    // Live search filter
+    document.getElementById('job-search')?.addEventListener('input', function () {
+        const val = this.value.toLowerCase();
+        document.querySelectorAll('.jobs-card').forEach(card => {
+            const title   = card.dataset.title?.toLowerCase() ?? '';
+            const company = card.dataset.company?.toLowerCase() ?? '';
+            card.style.display = (title.includes(val) || company.includes(val)) ? '' : 'none';
+        });
+    });
+
+    // Sidebar section toggle
+    function toggleSection(el) {
+        const isOpen = el.classList.toggle('open');
+        const section = el.closest('.jobs-sidebar-section');
+        const labels  = section.querySelectorAll('.jobs-cat-label, .jobs-cat-group-label, .jobs-view-all');
+        labels.forEach(l => l.style.display = isOpen ? '' : 'none');
+    }
+
+    // Category filter (UI only - highlights card tags)
+    function filterCategory(cat) {
+        document.querySelectorAll('.jobs-card').forEach(card => {
+            if (!cat) { card.style.display = ''; return; }
+            const tags = Array.from(card.querySelectorAll('.jobs-card-tag')).map(t => t.textContent.toLowerCase());
+            const title = card.dataset.title?.toLowerCase() ?? '';
+            const match = tags.some(t => t.includes(cat.toLowerCase())) || title.includes(cat.toLowerCase());
+            card.style.display = match ? '' : 'none';
+        });
+    }
+</script>
+@endpush

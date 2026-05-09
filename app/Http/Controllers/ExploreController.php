@@ -12,102 +12,126 @@ class ExploreController extends Controller
      * Halaman galeri utama — mirip halaman explore Behance
      * Route: GET /explore
      */
-    public function index(Request $request)
-    {
-        // ════════════════════════════════════════════════════
-        // ① JOIN 3 TABEL — dasar semua query di halaman ini
-        //    projects + users + project_categories + categories
-        //    Pakai DISTINCT karena satu project bisa masuk
-        //    banyak kategori (duplikat baris tanpa DISTINCT)
-        // ════════════════════════════════════════════════════
-        $query = DB::table('projects as p')
-            ->join('users as u',
-                    'u.id', '=', 'p.user_id')
-            ->leftJoin('project_categories as pc',
-                        'pc.project_id', '=', 'p.id')
-            ->leftJoin('categories as c',
-                        'c.id', '=', 'pc.category_id')
-            ->selectRaw('
-                DISTINCT
-                p.id,
-                p.title,
-                p.slug,
-                p.cover_image,
-                p.likes_count,
-                p.views_count,
-                p.comments_count,
-                p.created_at,
-                u.id       AS user_id,
-                u.name     AS creator_name,
-                u.username AS creator_username,
-                u.avatar   AS creator_avatar
-            ')
-            ->where('p.status', 'published');
+   public function index(Request $request)
+{
+    $query = DB::table('projects as p')
+        ->join('users as u', 'u.id', '=', 'p.user_id')
+        ->leftJoin('project_categories as pc', 'pc.project_id', '=', 'p.id')
+        ->leftJoin('categories as c', 'c.id', '=', 'pc.category_id')
+        ->selectRaw('DISTINCT
+            p.id, p.title, p.slug, p.cover_image,
+            p.likes_count, p.views_count, p.comments_count,
+            p.created_at, p.tools, p.dominant_color,
+            u.id AS user_id, u.name AS creator_name,
+            u.username AS creator_username, u.avatar AS creator_avatar,
+            u.location AS creator_location, u.availability AS creator_availability
+        ')
+        ->where('p.status', 'published');
 
-        // ════════════════════════════════════════════════════
-        // ② FILTER — Keyword search (WHERE LIKE)
-        //    Mencari di title, description, dan nama creator
-        // ════════════════════════════════════════════════════
-        if ($keyword = $request->get('q')) {
-            $query->where(function ($q) use ($keyword) {
-                $q->where('p.title',       'like', "%{$keyword}%")
-                  ->orWhere('p.description', 'like', "%{$keyword}%")
-                  ->orWhere('u.name',        'like', "%{$keyword}%")
-                  ->orWhere('u.username',    'like', "%{$keyword}%");
-            });
-        }
-
-        // ════════════════════════════════════════════════════
-        // ③ FILTER — By kategori slug
-        // ════════════════════════════════════════════════════
-        if ($categorySlug = $request->get('category')) {
-            $query->where('c.slug', $categorySlug);
-        }
-
-        // ════════════════════════════════════════════════════
-        // ④ SORT — Pilihan urutan tampil
-        // ════════════════════════════════════════════════════
-        match ($request->get('sort', 'trending')) {
-            'newest'  => $query->orderByDesc('p.created_at'),
-            'popular' => $query->orderByDesc('p.views_count'),
-            'most_liked' => $query->orderByDesc('p.likes_count'),
-            default   => $query->orderByDesc('p.likes_count')
-                                ->orderByDesc('p.views_count'),
-        };
-
-        // ════════════════════════════════════════════════════
-        // ⑤ SUBQUERY EXISTS — hanya project yang punya gambar
-        //    Penting: project tanpa gambar tidak ditampilkan
-        // ════════════════════════════════════════════════════
-        // $query->whereExists(function ($sub) {
-        //    $sub->select(DB::raw(1))
-        //         ->from('project_images')
-        //         ->whereColumn('project_images.project_id', 'p.id');
-        // });
-
-        // ════════════════════════════════════════════════════
-        // ⑥ Jalankan query dengan pagination (24 per halaman)
-        // ════════════════════════════════════════════════════
-        $projects = $query->paginate(24)->withQueryString();
-
-        // ════════════════════════════════════════════════════
-        // ⑦ Kategori untuk sidebar filter + hitungan project
-        // ════════════════════════════════════════════════════
-        $categories = DB::table('categories as c')
-            ->leftJoin('project_categories as pc',
-                        'pc.category_id', '=', 'c.id')
-            ->selectRaw('c.id, c.name, c.slug, c.icon,
-                         COUNT(pc.id) AS project_count')
-            ->where('c.is_active', 1)
-            ->groupBy('c.id', 'c.name', 'c.slug', 'c.icon')
-            ->orderByDesc('project_count')
-            ->get();
-
-        return view('explore', compact(
-            'projects',
-            'categories'
-        ));
+    // ── Filter: Keyword
+    if ($keyword = $request->get('q')) {
+        $query->where(function ($q) use ($keyword) {
+            $q->where('p.title', 'like', "%{$keyword}%")
+              ->orWhere('p.description', 'like', "%{$keyword}%")
+              ->orWhere('u.name', 'like', "%{$keyword}%")
+              ->orWhere('u.username', 'like', "%{$keyword}%");
+        });
     }
+
+    // ── Filter: Category (dari pill nav)
+    if ($categorySlug = $request->get('category')) {
+        $query->where('c.slug', $categorySlug);
+    }
+
+    // ── Filter: Creative Fields (dari sidebar, bisa multiple)
+    if ($fields = $request->get('fields')) {
+        $query->whereIn('c.slug', (array) $fields);
+    }
+
+    // ── Filter: Availability (bisa multiple)
+    if ($availabilities = $request->get('availability')) {
+        $query->whereIn('u.availability', (array) $availabilities);
+    }
+
+    // ── Filter: Location (bisa multiple)
+    if ($locations = $request->get('location')) {
+        $query->where(function($q) use ($locations) {
+            foreach ((array) $locations as $loc) {
+                $q->orWhere('u.location', 'like', "%{$loc}%");
+            }
+        });
+    }
+
+    // ── Filter: Tools (JSON search)
+    if ($tools = $request->get('tools')) {
+        $query->where(function($q) use ($tools) {
+            foreach ((array) $tools as $tool) {
+                $q->orWhereRaw("JSON_SEARCH(p.tools, 'one', ?) IS NOT NULL", [$tool]);
+            }
+        });
+    }
+
+    // ── Filter: Color
+    if ($color = $request->get('color')) {
+        $query->where('p.dominant_color', $color);
+    }
+
+    // ── Sort
+    match ($request->get('sort', 'trending')) {
+        'newest'     => $query->orderByDesc('p.created_at'),
+        'popular'    => $query->orderByDesc('p.views_count'),
+        'most_liked' => $query->orderByDesc('p.likes_count'),
+        default      => $query->orderByDesc('p.likes_count')->orderByDesc('p.views_count'),
+    };
+
+    $projects = $query->paginate(24)->withQueryString();
+
+    // ── Kategori untuk pill nav + sidebar
+    $categories = DB::table('categories as c')
+        ->leftJoin('project_categories as pc', 'pc.category_id', '=', 'c.id')
+        ->selectRaw('c.id, c.name, c.slug, c.icon, COUNT(pc.id) AS project_count')
+        ->where('c.is_active', 1)
+        ->groupBy('c.id', 'c.name', 'c.slug', 'c.icon')
+        ->orderByDesc('project_count')
+        ->get();
+
+    // ── Data untuk sidebar filter
+    $locations = DB::table('users')
+        ->whereNotNull('location')
+        ->where('location', '!=', '')
+        ->select('location')
+        ->distinct()
+        ->orderBy('location')
+        ->limit(30)
+        ->pluck('location');
+
+    $availabilityOptions = [
+        'available'     => 'Available for Work',
+        'freelance'     => 'Freelance',
+        'fulltime'      => 'Full-time',
+        'not_available' => 'Not Available',
+    ];
+
+    $toolOptions = [
+        'Figma', 'Adobe XD', 'Photoshop', 'Illustrator',
+        'Blender', 'After Effects', 'Sketch', 'Procreate',
+        'Cinema 4D', 'InDesign', 'Lightroom', 'Premiere Pro',
+    ];
+
+    $colorOptions = [
+        'red'    => '#e74c3c', 'orange' => '#e67e22',
+        'yellow' => '#f1c40f', 'green'  => '#2ecc71',
+        'blue'   => '#3498db', 'purple' => '#9b59b6',
+        'pink'   => '#e91e8c', 'brown'  => '#795548',
+        'black'  => '#111111', 'white'  => '#f5f5f5',
+        'gray'   => '#95a5a6', 'teal'   => '#1abc9c',
+    ];
+
+    return view('explore', compact(
+        'projects', 'categories', 'locations',
+        'availabilityOptions', 'toolOptions', 'colorOptions'
+    ));
+}
 
     /**
      * Halaman detail project

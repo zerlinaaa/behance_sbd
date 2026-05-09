@@ -38,9 +38,6 @@
         a { text-decoration: none; color: inherit; }
         img { display: block; }
 
-        /* ═══════════════════════════════════════════════════
-           NAV ROW 1 — Logo | main links | right actions
-        ═══════════════════════════════════════════════════ */
         .bh-nav1 {
             background: #fff;
             border-bottom: 1px solid #e0e0e0;
@@ -81,24 +78,29 @@
         }
         .bh-nav1-link i { font-size: 8px; color: #999; }
 
-        /* Nav1 dropdown */
         .bh-nav1-dd { position: relative; }
+
+        /* KEY FIX: position:fixed agar tidak terpotong overflow navbar */
         .bh-nav1-dd-menu {
-            position: absolute; top: 100%; left: 0;
-            background: #fff; border: 1px solid #e0e0e0;
-            border-radius: 4px; box-shadow: 0 8px 28px rgba(0,0,0,.14);
-            min-width: 180px; padding: 6px 0;
-            display: none; z-index: 700;
+            position: fixed;
+            top: 52px;
+            left: 0;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            box-shadow: 0 8px 28px rgba(0,0,0,.14);
+            min-width: 210px;
+            padding: 6px 0;
+            display: none;
+            z-index: 99999;
         }
-        .bh-nav1-dd:hover .bh-nav1-dd-menu { display: block; }
         .bh-nav1-dd-menu a {
-            display: block; padding: 9px 16px;
+            display: block; padding: 10px 18px;
             font-size: 13px; font-weight: 600; color: #222;
             transition: background .1s;
         }
-        .bh-nav1-dd-menu a:hover { background: #f5f5f5; }
+        .bh-nav1-dd-menu a:hover { background: #f5f5f5; color: #0057ff; }
 
-        /* Nav1 right */
         .bh-nav1-right {
             display: flex; align-items: center; gap: 6px;
             flex-shrink: 0; margin-left: auto;
@@ -138,7 +140,6 @@
         }
         .bh-adobe i { font-size: 20px; }
 
-        /* User avatar */
         .bh-user-wrap { position: relative; }
         .bh-avatar-btn {
             display: flex; align-items: center;
@@ -168,10 +169,6 @@
         .bh-user-dd i { width: 14px; text-align: center; color: #aaa; font-size: 12px; }
         .bh-user-dd hr { border: none; border-top: 1px solid #eee; margin: 4px 0; }
 
-        /* ═══════════════════════════════════════════════════
-           NAV ROW 2 — Filter | Search | Tabs | AI | Recommended
-           (injected per-page via @stack('subnav'))
-        ═══════════════════════════════════════════════════ */
         .bh-nav2 {
             background: #fff;
             border-bottom: 1px solid #e0e0e0;
@@ -209,7 +206,6 @@
         }
         .bh-nav2-search-box input::placeholder { color: #aaa; }
 
-        /* Projects / People / Assets / Images tabs */
         .bh-content-tabs { display: flex; flex-shrink: 0; }
         .bh-content-tab {
             padding: 6px 13px; font-size: 13px; font-weight: 700;
@@ -259,10 +255,6 @@
         }
         .bh-recommended-dd a:hover { background: #f5f5f5; }
 
-        /* ═══════════════════════════════════════════════════
-           NAV ROW 3 — Category pills
-           (injected per-page via @stack('subnav3'))
-        ═══════════════════════════════════════════════════ */
         .bh-nav3 {
             background: #fff; border-bottom: 1px solid #e0e0e0;
             position: sticky; top: calc(var(--nav1-h) + var(--nav2-h)); z-index: 580;
@@ -295,10 +287,7 @@
         .bh-pill.active .pill-count { background: rgba(255,255,255,.3); color: #fff; }
         .bh-pill.dark .pill-count { background: rgba(255,255,255,.2); color: #fff; }
 
-        /* Arrow next btn */
-        .bh-nav3-arrow {
-            flex-shrink: 0; margin-left: 4px;
-        }
+        .bh-nav3-arrow { flex-shrink: 0; margin-left: 4px; }
         .bh-nav3-arrow-btn {
             width: 28px; height: 28px; border-radius: 50%;
             border: 1.5px solid #e0e0e0; background: #fff;
@@ -308,9 +297,6 @@
         }
         .bh-nav3-arrow-btn:hover { border-color: #999; color: #111; background: #f5f5f5; }
 
-        /* ═══════════════════════════════════════════════════
-           GLOBAL UTILITIES
-        ═══════════════════════════════════════════════════ */
         .btn {
             display: inline-flex; align-items: center; gap: 6px;
             padding: 8px 18px; border-radius: var(--radius);
@@ -387,7 +373,6 @@
         }
         .btn-upload:hover { background: var(--blue-dark); }
 
-        /* Responsive */
         @media (max-width: 1100px) { .bh-content-tabs { display: none; } }
         @media (max-width: 900px)  { .btn-share { display: none; } .bh-adobe { display: none; } }
         @media (max-width: 768px)  { .bh-nav1-link:not(.keep) { display: none; } }
@@ -397,10 +382,6 @@
 </head>
 <body>
 
-{{-- ═══════════════════════════════════════════════════════════
-     ROW 1: Logo | Explore | Jobs | Client Work | Resources | Hire
-             (right) Start Free Trial | Share Work | ✉ | 🔔 | Avatar | Adobe
-═══════════════════════════════════════════════════════════ --}}
 <nav class="bh-nav1">
 
     <a href="{{ route('explore') }}" class="bh-logo">Bēhance</a>
@@ -411,27 +392,35 @@
             Explore
         </a>
 
-        <a href="#" class="bh-nav1-link">Jobs</a>
-        <a href="#" class="bh-nav1-link">Client Work</a>
+        <a href="{{ route('jobs') }}"
+           class="bh-nav1-link {{ request()->routeIs('jobs') ? 'active' : '' }}">
+            Jobs
+        </a>
 
-        <div class="bh-nav1-dd">
-            <button class="bh-nav1-link">
+        <a href="{{ route('client-work') }}"
+           class="bh-nav1-link {{ request()->routeIs('client-work') ? 'active' : '' }}">
+            Client Work
+        </a>
+
+        <div class="bh-nav1-dd" id="dd-resources">
+            <button class="bh-nav1-link" type="button" id="btn-resources">
                 Resources <i class="fas fa-chevron-down"></i>
             </button>
-            <div class="bh-nav1-dd-menu">
-                <a href="#">Blog</a>
-                <a href="#">Freelance Resources</a>
-                <a href="#">Adobe Portfolio</a>
+            <div class="bh-nav1-dd-menu" id="menu-resources">
+                <a href="#">Overview</a>
+                <a href="#">Career Guides</a>
+                <a href="#">Commissioned Projects</a>
+                <a href="#">Creative Apprenticeship</a>
             </div>
         </div>
 
         <div style="width:22px"></div>
 
-        <div class="bh-nav1-dd">
-            <button class="bh-nav1-link">
+        <div class="bh-nav1-dd" id="dd-hire">
+            <button class="bh-nav1-link" type="button" id="btn-hire">
                 Hire <i class="fas fa-chevron-down"></i>
             </button>
-            <div class="bh-nav1-dd-menu">
+            <div class="bh-nav1-dd-menu" id="menu-hire">
                 <a href="#">Find Talent</a>
                 <a href="#">Post a Job</a>
             </div>
@@ -481,12 +470,8 @@
     </div>
 </nav>
 
-{{-- ═══════════════════════════════════════════════════════════
-     ROW 2 + ROW 3 injected by each page via @stack
-═══════════════════════════════════════════════════════════ --}}
 @stack('subnav')
 
-{{-- ══ PAGE CONTENT ══ --}}
 <div class="container page-content">
     @if(session('success'))
         <div class="alert alert-success" style="margin-top:16px">
@@ -503,5 +488,42 @@
 </div>
 
 @stack('scripts')
+
+<script>
+(function () {
+    var items = [
+        { btnId: 'btn-resources', menuId: 'menu-resources' },
+        { btnId: 'btn-hire',      menuId: 'menu-hire' }
+    ];
+
+    function closeAll() {
+        items.forEach(function (i) {
+            document.getElementById(i.menuId).style.display = 'none';
+        });
+    }
+
+    items.forEach(function (item) {
+        var btn  = document.getElementById(item.btnId);
+        var menu = document.getElementById(item.menuId);
+
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var isOpen = menu.style.display === 'block';
+            closeAll();
+            if (!isOpen) {
+                var rect = btn.getBoundingClientRect();
+                menu.style.top     = (rect.bottom + window.scrollY) + 'px';
+                menu.style.left    = rect.left + 'px';
+                menu.style.display = 'block';
+            }
+        });
+    });
+
+    document.addEventListener('click', closeAll);
+    window.addEventListener('scroll', closeAll);
+    window.addEventListener('resize', closeAll);
+})();
+</script>
+
 </body>
 </html>
