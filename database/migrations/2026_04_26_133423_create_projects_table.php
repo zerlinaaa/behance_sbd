@@ -1,24 +1,31 @@
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
+<?php
 
-foreach ($data as $item) {
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-    $title = $item['title'] ?? 'Untitled Project';
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('projects', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
+            $table->string('cover_image')->nullable();
+            $table->string('dominant_color', 7)->nullable(); // <-- kolom yang kurang
+            $table->enum('status', ['draft', 'published'])->default('draft');
+            $table->unsignedInteger('views_count')->default(0);
+            $table->unsignedInteger('likes_count')->default(0);
+            $table->unsignedInteger('comments_count')->default(0);
+            $table->timestamps();
+        });
+    }
 
-    DB::table('projects')->insert([
-        'user_id' => 1, // sementara (WAJIB ada user id 1)
-        'title' => $title,
-        'description' => $item['description'] ?? null,
-        'cover_image' => $item['image'] ?? null,
-
-        'slug' => Str::slug($title) . '-' . rand(1000, 9999),
-
-        'status' => 'published',
-        'views_count' => 0,
-        'likes_count' => $item['likes'] ?? 0,
-        'comments_count' => 0,
-
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('projects');
+    }
+};

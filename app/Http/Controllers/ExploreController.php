@@ -21,7 +21,7 @@ class ExploreController extends Controller
         ->selectRaw('DISTINCT
             p.id, p.title, p.slug, p.cover_image,
             p.likes_count, p.views_count, p.comments_count,
-            p.created_at, p.tools, p.dominant_color,
+            p.created_at,
             u.id AS user_id, u.name AS creator_name,
             u.username AS creator_username, u.avatar AS creator_avatar,
             u.location AS creator_location, u.availability AS creator_availability
@@ -73,7 +73,7 @@ class ExploreController extends Controller
 
     // ── Filter: Color
     if ($color = $request->get('color')) {
-        $query->where('p.dominant_color', $color);
+        $query->where($color);
     }
 
     // ── Sort
@@ -84,7 +84,7 @@ class ExploreController extends Controller
         default      => $query->orderByDesc('p.likes_count')->orderByDesc('p.views_count'),
     };
 
-    $projects = $query->paginate(24)->withQueryString();
+    $projects = $query->paginate(243)->withQueryString();
 
     // ── Kategori untuk pill nav + sidebar
     $categories = DB::table('categories as c')
