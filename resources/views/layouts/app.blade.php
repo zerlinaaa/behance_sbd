@@ -7,7 +7,9 @@
     <title>@yield('title', 'Behance') — Portfolio Kreatif</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
             --blue: #0057ff;
@@ -38,18 +40,6 @@
         a { text-decoration: none; color: inherit; }
         img { display: block; }
 
-        .bh-nav1 {
-            background: #fff;
-            border-bottom: 1px solid #e0e0e0;
-            height: var(--nav1-h);
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            position: sticky;
-            top: 0;
-            z-index: 600;
-            gap: 0;
-        }
         .bh-logo {
             font-size: 22px; font-weight: 900; font-style: italic;
             color: #0057ff; letter-spacing: -1.5px; flex-shrink: 0;
@@ -170,13 +160,18 @@
         .bh-user-dd hr { border: none; border-top: 1px solid #eee; margin: 4px 0; }
 
         .bh-nav2 {
-            background: #fff;
-            border-bottom: 1px solid #e0e0e0;
-            height: var(--nav2-h);
-            display: flex; align-items: center;
-            padding: 0 20px; gap: 10px;
-            position: sticky; top: var(--nav1-h); z-index: 590;
-        }
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    height: var(--nav2-h);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 10px;
+
+    position: sticky;
+    top: 64px; /* tinggi navbar kamu */
+    z-index: 40;
+}
         .bh-filter-btn {
             display: flex; align-items: center; gap: 6px;
             border: 1.5px solid #d0d0d0; border-radius: 4px;
@@ -256,9 +251,13 @@
         .bh-recommended-dd a:hover { background: #f5f5f5; }
 
         .bh-nav3 {
-            background: #fff; border-bottom: 1px solid #e0e0e0;
-            position: sticky; top: calc(var(--nav1-h) + var(--nav2-h)); z-index: 580;
-        }
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+
+    position: sticky;
+    top: calc(64px + var(--nav2-h));
+    z-index: 30;
+}
         .bh-nav3-scroll {
             display: flex; align-items: center; padding: 0 20px;
             overflow-x: auto; scrollbar-width: none; height: 50px; gap: 3px;
@@ -380,95 +379,9 @@
     </style>
     @stack('styles')
 </head>
-<body>
+<body class="antialiased tracking-tight">
 
-<nav class="bh-nav1">
-
-    <a href="{{ route('explore') }}" class="bh-logo">Bēhance</a>
-
-    <div class="bh-nav1-links">
-        <a href="{{ route('explore') }}"
-           class="bh-nav1-link keep {{ request()->routeIs('explore') ? 'active' : '' }}">
-            Explore
-        </a>
-
-        <a href="{{ route('jobs') }}"
-           class="bh-nav1-link {{ request()->routeIs('jobs') ? 'active' : '' }}">
-            Jobs
-        </a>
-
-        <a href="{{ route('client-work') }}"
-           class="bh-nav1-link {{ request()->routeIs('client-work') ? 'active' : '' }}">
-            Client Work
-        </a>
-
-        <div class="bh-nav1-dd" id="dd-resources">
-            <button class="bh-nav1-link" type="button" id="btn-resources">
-                Resources <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="bh-nav1-dd-menu" id="menu-resources">
-                <a href="#">Overview</a>
-                <a href="#">Career Guides</a>
-                <a href="#">Commissioned Projects</a>
-                <a href="#">Creative Apprenticeship</a>
-            </div>
-        </div>
-
-        <div style="width:22px"></div>
-
-        <div class="bh-nav1-dd" id="dd-hire">
-            <button class="bh-nav1-link" type="button" id="btn-hire">
-                Hire <i class="fas fa-chevron-down"></i>
-            </button>
-            <div class="bh-nav1-dd-menu" id="menu-hire">
-                <a href="#">Find Talent</a>
-                <a href="#">Post a Job</a>
-            </div>
-        </div>
-
-        @auth
-        <a href="{{ route('dashboard') }}"
-           class="bh-nav1-link {{ request()->routeIs('dashboard*') ? 'active' : '' }}">
-            Dashboard
-        </a>
-        @endauth
-    </div>
-
-    <div class="bh-nav1-right">
-        @auth
-            <a href="{{ route('projects.create') }}" class="btn-share">Share Work</a>
-            <button class="bh-icon-btn" title="Pesan"><i class="fas fa-envelope"></i></button>
-            <button class="bh-icon-btn" title="Notifikasi">
-                <i class="fas fa-bell"></i>
-                <span class="bh-notif-dot"></span>
-            </button>
-            <div class="bh-user-wrap">
-                <button class="bh-avatar-btn">
-                    <img src="{{ auth()->user()->avatar
-                                    ? (Str::startsWith(auth()->user()->avatar,'http')
-                                        ? auth()->user()->avatar
-                                        : asset('storage/'.auth()->user()->avatar))
-                                    : 'https://i.pravatar.cc/60?u='.auth()->id() }}"
-                         class="bh-avatar" alt=""
-                         onerror="this.src='https://i.pravatar.cc/60?u={{ auth()->id() }}'">
-                </button>
-                <div class="bh-user-dd">
-                    <a href="{{ route('dashboard') }}"><i class="fas fa-chart-bar"></i> Dashboard</a>
-                    <a href="{{ route('projects.create') }}"><i class="fas fa-plus"></i> Upload Project</a>
-                    <hr>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit"><i class="fas fa-right-from-bracket"></i> Logout</button>
-                    </form>
-                </div>
-            </div>
-        @else
-            <a href="{{ route('register') }}" class="btn-trial">Start Free Trial</a>
-            <a href="{{ route('login') }}" class="btn-share">Share Work</a>
-        @endauth
-        <div class="bh-adobe"><i class="fab fa-adobe"></i> Adobe</div>
-    </div>
-</nav>
+@include('partials.navbar')
 
 @stack('subnav')
 

@@ -284,7 +284,7 @@
                 </div>
 
                 <div class="btn-wrap">
-                    <a href="{{ route('register2') }}" class="btn-continue">Continue</a>
+                    <button type="submit" class="btn-continue">Continue</button>
                 </div>
             </form>
         </div>

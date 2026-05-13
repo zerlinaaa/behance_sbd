@@ -1,9 +1,10 @@
-<header class="flex items-center justify-between h-16 px-5 bg-white border-b border-gray-200 sticky top-0 z-50 font-['Inter'] tracking-normal">
+<header class="flex items-center justify-between h-16 px-5 bg-white border-b border-gray-200 sticky top-0 z-[1001] font-['Inter'] tracking-normal">
     <div class="flex items-center space-x-7">
         <div class="text-[22px] font-black tracking-tighter cursor-pointer" style="min-width: 89px;">Bēhance</div>
         <nav class="hidden md:flex items-center space-x-6 text-[15px] font-bold">
             <a href="{{ route('explore') }}" class="hover:text-gray-500 transition">Explore</a>
             <a href="{{ route('jobs') }}" class="hover:text-gray-500 transition">Jobs</a>
+            <a href="{{ route('client-work') }}" class="hover:text-gray-500 transition">Client Work</a>
 
             <div class="group relative py-5 cursor-pointer">
                 <span class="flex items-center hover:text-gray-500">Resources 
@@ -39,19 +40,30 @@
 </div>
         </nav>
     </div>
-
+    <!-- RIGHT SECTION -->
     <div class="flex items-center space-x-3">
-        <a href="{{ route('register') }}"
-   class="bg-[#0057ff] hover:bg-blue-700 text-white px-4 py-2 rounded-full text-[13px] font-bold transition inline-block">
-    Start Free Trial
-</a>
-<a href="{{ route('login') }}"
-   class="bg-[#f3f6ff] text-[#0057ff] border border-[#dce4ff] px-4 py-2 rounded-full text-[13px] font-bold hover:bg-[#e8eeff] transition inline-block">
-    Sign In
-</a>
-        <div class="flex items-center space-x-1.5 ml-3 cursor-pointer font-black text-[14px]">
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="black"><path d="M12.7 3H19V17L12.7 3Z"/><path d="M7.3 3H1V17L7.3 3Z"/><path d="M10 8.5L14.2 17H11.5L10.7 15.1H9.3L8.5 17H5.8L10 8.5Z"/></svg>
-            <span class="tracking-tighter">Adobe</span>
+        
+        @auth
+    <a href="{{ route('projects.create') }}" class="border border-gray-200 px-4 py-2 rounded-full text-[14px] font-bold hover:text-gray-500 transition">+ Project</a>
+    <a href="{{ route('dashboard') }}" class="border border-gray-200 px-4 py-2 rounded-full text-[14px] font-bold hover:text-gray-500 transition">{{ auth()->user()->name }}</a>
+    <form method="POST" action="{{ route('logout') }}" class="inline">
+        @csrf
+        <button type="submit" class="border border-gray-200 px-4 py-2 rounded-full text-[14px] font-bold hover:text-gray-500 transition">Logout</button>
+    </form>
+@else
+    <a href="{{ route('login') }}" class="border border-gray-200 px-4 py-2 rounded-full text-[14px] font-bold hover:text-gray-500 transition">Sign In</a>
+    <a href="{{ route('register') }}" class="bg-[#0057ff] text-white px-5 py-2 rounded-full text-[14px] font-bold hover:bg-blue-700 transition">Start Free Trial</a>
+@endauth
+
+        <!-- Adobe Logo -->
+        <div class="flex items-center space-x-1.5 ml-4 cursor-pointer">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="black">
+                <path d="M12.7 3H19V17L12.7 3Z"/>
+                <path d="M7.3 3H1V17L7.3 3Z"/>
+                <path d="M10 8.5L14.2 17H11.5L10.7 15.1H9.3L8.5 17H5.8L10 8.5Z"/>
+            </svg>
+            <span class="font-black text-[14px] tracking-tighter">Adobe</span>
         </div>
     </div>
 </header>
+

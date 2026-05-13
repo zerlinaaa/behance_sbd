@@ -9,6 +9,7 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\RegisterTwoController;
 use App\Http\Controllers\HireController;
 
 
@@ -41,8 +42,8 @@ Route::get('/register', fn() => view('auth.register'))->name('register');
 Route::post('/login',    [LoginController::class,    'login'])->name('login.post');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
 Route::post('/logout',   [LoginController::class,    'logout'])->name('logout');
-Route::get('/register2', fn() => view('auth.register2'))->name('register2');
-Route::post('/register2', [RegisterController::class, 'register2'])->name('register2.post');
+Route::get('/register2', [RegisterTwoController::class, 'show'])->name('register2.show');
+Route::post('/register2', [RegisterTwoController::class, 'store'])->name('register2');
 
 // ── Resources
 Route::get('/resources',              fn() => view('resources.overview'))->name('resources.overview');
@@ -54,9 +55,6 @@ Route::get('/resources/creative',     fn() => view('resources.creative'))->name(
 Route::get('/hire/my-jobs',    [HireController::class, 'myJobs'])->name('hire.my-jobs');
 Route::get('/hire/hiring',     [HireController::class, 'hiring'])->name('hire.hiring');
 Route::get('/hire/freelancers',[HireController::class, 'freelance'])->name('hire.freelance');
-
-// ── Misc
-Route::get('/landing', fn() => view('landing'))->name('landing');
 
 // ── Jobs (UI only)
 Route::get('/jobs', fn() => view('jobs'))->name('jobs');
