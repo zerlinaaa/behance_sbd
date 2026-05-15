@@ -5,18 +5,6 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    /**
-     * Buat VIEW creator_stats
-     *
-     * VIEW ini merangkum semua statistik tiap kreator:
-     * - Jumlah project, total likes, total views
-     * - Rata-rata likes, project terbaik
-     * - Total komentar yang diterima
-     * - Jumlah follower
-     *
-     * Berguna untuk: leaderboard, halaman profil,
-     * laporan admin, dashboard statistik.
-     */
     public function up(): void
     {
         DB::statement("
@@ -62,7 +50,6 @@ return new class extends Migration
 
             FROM  users u
 
-            /* Hanya hitung project yang published */
             LEFT JOIN projects   p  ON  p.user_id    = u.id
                                     AND p.status      = 'published'
 
@@ -83,14 +70,10 @@ return new class extends Migration
                 u.created_at,
                 u.followers_count,
                 u.following_count
-
-            ORDER BY total_likes DESC
         ");
+        // ORDER BY dihapus dari VIEW — lakukan saat query: SELECT * FROM creator_stats ORDER BY total_likes DESC
     }
 
-    /**
-     * Hapus VIEW saat rollback migration
-     */
     public function down(): void
     {
         DB::statement('DROP VIEW IF EXISTS creator_stats');

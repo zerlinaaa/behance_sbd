@@ -549,18 +549,21 @@
     <div class="bh-toolbar">
         <div class="bh-toolbar-left">
             <h2 class="bh-section-title">
-                @if(request('category'))
+                @if($type === 'people')
+                    People
+                @elseif(request('category'))
                     {{ $categories->firstWhere('slug', request('category'))->name ?? 'Kategori' }}
                 @elseif(request('q'))
                     Hasil untuk "{{ request('q') }}"
-                @elseif(request('fields') || request('availability') || request('location') || request('tools') || request('color'))
-                    Hasil Filter
                 @else
                     Recommended Projects
                 @endif
             </h2>
-            <span class="bh-result-count">{{ number_format($projects->total()) }} project</span>
+            <span class="bh-result-count">
+                {{ $type === 'people' ? number_format($people->total()).' orang' : number_format($projects->total()).' project' }}
+            </span>
         </div>
+        @if($type !== 'people')
         <div style="display:flex;align-items:center;gap:4px">
             <div class="bh-view-toggle">
                 <button class="bh-view-btn active" id="btn-grid" onclick="setView('grid')" title="Grid">
@@ -571,18 +574,78 @@
                 </button>
             </div>
         </div>
+        @endif
     </div>
 
-    {{-- MASONRY GRID --}}
+    {{-- KONTEN --}}
     <div class="bh-grid-wrap">
+
+    @if($type === 'people')
+        {{-- ── PEOPLE GRID ── --}}
+        @if($people->isEmpty())
+            <div class="bh-empty">
+                <div class="bh-empty-icon"><i class="fas fa-users"></i></div>
+                <h3>Tidak ada kreator ditemukan</h3>
+                <p>Coba kata kunci lain</p>
+            </div>
+        @else
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;padding-bottom:48px;">
+            @foreach($people as $person)
+            <div style="background:#fff;border:1.5px solid #f0f0f0;border-radius:12px;overflow:hidden;text-align:center;padding:24px 16px 20px;transition:box-shadow .2s;cursor:pointer;"
+                 onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,.1)'"
+                 onmouseout="this.style.boxShadow='none'">
+
+                {{-- Cover / project strip --}}
+                <div style="margin:-24px -16px 16px;height:80px;background:#f5f5f5;overflow:hidden;">
+                    <div style="display:flex;height:100%;">
+                        @php $seed = $person->id ?? rand(1,999); @endphp
+                        <img src="https://picsum.photos/seed/{{ $seed }}a/120/80" style="width:33.33%;height:100%;object-fit:cover;" loading="lazy">
+                        <img src="https://picsum.photos/seed/{{ $seed }}b/120/80" style="width:33.33%;height:100%;object-fit:cover;" loading="lazy">
+                        <img src="https://picsum.photos/seed/{{ $seed }}c/120/80" style="width:33.33%;height:100%;object-fit:cover;" loading="lazy">
+                    </div>
+                </div>
+
+                {{-- Avatar --}}
+                <img src="{{ $person->avatar && Str::startsWith($person->avatar, 'http') ? $person->avatar : 'https://i.pravatar.cc/80?u='.$person->username }}"
+                     alt="{{ $person->name }}"
+                     style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12);margin-bottom:10px;"
+                     onerror="this.src='https://i.pravatar.cc/80?u={{ $person->username }}'">
+
+                <div style="font-size:15px;font-weight:800;color:#111;margin-bottom:2px;">{{ $person->name }}</div>
+                <div style="font-size:12px;color:#999;margin-bottom:6px;">@{{ $person->username }}</div>
+
+                @if($person->location)
+                <div style="font-size:12px;color:#aaa;margin-bottom:8px;">
+                    <i class="fas fa-map-marker-alt" style="font-size:10px;"></i> {{ $person->location }}
+                </div>
+                @endif
+
+                <div style="display:flex;justify-content:center;gap:20px;margin-top:10px;">
+                    <div>
+                        <div style="font-size:14px;font-weight:800;color:#111;">{{ number_format($person->followers_count) }}</div>
+                        <div style="font-size:11px;color:#aaa;">Followers</div>
+                    </div>
+                    <div>
+                        <div style="font-size:14px;font-weight:800;color:#111;">{{ number_format($person->following_count) }}</div>
+                        <div style="font-size:11px;color:#aaa;">Following</div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        <div class="bh-pagination-wrap">
+            {{ $people->withQueryString()->links() }}
+        </div>
+        @endif
+
+    @else
+        {{-- ── PROJECT GRID ── --}}
         @if($projects->isEmpty())
             <div class="bh-empty">
                 <div class="bh-empty-icon"><i class="fas fa-search"></i></div>
                 <h3>Tidak ada project ditemukan</h3>
                 <p>Coba kata kunci lain atau ubah filter</p>
-                <a href="{{ route('explore') }}" class="bh-btn-blue" style="margin:0 auto;">
-                    Lihat Semua Project
-                </a>
+                <a href="{{ route('explore') }}" class="bh-btn-blue" style="margin:0 auto;">Lihat Semua Project</a>
             </div>
         @else
         <div class="bh-grid" id="projects-grid">
@@ -639,12 +702,13 @@
             </a>
             @endforeach
         </div>
-
         <div class="bh-pagination-wrap">
             {{ $projects->withQueryString()->links() }}
         </div>
         @endif
-    </div>
+    @endif
+
+    </div>{{-- /.bh-grid-wrap --}}
 
 </div>{{-- /.bh-main-content --}}
 

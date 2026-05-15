@@ -14,7 +14,7 @@ use App\Http\Controllers\HireController;
 
 
 // ── Halaman utama → explore
-Route::get('/', fn() => redirect()->route('explore'));
+Route::get('/', fn() => redirect()->route('explore'))->name('landing');
 
 // ── Explore & detail project (publik)
 Route::get('/explore',               [ExploreController::class, 'index'])->name('explore');

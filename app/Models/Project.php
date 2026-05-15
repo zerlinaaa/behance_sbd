@@ -136,7 +136,7 @@ class Project extends Model
     public function scopeInCategory($query, int|string $category)
     {
         return $query->whereHas('categories', fn($q) =>
-            $q->where(is_int($category) ? 'id' : 'slug', $category)
+            $q->where(is_int($category) ? 'categories.id' : 'categories.slug', $category)
         );
     }
 

@@ -7,6 +7,17 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // ─── DROP dulu kalau sudah ada ────────────────────────────
+        DB::unprepared('DROP FUNCTION  IF EXISTS CalculateTrendingScore');
+        DB::unprepared('DROP PROCEDURE IF EXISTS ToggleLike');
+        DB::unprepared('DROP PROCEDURE IF EXISTS GetTrendingProjects');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_follows_after_delete');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_follows_after_insert');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_comments_after_delete');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_comments_after_insert');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_likes_after_delete');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_likes_after_insert');
+
         // ─── TRIGGER: likes ───────────────────────────────────────
         DB::unprepared('
             CREATE TRIGGER trg_likes_after_insert
@@ -155,16 +166,15 @@ return new class extends Migration
 
     public function down(): void
     {
-        // Hapus semua dalam urutan terbalik
         DB::unprepared('DROP FUNCTION  IF EXISTS CalculateTrendingScore');
         DB::unprepared('DROP PROCEDURE IF EXISTS ToggleLike');
         DB::unprepared('DROP PROCEDURE IF EXISTS GetTrendingProjects');
         DB::unprepared('DROP PROCEDURE IF EXISTS GetCreatorStats');
-        DB::unprepared('DROP TRIGGER  IF EXISTS trg_follows_after_delete');
-        DB::unprepared('DROP TRIGGER  IF EXISTS trg_follows_after_insert');
-        DB::unprepared('DROP TRIGGER  IF EXISTS trg_comments_after_delete');
-        DB::unprepared('DROP TRIGGER  IF EXISTS trg_comments_after_insert');
-        DB::unprepared('DROP TRIGGER  IF EXISTS trg_likes_after_delete');
-        DB::unprepared('DROP TRIGGER  IF EXISTS trg_likes_after_insert');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_follows_after_delete');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_follows_after_insert');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_comments_after_delete');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_comments_after_insert');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_likes_after_delete');
+        DB::unprepared('DROP TRIGGER   IF EXISTS trg_likes_after_insert');
     }
 };
