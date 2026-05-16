@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adobe Creative Apprenticeship - Get Ready to Launch Your Creative Career</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+@extends('layouts.app')
+@section('title', 'Creative Apprenticeship')
+    
+    @push('styles')
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -402,9 +398,10 @@
             .employers-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
+    @endpush
 </head>
 
-@include('partials.navbar')
+@section('content')
 
 <body class="antialiased tracking-tight">
 
@@ -733,6 +730,6 @@ function toggleFaq(index) {
 
 </body>
 
-@include('partials.footer')
+@endsection
 
 </html>

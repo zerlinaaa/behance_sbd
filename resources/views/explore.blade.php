@@ -2,63 +2,70 @@
 @section('title', 'Explore')
 
 @push('subnav')
-<div class="bh-nav2">
-    <button class="bh-filter-btn" onclick="openFilter()">
+<!-- {{-- ── SEARCH BAR (pill style, sama seperti people/dashboard) ── --}}
+<div class="exp-topbar">
+    {{-- Tombol Filter --}}
+    <button class="exp-filter-pill-btn" onclick="openFilter()">
         <i class="fas fa-sliders-h"></i>
         <span>Filter</span>
     </button>
 
-    <form method="GET" action="{{ route('explore') }}" id="explore-form" class="bh-nav2-search">
-        <input type="hidden" name="sort" value="{{ request('sort', 'trending') }}">
-        <input type="hidden" name="category" value="{{ request('category') }}">
-        @foreach((array)request('fields', []) as $f)
-            <input type="hidden" name="fields[]" value="{{ $f }}">
-        @endforeach
-        @foreach((array)request('availability', []) as $a)
-            <input type="hidden" name="availability[]" value="{{ $a }}">
-        @endforeach
-        @foreach((array)request('location', []) as $l)
-            <input type="hidden" name="location[]" value="{{ $l }}">
-        @endforeach
-        @foreach((array)request('tools', []) as $t)
-            <input type="hidden" name="tools[]" value="{{ $t }}">
-        @endforeach
-        @if(request('color'))
-            <input type="hidden" name="color" value="{{ request('color') }}">
-        @endif
-        <div class="bh-nav2-search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" name="q"
-                   placeholder="Search Behance..."
-                   value="{{ request('q') }}"
-                   onkeydown="if(event.key==='Enter'){this.closest('form').submit()}">
-        </div>
-    </form>
+    {{-- Search Pill --}}
+    <div class="exp-search-pill">
+        <i class="fas fa-search" style="color:#777;font-size:13px;flex-shrink:0"></i>
 
-    <div class="bh-content-tabs">
-        <a href="{{ route('explore', array_merge(request()->except('type'), ['type'=>'projects'])) }}"
-           class="bh-content-tab {{ (!request('type') || request('type')==='projects') ? 'active' : '' }}">
-            Projects
-        </a>
-        <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'people'])) }}"
-           class="bh-content-tab {{ request('type')==='people' ? 'active' : '' }}">
-            People
-        </a>
-        <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'assets'])) }}"
-           class="bh-content-tab {{ request('type')==='assets' ? 'active' : '' }}">
-            Assets
-        </a>
-        <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'images'])) }}"
-           class="bh-content-tab {{ request('type')==='images' ? 'active' : '' }}">
-            Images
-        </a>
+        <form method="GET" action="{{ route('explore') }}" style="flex:1;display:flex;" id="explore-form">
+            <input type="hidden" name="sort" value="{{ request('sort', 'trending') }}">
+            <input type="hidden" name="category" value="{{ request('category') }}">
+            @foreach((array)request('fields', []) as $f)
+                <input type="hidden" name="fields[]" value="{{ $f }}">
+            @endforeach
+            @foreach((array)request('availability', []) as $a)
+                <input type="hidden" name="availability[]" value="{{ $a }}">
+            @endforeach
+            @foreach((array)request('location', []) as $l)
+                <input type="hidden" name="location[]" value="{{ $l }}">
+            @endforeach
+            @foreach((array)request('tools', []) as $t)
+                <input type="hidden" name="tools[]" value="{{ $t }}">
+            @endforeach
+            @if(request('color'))
+                <input type="hidden" name="color" value="{{ request('color') }}">
+            @endif
+            <input type="text" name="q"
+                   value="{{ request('q') }}"
+                   placeholder="Search Behance..."
+                   style="border:none;background:transparent;outline:none;flex:1;font-size:14px;font-weight:500;font-family:'Nunito',sans-serif;">
+        </form>
+
+        {{-- Inner Tabs --}}
+        <div class="exp-inner-tabs">
+            <a href="{{ route('explore', array_merge(request()->except('type'), ['type'=>'projects'])) }}"
+               class="exp-inner-tab {{ (!request('type') || request('type')==='projects') ? 'active' : '' }}">
+                Projects
+            </a>
+            <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'people'])) }}"
+               class="exp-inner-tab {{ request('type')==='people' ? 'active' : '' }}">
+                People
+            </a>
+            <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'assets'])) }}"
+               class="exp-inner-tab {{ request('type')==='assets' ? 'active' : '' }}">
+                Assets
+            </a>
+            <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'images'])) }}"
+               class="exp-inner-tab {{ request('type')==='images' ? 'active' : '' }}">
+                Images
+            </a>
+        </div>
+
+        <div style="width:1px;height:20px;background:#ddd;margin:0 6px;flex-shrink:0"></div>
+        <div style="color:#555;font-size:15px;margin-right:8px;cursor:pointer;flex-shrink:0">
+            <i class="fas fa-wand-magic-sparkles"></i>
+        </div>
     </div>
 
-    <button class="bh-ai-btn" title="AI Search">
-        <i class="fas fa-wand-magic-sparkles"></i>
-    </button>
-
-    <div class="bh-recommended-wrap">
+    {{-- Sort Dropdown --}}
+    <div class="exp-sort-wrap">
         @php
             $sortLabels = [
                 'trending'   => 'Trending',
@@ -68,12 +75,12 @@
             ];
             $currentSort = request('sort', 'trending');
         @endphp
-        <button class="bh-recommended-btn">
+        <button class="exp-sort-btn">
             <i class="fas fa-bars-staggered" style="font-size:13px"></i>
             {{ $sortLabels[$currentSort] ?? 'Recommended' }}
-            <i class="fas fa-chevron-down"></i>
+            <i class="fas fa-chevron-down" style="font-size:10px"></i>
         </button>
-        <div class="bh-recommended-dd">
+        <div class="exp-sort-dd">
             @foreach($sortLabels as $val => $label)
             <a href="{{ route('explore', array_merge(request()->except('sort','page'), ['sort'=>$val])) }}"
                style="{{ $currentSort===$val ? 'font-weight:800;color:#0057ff' : '' }}">
@@ -84,35 +91,33 @@
     </div>
 </div>
 
-<div class="bh-nav3">
-    <div class="bh-nav3-scroll" id="bh-pills-scroll">
-        <a href="{{ route('explore', array_merge(request()->except('category','page'), [])) }}"
-           class="bh-pill {{ !request('category') ? 'active' : '' }}">
-            <span class="pill-icon">☆</span> For You
-        </a>
-        <a href="{{ route('explore', ['sort'=>'newest']) }}" class="bh-pill dark">
-            <span class="pill-icon">♡</span> Following
-        </a>
-        <a href="{{ route('explore', ['sort'=>'popular']) }}" class="bh-pill dark">
-            <span class="pill-icon">✦</span> Best of Behance
-        </a>
-        @foreach($categories as $cat)
-            <a href="{{ route('explore', array_merge(request()->except('category','page'), ['category'=>$cat->slug])) }}"
-               class="bh-pill {{ request('category')===$cat->slug ? 'active' : '' }}">
-                @if($cat->icon)<span class="pill-icon">{{ $cat->icon }}</span>@endif
-                {{ $cat->name }}
-                @if($cat->project_count > 0)
-                    <span class="pill-count">{{ number_format($cat->project_count) }}</span>
-                @endif
-            </a>
-        @endforeach
-        <div class="bh-nav3-arrow">
-            <button class="bh-nav3-arrow-btn" onclick="document.getElementById('bh-pills-scroll').scrollBy({left:200,behavior:'smooth'})">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-        </div>
-    </div>
-</div>
+{{-- ── CATEGORY CARDS ── --}}
+<div class="exp-cat-bar">
+    <a href="{{ route('explore', array_merge(request()->except('category','page'), [])) }}"
+       class="exp-cat-card {{ !request('category') ? 'active' : '' }}">
+        <img src="https://picsum.photos/seed/foryou/200/100" alt="For You">
+        <div class="exp-cat-overlay"></div>
+        <span>☆ For You</span>
+    </a>
+    <a href="{{ route('explore', ['sort'=>'newest']) }}" class="exp-cat-card">
+        <img src="https://picsum.photos/seed/following/200/100" alt="Following">
+        <div class="exp-cat-overlay"></div>
+        <span>♡ Following</span>
+    </a>
+    <a href="{{ route('explore', ['sort'=>'popular']) }}" class="exp-cat-card">
+        <img src="https://picsum.photos/seed/bestof/200/100" alt="Best of Behance">
+        <div class="exp-cat-overlay"></div>
+        <span>✦ Best of Behance</span>
+    </a>
+    @foreach($categories as $cat)
+    <a href="{{ route('explore', array_merge(request()->except('category','page'), ['category'=>$cat->slug])) }}"
+       class="exp-cat-card {{ request('category')===$cat->slug ? 'active' : '' }}">
+        <img src="https://picsum.photos/seed/{{ $cat->slug }}/200/100" alt="{{ $cat->name }}">
+        <div class="exp-cat-overlay"></div>
+        <span>@if($cat->icon){{ $cat->icon }} @endif{{ $cat->name }}</span>
+    </a>
+    @endforeach
+</div> -->
 @endpush
 
 @push('styles')
@@ -400,12 +405,507 @@
         .bh-hero h1 { font-size: 30px; }
         .bh-main-content.sidebar-open { margin-left: 0; }
     }
+
+    /* ── PEOPLE GRID ── */
+.people-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding-bottom: 48px;
+}
+@media (max-width: 700px) { .people-grid { grid-template-columns: 1fr; } }
+
+.people-card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e5e5e5;
+    transition: transform .2s, box-shadow .2s;
+    cursor: pointer;
+}
+.people-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 24px rgba(0,0,0,.10);
+}
+
+/* Cover strip — 4 kolom foto seperti behance asli */
+.people-card-cover {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: 90px;
+    overflow: hidden;
+}
+.people-card-cover img {
+    width: 100%; height: 100%; object-fit: cover;
+}
+
+/* Body */
+.people-card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px 20px;
+    text-align: center;
+}
+
+/* Avatar besar, overlap cover */
+.people-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,.15);
+    margin-top: -40px;
+    margin-bottom: 10px;
+    background: #eee;
+}
+
+.people-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 4px;
+}
+
+.people-location {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.people-location i { font-size: 10px; }
+
+/* Tags availability */
+.people-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+.people-tag {
+    font-size: 12px;
+    font-weight: 700;
+    border: 1.5px solid;
+    border-radius: 20px;
+    padding: 2px 10px;
+}
+
+/* Stats row */
+.people-stats {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 12px 0;
+    margin-bottom: 14px;
+}
+.people-stat {
+    flex: 1;
+    text-align: center;
+}
+.people-stat-num {
+    font-size: 15px;
+    font-weight: 800;
+    color: #111;
+}
+.people-stat-label {
+    font-size: 11px;
+    color: #aaa;
+    font-weight: 600;
+}
+.people-stat-divider {
+    width: 1px;
+    height: 28px;
+    background: #f0f0f0;
+}
+
+/* Tombol Message */
+.people-msg-btn {
+    width: 100%;
+    padding: 10px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    color: #111;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: all .14s;
+}
+.people-msg-btn:hover {
+    border-color: #0057ff;
+    color: #0057ff;
+    background: #f0f5ff;
+}
+/* ── HIRE BANNER ── */
+.hire-banner {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    margin-bottom: 28px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: url('https://picsum.photos/seed/hirebanner/1400/400') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.hire-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+}
+.hire-banner-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: #fff;
+}
+.hire-banner-content h2 {
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    letter-spacing: -.5px;
+}
+.hire-banner-content p {
+    font-size: 15px;
+    color: rgba(255,255,255,.85);
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+.hire-banner-btn {
+    display: inline-block;
+    padding: 10px 28px;
+    border: 2px solid #fff;
+    border-radius: 40px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all .2s;
+    background: transparent;
+}
+.hire-banner-btn:hover {
+    background: #fff;
+    color: #111;
+}
+/* ── CATEGORY CARDS ── */
+.bh-cat-scroll {
+    display: flex; gap: 10px; padding: 12px 20px;
+    overflow-x: auto; scrollbar-width: none;
+    background: #fff;
+}
+.bh-cat-scroll::-webkit-scrollbar { display: none; }
+.bh-cat-card {
+    position: relative; min-width: 150px; height: 46px;
+    border-radius: 8px; overflow: hidden; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; transition: transform .2s;
+}
+.bh-cat-card:hover { transform: scale(1.03); }
+.bh-cat-card img {
+    position: absolute; width: 100%; height: 100%;
+    object-fit: cover; z-index: 1;
+}
+.bh-cat-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,.5); z-index: 2;
+}
+.bh-cat-card.active .bh-cat-overlay { background: rgba(0,87,255,.8); }
+.bh-cat-card span {
+    position: relative; z-index: 3;
+    color: #fff; font-size: 13px; font-weight: 700;
+}
+
+/* ── PROJECT GRID SERAGAM ── */
+.exp-projects-grid {
+    display: grid;
+    background: #fff;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 24px 20px 48px;
+}
+.exp-card {
+    background: #fff; border-radius: 8px; overflow: hidden;
+    border: 1px solid #e5e5e5; text-decoration: none; display: block;
+    transition: transform .2s, box-shadow .2s;
+}
+.exp-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.12); }
+.exp-card-img-wrap { position: relative; overflow: hidden; }
+.exp-card-img {
+    width: 100%; height: 200px; object-fit: cover; display: block;
+    transition: transform .35s;
+}
+.exp-card:hover .exp-card-img { transform: scale(1.03); }
+.exp-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 60%);
+    opacity: 0; transition: opacity .2s;
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 10px;
+}
+.exp-card:hover .exp-card-overlay { opacity: 1; }
+.exp-overlay-row { display: flex; align-items: center; gap: 5px; }
+.exp-overlay-btn {
+    background: rgba(255,255,255,.95); border: none; border-radius: 20px;
+    padding: 5px 11px; font-size: 12px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; gap: 4px;
+    font-family: 'Nunito', sans-serif; color: #111; transition: all .14s;
+}
+.exp-overlay-btn.liked { background: #e74c3c; color: #fff; }
+.exp-overlay-btn.bookmarked { background: #0057ff; color: #fff; }
+.exp-overlay-views {
+    margin-left: auto; color: rgba(255,255,255,.9);
+    font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px;
+}
+.exp-card-body { padding: 12px 14px; }
+.exp-card-title {
+    font-size: 14px; font-weight: 700; color: #111; margin-bottom: 8px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.exp-card-meta { display: flex; align-items: center; gap: 8px; }
+.exp-card-avatar {
+    width: 22px; height: 22px; border-radius: 50%;
+    object-fit: cover; border: 1.5px solid #e8e8e8; flex-shrink: 0;
+}
+.exp-card-author {
+    font-size: 12px; font-weight: 600; color: #555; flex: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.exp-card:hover .exp-card-author { color: #0057ff; }
+.exp-card-likes {
+    display: flex; align-items: center; gap: 3px;
+    font-size: 11px; color: #999; font-weight: 700; margin-left: auto;
+}
+.exp-card-likes i { color: #ddd; font-size: 10px; }
+.exp-card:hover .exp-card-likes i { color: #e74c3c; }
+
+/* Loading infinite scroll */
+#exp-loading {
+    text-align: center; padding: 24px;
+    color: #aaa; font-size: 13px; font-weight: 700; display: none;
+}
+
+/* Footer */
+.exp-footer {
+    background: #fff; border-top: 1px solid #e5e5e5;
+    padding: 28px 20px; display: flex;
+    justify-content: space-between; align-items: center;
+}
+.exp-footer-links { display: flex; gap: 20px; font-size: 13px; color: #888; }
+.exp-footer-links a:hover { color: #111; }
+
+/* ── TOPBAR (pill style) ── */
+.exp-topbar {
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 52px;
+    z-index: 40;
+}
+.exp-filter-pill-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 18px; border: 1.5px solid #e0e0e0;
+    border-radius: 50px; background: #fff;
+    font-size: 13px; font-weight: 700; color: #333;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    white-space: nowrap; transition: all .14s; flex-shrink: 0;
+}
+.exp-filter-pill-btn:hover { border-color: #999; color: #111; }
+
+.exp-search-pill {
+    display: flex; align-items: center; flex: 1;
+    background: #f5f5f5; border: 1px solid #e5e5e5;
+    border-radius: 50px; padding: 4px 6px 4px 16px; gap: 10px;
+}
+.exp-search-pill:focus-within {
+    border-color: #0057ff; background: #fff;
+    box-shadow: 0 0 0 3px rgba(0,87,255,.08);
+}
+
+.exp-inner-tabs { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.exp-inner-tab {
+    padding: 6px 14px; border-radius: 50px;
+    font-size: 13px; font-weight: 700; color: #555;
+    text-decoration: none; transition: all .2s;
+    font-family: 'Nunito', sans-serif; white-space: nowrap;
+}
+.exp-inner-tab:hover { color: #111; }
+.exp-inner-tab.active {
+    background: #fff; color: #111;
+    box-shadow: 0 1px 4px rgba(0,0,0,.1);
+}
+
+.exp-sort-wrap { position: relative; flex-shrink: 0; }
+.exp-sort-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: none; cursor: pointer;
+    font-size: 14px; font-weight: 700; color: #111;
+    font-family: 'Nunito', sans-serif; padding: 8px 0;
+    white-space: nowrap;
+}
+.exp-sort-dd {
+    display: none; position: absolute; top: 100%; right: 0;
+    background: #fff; min-width: 180px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+    border-radius: 12px; padding: 8px 0; z-index: 200;
+    border: 1px solid #eee;
+}
+.exp-sort-wrap:hover .exp-sort-dd { display: block; }
+.exp-sort-dd a {
+    display: block; padding: 10px 20px;
+    color: #444; font-size: 14px; font-weight: 600;
+    transition: background .2s; font-family: 'Nunito', sans-serif;
+}
+.exp-sort-dd a:hover { background: #f5f5f5; color: #000; }
+
+/* ── CATEGORY BAR ── */
+.exp-cat-bar {
+    display: flex; gap: 10px; padding: 12px 20px;
+    overflow-x: auto; scrollbar-width: none;
+    background: #fff; border-bottom: 1px solid #e5e5e5;
+    position: sticky; top: calc(52px + 57px); z-index: 30;
+}
+.exp-cat-bar::-webkit-scrollbar { display: none; }
+.exp-cat-card {
+    position: relative; min-width: 150px; height: 46px;
+    border-radius: 8px; overflow: hidden; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; transition: transform .2s;
+}
+.exp-cat-card:hover { transform: scale(1.03); }
+.exp-cat-card img {
+    position: absolute; width: 100%; height: 100%;
+    object-fit: cover; z-index: 1;
+}
+.exp-cat-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,.5); z-index: 2;
+}
+.exp-cat-card.active .exp-cat-overlay { background: rgba(0,87,255,.8); }
+.exp-cat-card span {
+    position: relative; z-index: 3;
+    color: #fff; font-size: 13px; font-weight: 700;
+}
+
+/* ── HERO BARU (ala behance.net) ── */
+.bh-hero-new {
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+}
+.bh-hero-center {
+    text-align: center;
+    max-width: 560px;
+}
+.bh-hero-center h1 {
+    font-size: 52px; font-weight: 900; line-height: 1.08;
+    letter-spacing: -2.5px; color: #111; margin-bottom: 16px;
+}
+.bh-hero-center h1 span { color: #0057ff; }
+.bh-hero-center p {
+    font-size: 15px; color: #666; line-height: 1.7;
+    font-weight: 500; margin-bottom: 28px;
+}
+@media (max-width: 768px) {
+    .bh-hero-center h1 { font-size: 34px; }
+    .bh-hero-new { padding: 56px 20px; }
+}
+
+/* ── FILTER BAR ── */
+.exp-filter-pill-btn {
+     display: flex; align-items: center; gap: 8px;
+    padding: 8px 18px; border: 1.5px solid #d0d0d0;
+    border-radius: 50px; background: #fff;
+    font-size: 13px; font-weight: 700; color: #333;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    white-space: nowrap; transition: all .14s; flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+.exp-filter-pill-btn:hover { border-color: #999; color: #111; }
+.exp-search-pill {
+    display: flex; align-items: center; flex: 1;
+    background: #fff; border: 1px solid #e5e5e5;
+    border-radius: 50px; padding: 4px 6px 4px 16px; gap: 10px;
+}
+.exp-search-pill:focus-within {
+    border-color: #0057ff; background: #fff;
+    box-shadow: 0 0 0 3px rgba(0,87,255,.08);
+}
+.exp-inner-tabs { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.exp-inner-tab {
+    padding: 6px 14px; border-radius: 50px;
+    font-size: 13px; font-weight: 700; color: #555;
+    text-decoration: none; transition: all .2s;
+    font-family: 'Nunito', sans-serif; white-space: nowrap;
+}
+.exp-inner-tab:hover { color: #111; }
+.exp-inner-tab.active { background: #fff; color: #111; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+.exp-sort-wrap { position: relative; flex-shrink: 0; }
+.exp-sort-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: none; cursor: pointer;
+    font-size: 14px; font-weight: 700; color: #111;
+    font-family: 'Nunito', sans-serif; padding: 8px 0; white-space: nowrap;
+}
+.exp-sort-dd {
+    display: none; position: absolute; top: 100%; right: 0;
+    background: #fff; min-width: 180px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+    border-radius: 12px; padding: 8px 0; z-index: 200; border: 1px solid #eee;
+}
+.exp-sort-wrap:hover .exp-sort-dd { display: block; }
+.exp-sort-dd a {
+    display: block; padding: 10px 20px; color: #444;
+    font-size: 14px; font-weight: 600; transition: background .2s;
+    font-family: 'Nunito', sans-serif;
+}
+.exp-sort-dd a:hover { background: #f5f5f5; color: #000; }
+
+/* ── CATEGORY BAR ── */
+.exp-cat-bar {
+    display: flex; gap: 8px; padding: 10px 20px;
+    overflow-x: auto; scrollbar-width: none;
+    background: #fff; border-bottom: 1px solid #e5e5e5;
+    position: sticky; top: calc(52px + 57px); z-index: 30;
+}
+.exp-cat-bar::-webkit-scrollbar { display: none; }
+.exp-cat-card {
+    position: relative; min-width: 140px; height: 44px;
+    border-radius: 8px; overflow: hidden; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; transition: transform .2s;
+}
+.exp-cat-card:hover { transform: scale(1.03); }
+.exp-cat-card img { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+.exp-cat-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.55); z-index: 2; }
+.exp-cat-card.active .exp-cat-overlay { background: rgba(0,87,255,.8); }
+.exp-cat-card span { position: relative; z-index: 3; color: #fff; font-size: 13px; font-weight: 700; }
+
+@media (max-width: 900px) {
+    .bh-hero-new { grid-template-columns: 1fr; }
+    .bh-hero-col { display: none; }
+    .bh-hero-center { min-width: unset; padding: 40px 20px; }
+    .bh-hero-center h1 { font-size: 30px; }
+}
 </style>
 @endpush
 
 @section('content')
 
-{{-- ── OVERLAY (klik untuk tutup sidebar) ── --}}
+{{-- ── OVERLAY ── --}}
 <div class="bh-filter-overlay" id="filter-overlay" onclick="closeFilter()"></div>
 
 {{-- ── FILTER SIDEBAR ── --}}
@@ -421,6 +921,7 @@
         <input type="hidden" name="q" value="{{ request('q') }}">
         <input type="hidden" name="sort" value="{{ request('sort', 'trending') }}">
         <input type="hidden" name="category" value="{{ request('category') }}">
+        <input type="hidden" name="type" value="{{ request('type') }}">
 
         <div class="bh-filter-body">
 
@@ -516,201 +1017,587 @@
                 </div>
             </div>
 
-        </div>{{-- /.bh-filter-body --}}
+        </div>
 
         <div class="bh-filter-footer">
             <button type="button" class="bh-filter-reset" onclick="resetFilter()">Reset</button>
             <button type="submit" class="bh-filter-apply">Terapkan Filter</button>
         </div>
     </form>
-</div>{{-- /.bh-filter-sidebar --}}
+</div>
 
-{{-- ── KONTEN UTAMA (geser saat sidebar buka) ── --}}
-<div class="bh-main-content" id="bh-main-content">
+@if($type === 'people')
+{{-- ════════════════════════════════════════
+     PEOPLE — Layout ala Dashboard
+════════════════════════════════════════ --}}
 
-    {{-- HERO --}}
-    @if(!request('q') && !request('category') && !request('fields') && !request('availability') && !request('location') && !request('tools') && !request('color'))
-    <div class="bh-hero">
-        <h1>The World's<br><span>Best Creators</span><br>Are On Behance</h1>
-        <p>Platform lengkap untuk membantu perekrut dan kreator menavigasi dunia kreatif — dari menemukan inspirasi hingga terhubung satu sama lain.</p>
-        <div class="bh-hero-btns">
-            @auth
-                <a href="{{ route('projects.create') }}" class="bh-btn-blue">Upload Project</a>
-                <a href="{{ route('dashboard') }}" class="bh-btn-ghost">Lihat Dashboard</a>
-            @else
-                <a href="{{ route('register') }}" class="bh-btn-blue">Daftar Gratis</a>
-                <a href="{{ route('login') }}" class="bh-btn-ghost">Masuk</a>
-            @endauth
-        </div>
-    </div>
-    @endif
+{{-- Override: sembunyikan bh-nav2 & bh-nav3 khusus people --}}
+<style>
+    /* Sembunyikan subnav bawaan explore saat people */
+    .bh-nav2, .bh-nav3 { display: none !important; }
 
-    {{-- TOOLBAR --}}
-    <div class="bh-toolbar">
-        <div class="bh-toolbar-left">
-            <h2 class="bh-section-title">
-                @if($type === 'people')
-                    People
-                @elseif(request('category'))
-                    {{ $categories->firstWhere('slug', request('category'))->name ?? 'Kategori' }}
-                @elseif(request('q'))
-                    Hasil untuk "{{ request('q') }}"
-                @else
-                    Recommended Projects
-                @endif
-            </h2>
-            <span class="bh-result-count">
-                {{ $type === 'people' ? number_format($people->total()).' orang' : number_format($projects->total()).' project' }}
-            </span>
-        </div>
-        @if($type !== 'people')
-        <div style="display:flex;align-items:center;gap:4px">
-            <div class="bh-view-toggle">
-                <button class="bh-view-btn active" id="btn-grid" onclick="setView('grid')" title="Grid">
-                    <i class="fas fa-th"></i>
-                </button>
-                <button class="bh-view-btn" id="btn-list" onclick="setView('list')" title="List">
-                    <i class="fas fa-list"></i>
-                </button>
-            </div>
-        </div>
-        @endif
-    </div>
+    /* ── PEOPLE FILTER BAR (dashboard style) ── */
+    .ppl-bar {
+        background: #fff;
+        border-bottom: 1px solid #e5e5e5;
+        padding: 10px 32px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: sticky;
+        top: 52px;
+        z-index: 50;
+    }
+ .ppl-search-pill {
+    display: flex; align-items: center; flex: 1;
+    background: #fff; border: 1px solid #e0e0e0;
+    border-radius: 50px; padding: 4px 6px 4px 16px; gap: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+    .ppl-search-pill input {
+        border: none; background: transparent; outline: none;
+        flex: 1; font-size: 14px; font-weight: 500;
+        font-family: 'Nunito', sans-serif;
+    }
+    .ppl-inner-tabs { display: flex; align-items: center; gap: 2px; }
+    .ppl-inner-tab {
+        padding: 6px 14px; border-radius: 50px;
+        font-size: 13px; font-weight: 700; color: #555;
+        text-decoration: none; transition: all .2s;
+        font-family: 'Nunito', sans-serif;
+    }
+    .ppl-inner-tab:hover { color: #111; }
+    .ppl-inner-tab.active {
+        background: #fff; color: #111;
+        box-shadow: 0 1px 4px rgba(0,0,0,.1);
+    }
+    .ppl-divider { width: 1px; height: 20px; background: #ddd; margin: 0 4px; }
+    .ppl-sort-wrap { position: relative; flex-shrink: 0; }
+    .ppl-sort-btn {
+        display: flex; align-items: center; gap: 6px;
+        background: none; border: none; cursor: pointer;
+        font-size: 14px; font-weight: 700; color: #111;
+        font-family: 'Nunito', sans-serif; padding: 8px 0;
+        white-space: nowrap;
+    }
+    .ppl-sort-dd {
+        display: none; position: absolute; top: 100%; right: 0;
+        background: #fff; min-width: 180px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.15);
+        border-radius: 12px; padding: 8px 0; z-index: 200;
+        border: 1px solid #eee;
+    }
+    .ppl-sort-wrap:hover .ppl-sort-dd { display: block; }
+    .ppl-sort-dd a {
+        display: block; padding: 10px 20px;
+        color: #444; font-size: 14px; font-weight: 600;
+        transition: background .2s; font-family: 'Nunito', sans-serif;
+    }
+    .ppl-sort-dd a:hover { background: #f5f5f5; color: #000; }
 
-    {{-- KONTEN --}}
-    <div class="bh-grid-wrap">
+    /* ── HIRE BANNER ── */
+    .hire-banner {
+        position: relative; width: 100%; height: 220px;
+        margin-bottom: 28px; border-radius: 10px; overflow: hidden;
+        background: url('https://picsum.photos/seed/hirebanner/1400/400') center/cover no-repeat;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .hire-banner::before {
+        content: ''; position: absolute; inset: 0;
+        background: rgba(0,0,0,.55);
+    }
+    .hire-banner-content { position: relative; z-index: 1; text-align: center; color: #fff; }
+    .hire-banner-content h2 { font-size: 32px; font-weight: 900; margin-bottom: 10px; letter-spacing: -.5px; }
+    .hire-banner-content p { font-size: 15px; color: rgba(255,255,255,.85); margin-bottom: 20px; line-height: 1.6; }
+    .hire-banner-btn {
+        display: inline-block; padding: 10px 28px;
+        border: 2px solid #fff; border-radius: 40px;
+        color: #fff; font-size: 14px; font-weight: 700;
+        text-decoration: none; transition: all .2s; background: transparent;
+        font-family: 'Nunito', sans-serif;
+    }
+    .hire-banner-btn:hover { background: #fff; color: #111; }
 
-    @if($type === 'people')
-        {{-- ── PEOPLE GRID ── --}}
-        @if($people->isEmpty())
-            <div class="bh-empty">
-                <div class="bh-empty-icon"><i class="fas fa-users"></i></div>
-                <h3>Tidak ada kreator ditemukan</h3>
-                <p>Coba kata kunci lain</p>
-            </div>
-        @else
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;padding-bottom:48px;">
-            @foreach($people as $person)
-            <div style="background:#fff;border:1.5px solid #f0f0f0;border-radius:12px;overflow:hidden;text-align:center;padding:24px 16px 20px;transition:box-shadow .2s;cursor:pointer;"
-                 onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,.1)'"
-                 onmouseout="this.style.boxShadow='none'">
+    /* ── PEOPLE GRID ── */
+    .people-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px; padding-bottom: 48px;
+    }
+    .people-card {
+        background: #fff; border-radius: 8px; overflow: hidden;
+        border: 1px solid #e5e5e5;
+        transition: transform .2s, box-shadow .2s; cursor: pointer;
+    }
+    .people-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,0,0,.10); }
+    .people-card-cover {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        height: 90px; overflow: hidden;
+    }
+    .people-card-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .people-card-body {
+        display: flex; flex-direction: column;
+        align-items: center; padding: 0 20px 20px; text-align: center;
+    }
+    .people-avatar {
+        width: 80px; height: 80px; border-radius: 50%;
+        object-fit: cover; border: 3px solid #fff;
+        box-shadow: 0 2px 10px rgba(0,0,0,.15);
+        margin-top: -40px; margin-bottom: 10px; background: #eee;
+    }
+    .people-name { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .people-location {
+        font-size: 12px; color: #888; margin-bottom: 8px;
+        display: flex; align-items: center; gap: 4px;
+    }
+    .people-tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px; }
+    .people-tag { font-size: 12px; font-weight: 700; border: 1.5px solid; border-radius: 20px; padding: 2px 10px; }
+    .people-stats {
+        display: flex; align-items: center; width: 100%;
+        border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0;
+        padding: 12px 0; margin-bottom: 14px;
+    }
+    .people-stat { flex: 1; text-align: center; }
+    .people-stat-num { font-size: 15px; font-weight: 800; color: #111; }
+    .people-stat-label { font-size: 11px; color: #aaa; font-weight: 600; }
+    .people-stat-divider { width: 1px; height: 28px; background: #f0f0f0; }
+    .people-msg-btn {
+        width: 100%; padding: 10px; border: 1.5px solid #e0e0e0;
+        border-radius: 6px; background: #fff; font-size: 13px;
+        font-weight: 700; color: #111; cursor: pointer;
+        font-family: 'Nunito', sans-serif; transition: all .14s;
+    }
+    .people-msg-btn:hover { border-color: #0057ff; color: #0057ff; background: #f0f5ff; }
 
-                {{-- Cover / project strip --}}
-                <div style="margin:-24px -16px 16px;height:80px;background:#f5f5f5;overflow:hidden;">
-                    <div style="display:flex;height:100%;">
-                        @php $seed = $person->id ?? rand(1,999); @endphp
-                        <img src="https://picsum.photos/seed/{{ $seed }}a/120/80" style="width:33.33%;height:100%;object-fit:cover;" loading="lazy">
-                        <img src="https://picsum.photos/seed/{{ $seed }}b/120/80" style="width:33.33%;height:100%;object-fit:cover;" loading="lazy">
-                        <img src="https://picsum.photos/seed/{{ $seed }}c/120/80" style="width:33.33%;height:100%;object-fit:cover;" loading="lazy">
-                    </div>
-                </div>
+    /* ── FOOTER ── */
+    .ppl-footer {
+        background: #fff; border-top: 1px solid #e5e5e5;
+        padding: 28px 32px; margin-top: 20px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .ppl-footer-links { display: flex; gap: 20px; font-size: 13px; color: #888; }
+    .ppl-footer-links a:hover { color: #111; }
+</style>
 
-                {{-- Avatar --}}
-                <img src="{{ $person->avatar && Str::startsWith($person->avatar, 'http') ? $person->avatar : 'https://i.pravatar.cc/80?u='.$person->username }}"
-                     alt="{{ $person->name }}"
-                     style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12);margin-bottom:10px;"
-                     onerror="this.src='https://i.pravatar.cc/80?u={{ $person->username }}'">
-
-                <div style="font-size:15px;font-weight:800;color:#111;margin-bottom:2px;">{{ $person->name }}</div>
-                <div style="font-size:12px;color:#999;margin-bottom:6px;">@{{ $person->username }}</div>
-
-                @if($person->location)
-                <div style="font-size:12px;color:#aaa;margin-bottom:8px;">
-                    <i class="fas fa-map-marker-alt" style="font-size:10px;"></i> {{ $person->location }}
-                </div>
-                @endif
-
-                <div style="display:flex;justify-content:center;gap:20px;margin-top:10px;">
-                    <div>
-                        <div style="font-size:14px;font-weight:800;color:#111;">{{ number_format($person->followers_count) }}</div>
-                        <div style="font-size:11px;color:#aaa;">Followers</div>
-                    </div>
-                    <div>
-                        <div style="font-size:14px;font-weight:800;color:#111;">{{ number_format($person->following_count) }}</div>
-                        <div style="font-size:11px;color:#aaa;">Following</div>
-                    </div>
-                </div>
-            </div>
+{{-- ── PEOPLE FILTER BAR ── --}}
+<div class="ppl-bar">
+    {{-- Search Pill --}}
+    <div class="ppl-search-pill">
+        <i class="fas fa-search" style="color:#777;font-size:13px"></i>
+        <form action="{{ route('explore') }}" method="GET" style="flex:1;display:flex;">
+            <input type="hidden" name="type" value="people">
+            @foreach((array)request('availability', []) as $a)
+                <input type="hidden" name="availability[]" value="{{ $a }}">
             @endforeach
-        </div>
-        <div class="bh-pagination-wrap">
-            {{ $people->withQueryString()->links() }}
-        </div>
-        @endif
+            @foreach((array)request('location', []) as $l)
+                <input type="hidden" name="location[]" value="{{ $l }}">
+            @endforeach
+            <input type="text" name="q" value="{{ request('q') }}" placeholder="Search people...">
+        </form>
 
-    @else
-        {{-- ── PROJECT GRID ── --}}
-        @if($projects->isEmpty())
-            <div class="bh-empty">
-                <div class="bh-empty-icon"><i class="fas fa-search"></i></div>
-                <h3>Tidak ada project ditemukan</h3>
-                <p>Coba kata kunci lain atau ubah filter</p>
-                <a href="{{ route('explore') }}" class="bh-btn-blue" style="margin:0 auto;">Lihat Semua Project</a>
-            </div>
-        @else
-        <div class="bh-grid" id="projects-grid">
-            @foreach($projects as $project)
-            <a href="{{ route('projects.show', $project->slug) }}" class="bh-card">
-                <div class="bh-card-img-wrap">
-                    <img src="{{ $project->cover_image
-                                ? (Str::startsWith($project->cover_image, 'http')
-                                    ? $project->cover_image
-                                    : asset('storage/' . $project->cover_image))
-                                : 'https://picsum.photos/seed/' . $project->id . '/480/340' }}"
-                         alt="{{ $project->title }}"
-                         class="bh-card-img"
-                         loading="lazy"
-                         onerror="this.src='https://picsum.photos/seed/{{ $project->id }}x/480/340'">
-                    <div class="bh-card-overlay">
-                        <div class="bh-overlay-row">
-                            @auth
-                            <button class="bh-overlay-btn {{ $project->is_liked ?? false ? 'liked' : '' }}"
-                                    onclick="event.preventDefault(); toggleLike({{ $project->id }}, this)">
-                                <i class="fas fa-heart"></i>
-                                <span>{{ number_format($project->likes_count) }}</span>
-                            </button>
-                            <button class="bh-overlay-btn {{ $project->is_bookmarked ?? false ? 'bookmarked' : '' }}"
-                                    onclick="event.preventDefault(); toggleBookmark({{ $project->id }}, this)">
-                                <i class="fas fa-bookmark"></i>
-                            </button>
-                            @endauth
-                            <span class="bh-overlay-views" style="{{ auth()->check() ? '' : 'margin-left:auto' }}">
-                                <i class="fas fa-eye"></i>
-                                {{ number_format($project->views_count) }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bh-card-body">
-                    <div class="bh-card-title">{{ $project->title }}</div>
-                    <div class="bh-card-meta">
-                        <img src="{{ $project->creator_avatar
-                                        ? (Str::startsWith($project->creator_avatar, 'http')
-                                            ? $project->creator_avatar
-                                            : asset('storage/' . $project->creator_avatar))
-                                        : 'https://i.pravatar.cc/44?u=' . $project->creator_username }}"
-                             alt="{{ $project->creator_name }}"
-                             class="bh-card-avatar"
-                             onerror="this.src='https://i.pravatar.cc/44?u={{ $project->creator_username }}'">
-                        <span class="bh-card-author">{{ $project->creator_name }}</span>
-                        <span class="bh-card-likes">
-                            <i class="fas fa-heart"></i>
-                            {{ number_format($project->likes_count) }}
-                        </span>
-                    </div>
-                </div>
+        <div class="ppl-inner-tabs">
+            <a href="{{ route('explore', array_merge(request()->except('type'), ['type'=>'projects'])) }}"
+               class="ppl-inner-tab">Projects</a>
+            <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'people'])) }}"
+               class="ppl-inner-tab active">People</a>
+            <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'assets'])) }}"
+               class="ppl-inner-tab">Assets</a>
+            <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'images'])) }}"
+               class="ppl-inner-tab">Images</a>
+        </div>
+
+        <div class="ppl-divider"></div>
+        <div style="color:#555;font-size:15px;margin-right:10px;cursor:pointer;">
+            <i class="fas fa-wand-magic-sparkles"></i>
+        </div>
+    </div>
+
+    {{-- Sort Dropdown --}}
+    <div class="ppl-sort-wrap">
+        @php
+            $sortLabels = ['trending'=>'Trending','newest'=>'Terbaru','popular'=>'Paling Dilihat','most_liked'=>'Paling Disukai'];
+            $currentSort = request('sort', 'trending');
+        @endphp
+        <button class="ppl-sort-btn">
+            <i class="fas fa-bars-staggered" style="font-size:13px"></i>
+            {{ $sortLabels[$currentSort] ?? 'Recommended' }}
+            <i class="fas fa-chevron-down" style="font-size:10px"></i>
+        </button>
+        <div class="ppl-sort-dd">
+            @foreach($sortLabels as $val => $label)
+            <a href="{{ route('explore', array_merge(request()->except('sort'), ['sort'=>$val])) }}"
+               style="{{ $currentSort===$val ? 'font-weight:800;color:#0057ff' : '' }}">
+                {{ $label }}
             </a>
             @endforeach
         </div>
-        <div class="bh-pagination-wrap">
-            {{ $projects->withQueryString()->links() }}
+    </div>
+</div>
+
+{{-- ── KONTEN PEOPLE ── --}}
+<div style="padding: 24px 32px;">
+
+    {{-- Hire Banner --}}
+    <div class="hire-banner">
+        <div class="hire-banner-content">
+            <h2>Looking to Hire a Creator?</h2>
+            <p>Over 1 million creatives are available for freelance or<br>full-time work on our Hire page.</p>
+            <a href="/hire" class="hire-banner-btn">View our Hire Page</a>
         </div>
-        @endif
+    </div>
+
+    {{-- Count --}}
+    <div style="font-size:13px;color:#999;font-weight:700;margin-bottom:16px;">
+        {{ number_format($people->count()) }} people
+    </div>
+
+    {{-- Grid --}}
+    @if($people->isEmpty())
+        <div class="bh-empty">
+            <div class="bh-empty-icon"><i class="fas fa-users"></i></div>
+            <h3>Tidak ada kreator ditemukan</h3>
+            <p>Coba kata kunci lain</p>
+        </div>
+    @else
+    <div class="people-grid" id="people-grid">
+        @foreach($people as $person)
+        <div class="people-card">
+            <div class="people-card-cover">
+                @php $seed = $person->id ?? rand(1,999); @endphp
+                <img src="https://picsum.photos/seed/{{ $seed }}a/120/80" loading="lazy">
+                <img src="https://picsum.photos/seed/{{ $seed }}b/120/80" loading="lazy">
+                <img src="https://picsum.photos/seed/{{ $seed }}c/120/80" loading="lazy">
+                <img src="https://picsum.photos/seed/{{ $seed }}d/120/80" loading="lazy">
+            </div>
+            <div class="people-card-body">
+                <img class="people-avatar"
+                     src="{{ $person->avatar && Str::startsWith($person->avatar, 'http') ? $person->avatar : 'https://i.pravatar.cc/100?u='.$person->username }}"
+                     alt="{{ $person->name }}"
+                     onerror="this.src='https://i.pravatar.cc/100?u={{ $person->username }}'">
+
+                <div class="people-name">{{ $person->name }}</div>
+
+                @if($person->location)
+                <div class="people-location">
+                    <i class="fas fa-map-marker-alt" style="font-size:10px"></i> {{ $person->location }}
+                </div>
+                @endif
+
+                @php
+                    $availMap = [
+                        'available' => ['label'=>'Available for Work','color'=>'#0057ff'],
+                        'freelance' => ['label'=>'Freelance','color'=>'#e67e22'],
+                        'fulltime'  => ['label'=>'Full-Time','color'=>'#2ecc71'],
+                        'not_available' => ['label'=>'Not Available','color'=>'#999'],
+                    ];
+                    $avail = $availMap[$person->availability ?? ''] ?? null;
+                @endphp
+                @if($avail)
+                <div class="people-tags">
+                    <span class="people-tag" style="color:{{ $avail['color'] }};border-color:{{ $avail['color'] }}">
+                        {{ $avail['label'] }}
+                    </span>
+                </div>
+                @endif
+
+                <div class="people-stats">
+                    <div class="people-stat">
+                        <div class="people-stat-num">{{ number_format($person->followers_count ?? 0) }}</div>
+                        <div class="people-stat-label">Followers</div>
+                    </div>
+                    <div class="people-stat-divider"></div>
+                    <div class="people-stat">
+                        <div class="people-stat-num">{{ number_format($person->following_count ?? 0) }}</div>
+                        <div class="people-stat-label">Following</div>
+                    </div>
+                    <div class="people-stat-divider"></div>
+                    <div class="people-stat">
+                        <div class="people-stat-num">{{ number_format($person->project_count ?? 0) }}</div>
+                        <div class="people-stat-label">Projects</div>
+                    </div>
+                </div>
+
+                <button class="people-msg-btn">Message {{ explode(' ', $person->name)[0] }}</button>
+            </div>
+        </div>
+        @endforeach
+    </div>
+    @endif
+</div>
+
+{{-- ── FOOTER ── --}}
+<div class="ppl-footer">
+    <div class="ppl-footer-links">
+        <a href="#">Try Behance Pro</a>
+        <a href="#">Privacy</a>
+        <a href="#">Help</a>
+        <a href="#">Cookie Preferences</a>
+    </div>
+    <div style="font-size:12px;color:#bbb;">© {{ date('Y') }} Adobe Inc. All rights reserved.</div>
+</div>
+
+{{-- ════════════════════════════════════════
+     PROJECTS / ASSETS / IMAGES — Layout lama
+════════════════════════════════════════ --}}
+@else
+<div class="bh-main-content" id="bh-main-content">
+
+    {{-- ── HERO ── --}}
+@if($type === 'projects' && !request('q') && !request('category') && !request('fields') && !request('availability') && !request('location') && !request('tools') && !request('color') && (!request('sort') || request('sort') === 'trending'))
+<div class="bh-hero-new">
+    <div class="bh-hero-center">
+        <h1>The World's<br><span>Best Creators</span><br>Are On Behance</h1>
+        <p>A comprehensive platform to help hirers and creators navigate the creative world.</p>
+        <div class="bh-hero-btns">
+            @auth
+                <a href="{{ route('projects.create') }}" class="bh-btn-blue">Upload Project</a>
+                <a href="{{ route('dashboard') }}" class="bh-btn-ghost">Dashboard</a>
+            @else
+                <a href="{{ route('register') }}" class="bh-btn-blue">Hire a Freelancer</a>
+                <a href="{{ route('login') }}" class="bh-btn-ghost">Try Behance Pro</a>
+            @endauth
+        </div>
+    </div>
+</div>
+@endif
+
+    {{-- ── FILTER BAR (di bawah hero, sticky saat scroll) ── --}}
+    <div class="exp-topbar" id="exp-topbar">
+        <button class="exp-filter-pill-btn" onclick="openFilter()">
+            <i class="fas fa-sliders-h"></i>
+            <span>Filter</span>
+        </button>
+
+        <div class="exp-search-pill">
+            <i class="fas fa-search" style="color:#777;font-size:13px;flex-shrink:0"></i>
+            <form method="GET" action="{{ route('explore') }}" style="flex:1;display:flex;">
+                <input type="hidden" name="sort" value="{{ request('sort', 'trending') }}">
+                <input type="hidden" name="category" value="{{ request('category') }}">
+                @foreach((array)request('fields', []) as $f)
+                    <input type="hidden" name="fields[]" value="{{ $f }}">
+                @endforeach
+                @foreach((array)request('availability', []) as $a)
+                    <input type="hidden" name="availability[]" value="{{ $a }}">
+                @endforeach
+                @foreach((array)request('location', []) as $l)
+                    <input type="hidden" name="location[]" value="{{ $l }}">
+                @endforeach
+                @foreach((array)request('tools', []) as $t)
+                    <input type="hidden" name="tools[]" value="{{ $t }}">
+                @endforeach
+                @if(request('color'))
+                    <input type="hidden" name="color" value="{{ request('color') }}">
+                @endif
+                <input type="text" name="q" value="{{ request('q') }}"
+                       placeholder="Search Behance..."
+                       style="border:none;background:transparent;outline:none;flex:1;font-size:14px;font-weight:500;font-family:'Nunito',sans-serif;">
+            </form>
+
+            <div class="exp-inner-tabs">
+                <a href="{{ route('explore', array_merge(request()->except('type'), ['type'=>'projects'])) }}"
+                   class="exp-inner-tab {{ (!request('type') || request('type')==='projects') ? 'active' : '' }}">Projects</a>
+                <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'people'])) }}"
+                   class="exp-inner-tab {{ request('type')==='people' ? 'active' : '' }}">People</a>
+                <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'assets'])) }}"
+                   class="exp-inner-tab {{ request('type')==='assets' ? 'active' : '' }}">Assets</a>
+                <a href="{{ route('explore', array_merge(request()->only('q','sort'), ['type'=>'images'])) }}"
+                   class="exp-inner-tab {{ request('type')==='images' ? 'active' : '' }}">Images</a>
+            </div>
+
+            <div style="width:1px;height:20px;background:#ddd;margin:0 6px;flex-shrink:0"></div>
+            <div style="color:#555;font-size:15px;margin-right:8px;cursor:pointer;flex-shrink:0">
+                <i class="fas fa-wand-magic-sparkles"></i>
+            </div>
+        </div>
+
+        <div class="exp-sort-wrap">
+            @php
+                $sortLabels = ['trending'=>'Trending','newest'=>'Terbaru','popular'=>'Paling Dilihat','most_liked'=>'Paling Disukai'];
+                $currentSort = request('sort', 'trending');
+            @endphp
+            <button class="exp-sort-btn">
+                <i class="fas fa-bars-staggered" style="font-size:13px"></i>
+                {{ $sortLabels[$currentSort] ?? 'Recommended' }}
+                <i class="fas fa-chevron-down" style="font-size:10px"></i>
+            </button>
+            <div class="exp-sort-dd">
+                @foreach($sortLabels as $val => $label)
+                <a href="{{ route('explore', array_merge(request()->except('sort','page'), ['sort'=>$val])) }}"
+                   style="{{ $currentSort===$val ? 'font-weight:800;color:#0057ff' : '' }}">{{ $label }}</a>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    {{-- ── CATEGORY BAR ── --}}
+    <div class="exp-cat-bar">
+    {{-- For You: aktif hanya saat tidak ada category DAN sort default --}}
+    <a href="{{ route('explore', ['type'=>'projects']) }}"
+       class="exp-cat-card {{ (!request('category') && (!request('sort') || request('sort') === 'trending')) ? 'active' : '' }}">
+        <img src="https://picsum.photos/seed/foryou/200/100">
+        <div class="exp-cat-overlay"></div>
+        <span>☆ For You</span>
+    </a>
+
+    {{-- Following: aktif saat sort=newest --}}
+    <a href="{{ route('explore', ['sort'=>'newest', 'type'=>'projects']) }}"
+       class="exp-cat-card {{ request('sort') === 'newest' && !request('category') ? 'active' : '' }}">
+        <img src="https://picsum.photos/seed/following/200/100">
+        <div class="exp-cat-overlay"></div>
+        <span>♡ Following</span>
+    </a>
+
+    {{-- Best of Behance: aktif saat sort=popular --}}
+    <a href="{{ route('explore', ['sort'=>'popular', 'type'=>'projects']) }}"
+       class="exp-cat-card {{ request('sort') === 'popular' && !request('category') ? 'active' : '' }}">
+        <img src="https://picsum.photos/seed/bestof/200/100">
+        <div class="exp-cat-overlay"></div>
+        <span>✦ Best of Behance</span>
+    </a>
+
+    {{-- Kategori dinamis --}}
+    @foreach($categories as $cat)
+    <a href="{{ route('explore', array_merge(request()->except('category','page','sort'), ['category'=>$cat->slug, 'type'=>'projects'])) }}"
+       class="exp-cat-card {{ request('category')===$cat->slug ? 'active' : '' }}">
+        <img src="https://picsum.photos/seed/{{ $cat->slug }}/200/100" alt="{{ $cat->name }}">
+        <div class="exp-cat-overlay"></div>
+        <span>@if($cat->icon){{ $cat->icon }} @endif{{ $cat->name }}</span>
+    </a>
+    @endforeach
+</div>
+
+    {{-- ── PROJECT GRID ── --}}
+    @if($projects->isEmpty())
+        <div class="bh-empty" style="padding:80px 20px">
+            <div class="bh-empty-icon"><i class="fas fa-search"></i></div>
+            <h3>Tidak ada project ditemukan</h3>
+            <p>Coba kata kunci lain atau ubah filter</p>
+            <a href="{{ route('explore') }}" class="bh-btn-blue" style="margin:0 auto;">Lihat Semua</a>
+        </div>
+    @else
+    <div class="exp-projects-grid" id="projects-grid">
+        @foreach($projects as $project)
+        <a href="{{ route('projects.show', $project->slug) }}" class="exp-card">
+            <div class="exp-card-img-wrap">
+                <img src="{{ $project->cover_image
+                            ? (Str::startsWith($project->cover_image,'http')
+                                ? $project->cover_image
+                                : asset('storage/'.$project->cover_image))
+                            : 'https://picsum.photos/seed/'.$project->id.'/480/300' }}"
+                     alt="{{ $project->title }}"
+                     class="exp-card-img" loading="lazy"
+                     onerror="this.src='https://picsum.photos/seed/{{ $project->id }}x/480/300'">
+                <div class="exp-card-overlay">
+                    <div class="exp-overlay-row">
+                        @auth
+                        <button class="exp-overlay-btn {{ $project->is_liked ?? false ? 'liked' : '' }}"
+                                onclick="event.preventDefault(); toggleLike({{ $project->id }}, this)">
+                            <i class="fas fa-heart"></i>
+                            <span>{{ number_format($project->likes_count) }}</span>
+                        </button>
+                        <button class="exp-overlay-btn {{ $project->is_bookmarked ?? false ? 'bookmarked' : '' }}"
+                                onclick="event.preventDefault(); toggleBookmark({{ $project->id }}, this)">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                        @endauth
+                        <span class="exp-overlay-views">
+                            <i class="fas fa-eye"></i> {{ number_format($project->views_count) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="exp-card-body">
+                <div class="exp-card-title">{{ $project->title }}</div>
+                <div class="exp-card-meta">
+                    <img src="{{ $project->creator_avatar
+                                    ? (Str::startsWith($project->creator_avatar,'http')
+                                        ? $project->creator_avatar
+                                        : asset('storage/'.$project->creator_avatar))
+                                    : 'https://i.pravatar.cc/44?u='.$project->creator_username }}"
+                         class="exp-card-avatar"
+                         onerror="this.src='https://i.pravatar.cc/44?u={{ $project->creator_username }}'">
+                    <span class="exp-card-author">{{ $project->creator_name }}</span>
+                    <span class="exp-card-likes">
+                        <i class="fas fa-heart"></i> {{ number_format($project->likes_count) }}
+                    </span>
+                </div>
+            </div>
+        </a>
+        @endforeach
+    </div>
+    <div id="exp-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
     @endif
 
-    </div>{{-- /.bh-grid-wrap --}}
+    {{-- ── LOGIN GATE (inline, tepat di bawah grid) ── --}}
+<div id="exp-login-gate" style="display:none; padding: 60px 20px 80px; text-align: center; border-top: 1px solid #eee;">
+    <h2 style="font-size:24px;font-weight:800;color:#111;margin-bottom:10px;line-height:1.3;">
+        Log in or sign up to view more projects
+    </h2>
+    <p style="font-size:14px;color:#888;margin-bottom:28px;line-height:1.6;">
+        Join millions of creatives on Behance to discover, share, and get inspired.
+    </p>
 
-</div>{{-- /.bh-main-content --}}
+    <div style="max-width:400px;margin:0 auto;">
+        <div style="
+            border: 1.5px solid #d0d0d0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            background: #fff;
+            text-align: left;
+        ">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input type="email" placeholder="Email address"
+                   style="border:none;outline:none;flex:1;font-size:14px;font-family:'Nunito',sans-serif;color:#111;background:transparent;">
+        </div>
+
+        <a href="{{ route('login') }}" style="
+            display: block;
+            width: 100%;
+            padding: 13px;
+            background: #111;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            text-decoration: none;
+            margin-bottom: 16px;
+        ">Continue</a>
+
+        <div style="font-size:13px;color:#888;margin-bottom:12px;">
+            Already have an account?
+            <a href="{{ route('login') }}" style="color:#0057ff;font-weight:700;">Sign In</a>
+        </div>
+
+        <div style="font-size:11px;color:#bbb;line-height:1.6;">
+            By continuing, you agree to our
+            <a href="#" style="color:#bbb;text-decoration:underline;">Terms of Use</a> and
+            <a href="#" style="color:#bbb;text-decoration:underline;">Privacy Policy</a>.
+        </div>
+    </div>
+</div>
+
+    <div class="exp-footer">
+        <div class="exp-footer-links">
+            <a href="#">Try Behance Pro</a>
+            <a href="#">Privacy</a>
+            <a href="#">Help</a>
+            <a href="#">Cookie Preferences</a>
+        </div>
+        <div style="font-size:12px;color:#bbb;">© {{ date('Y') }} Adobe Inc. All rights reserved.</div>
+    </div>
+
+</div>
+
+@endif
 
 @endsection
 
@@ -722,13 +1609,15 @@ const csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 function openFilter() {
     document.getElementById('filter-sidebar').classList.add('open');
     document.getElementById('filter-overlay').classList.add('open');
-    document.getElementById('bh-main-content').classList.add('sidebar-open');
+    const main = document.getElementById('bh-main-content');
+    if (main) main.classList.add('sidebar-open');
     document.body.style.overflow = 'hidden';
 }
 function closeFilter() {
     document.getElementById('filter-sidebar').classList.remove('open');
     document.getElementById('filter-overlay').classList.remove('open');
-    document.getElementById('bh-main-content').classList.remove('sidebar-open');
+    const main = document.getElementById('bh-main-content');
+    if (main) main.classList.remove('sidebar-open');
     document.body.style.overflow = '';
 }
 function toggleSection(btn) {
@@ -782,28 +1671,98 @@ async function toggleBookmark(id, btn) {
     } catch(e) { console.error(e); }
 }
 
-// ── VIEW TOGGLE ──
-function setView(mode) {
-    const grid = document.getElementById('projects-grid');
-    const btnG = document.getElementById('btn-grid');
-    const btnL = document.getElementById('btn-list');
-    if (!grid) return;
-    if (mode === 'list') {
-        grid.classList.add('list-view');
-        btnG.classList.remove('active'); btnL.classList.add('active');
-        localStorage.setItem('explore_view', 'list');
-    } else {
-        grid.classList.remove('list-view');
-        btnG.classList.add('active'); btnL.classList.remove('active');
-        localStorage.setItem('explore_view', 'grid');
-    }
+// ── INFINITE SCROLL ──
+@if($type !== 'people')
+(function() {
+    let page = 2;
+    let loading = false;
+    @auth
+    let hasMore = {{ $projects->hasMorePages() ? 'true' : 'false' }};
+@else
+    let hasMore = {{ $projects->count() < 30 ? 'false' : 'true' }};
+    let isGuest = true;
+@endauth
+
+    async function loadMore() {
+        if (loading || !hasMore) return;
+
+      @guest
+if (isGuest) {
+    hasMore = false;
+    document.getElementById('exp-login-gate').style.display = 'block';
+    return;
 }
+@endguest
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('explore_view') === 'list') setView('list');
-});
+        loading = true;
+        document.getElementById('exp-loading').style.display = 'block';
 
-// Shortcut '/' untuk focus search
+        const params = new URLSearchParams(window.location.search);
+        params.set('page', page);
+
+        try {
+            const res = await fetch(`{{ route('explore') }}?${params}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            });
+            const data = await res.json();
+
+            if (!data.projects || data.projects.length === 0) {
+                hasMore = false;
+            } else {
+                const grid = document.getElementById('projects-grid');
+                data.projects.forEach(p => {
+                    const cover = p.cover_image
+                        ? (p.cover_image.startsWith('http') ? p.cover_image : `/storage/${p.cover_image}`)
+                        : `https://picsum.photos/seed/${p.id}/480/300`;
+                    const avatar = p.creator_avatar
+                        ? (p.creator_avatar.startsWith('http') ? p.creator_avatar : `/storage/${p.creator_avatar}`)
+                        : `https://i.pravatar.cc/44?u=${p.creator_username}`;
+                    grid.insertAdjacentHTML('beforeend', `
+                        <a href="/projects/${p.slug}" class="exp-card">
+                            <div class="exp-card-img-wrap">
+                                <img src="${cover}" class="exp-card-img" loading="lazy"
+                                     onerror="this.src='https://picsum.photos/seed/${p.id}x/480/300'">
+                                <div class="exp-card-overlay">
+                                    <div class="exp-overlay-row">
+                                        <span class="exp-overlay-views">
+                                            <i class="fas fa-eye"></i> ${(p.views_count||0).toLocaleString()}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exp-card-body">
+                                <div class="exp-card-title">${p.title}</div>
+                                <div class="exp-card-meta">
+                                    <img src="${avatar}" class="exp-card-avatar"
+                                         onerror="this.src='https://i.pravatar.cc/44?u=${p.creator_username}'">
+                                    <span class="exp-card-author">${p.creator_name}</span>
+                                    <span class="exp-card-likes">
+                                        <i class="fas fa-heart"></i> ${(p.likes_count||0).toLocaleString()}
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    `);
+                });
+                hasMore = data.has_more ?? false;
+                page++;
+            }
+        } catch(e) { console.error(e); }
+        finally {
+            loading = false;
+            document.getElementById('exp-loading').style.display = 'none';
+        }
+    }
+
+    window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 800) loadMore();
+    });
+})();
+@endif
+
 document.addEventListener('keydown', e => {
     if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
         e.preventDefault();

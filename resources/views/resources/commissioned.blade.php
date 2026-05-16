@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-     <script src="https://cdn.tailwindcss.com"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kickstart your career with Adobe as your first client | Behance</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+@extends('layouts.app')
+@section('title', 'Commissioned Projects')
+
+@push('styles')
+
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -371,10 +368,14 @@
             .hero-content h1 { font-size: 32px; }
             .projects-grid { grid-template-columns: 1fr; }
         }
-    </style>
+
+        </style>
+
+@endpush
+
 </head>
 
-@include('partials.navbar')
+@section('content')
 
 <body class="antialiased tracking-tight">
 
@@ -629,6 +630,6 @@
 </div>
 </body>
 
-@include('partials.footer')
+@endsection
 
 </html>

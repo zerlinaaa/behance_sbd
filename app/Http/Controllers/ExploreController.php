@@ -14,6 +14,10 @@ class ExploreController extends Controller
      */
     public function index(Request $request)
     {
+
+     if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
         $type = $request->get('type', 'projects');
 
         // ══════════════════════════════════════════════════
@@ -48,8 +52,7 @@ class ExploreController extends Controller
 
             $people = $peopleQuery
                 ->orderByDesc('followers_count')
-                ->paginate(40)
-                ->withQueryString();
+                ->get();
         }
 
         // ══════════════════════════════════════════════════
@@ -125,7 +128,8 @@ class ExploreController extends Controller
             default      => $query->orderByDesc('p.likes_count')->orderByDesc('p.views_count'),
         };
 
-        $projects = $query->paginate(243)->withQueryString();
+        $perPage = auth()->check() ? 24 : 30;
+$projects = $query->paginate($perPage)->withQueryString();
 
         // ── Kategori untuk pill nav + sidebar
         $categories = DB::table('categories as c')
@@ -167,6 +171,13 @@ class ExploreController extends Controller
             'black'  => '#111111', 'white'  => '#f5f5f5',
             'gray'   => '#95a5a6', 'teal'   => '#1abc9c',
         ];
+
+        if ($request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+    return response()->json([
+        'projects' => $projects->items(),
+        'has_more' => $projects->hasMorePages(),
+    ]);
+}
 
         return view('explore', compact(
             'projects', 'categories', 'locations',

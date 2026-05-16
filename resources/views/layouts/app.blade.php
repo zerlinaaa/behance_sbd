@@ -169,7 +169,7 @@
     gap: 10px;
 
     position: sticky;
-    top: 64px; /* tinggi navbar kamu */
+    top: 52px; /* tinggi navbar kamu */
     z-index: 40;
 }
         .bh-filter-btn {
@@ -255,7 +255,7 @@
     border-bottom: 1px solid #e0e0e0;
 
     position: sticky;
-    top: calc(64px + var(--nav2-h));
+    top: calc(52px + var(--nav2-h));
     z-index: 30;
 }
         .bh-nav3-scroll {
@@ -381,24 +381,15 @@
 </head>
 <body class="antialiased tracking-tight">
 
-@include('partials.navbar')
+@auth
+    @include('partials.navbarlogin')
+@else
+    @include('partials.navbar')
+@endauth
 
 @stack('subnav')
 
-<div class="container page-content">
-    @if(session('success'))
-        <div class="alert alert-success" style="margin-top:16px">
-            <i class="fas fa-check-circle"></i> {{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="alert alert-error" style="margin-top:16px">
-            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-        </div>
-    @endif
-
-    @yield('content')
-</div>
+@yield('content')
 
 @stack('scripts')
 

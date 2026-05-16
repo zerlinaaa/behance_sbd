@@ -2,7 +2,7 @@
     <div class="flex items-center space-x-7">
         <div class="text-[22px] font-black tracking-tighter cursor-pointer" style="min-width: 89px;">Bēhance</div>
         <nav class="hidden md:flex items-center space-x-6 text-[15px] font-bold">
-            <a href="{{ route('explore') }}" class="hover:text-gray-500 transition">Explore</a>
+            <a href="{{ route('dashboard') }}" class="hover:text-gray-500 transition">Explore</a>
             <a href="{{ route('jobs') }}" class="hover:text-gray-500 transition">Jobs</a>
             <a href="{{ route('client-work') }}" class="hover:text-gray-500 transition">Client Work</a>
 
