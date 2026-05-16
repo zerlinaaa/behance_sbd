@@ -114,11 +114,10 @@ class ExploreController extends Controller
                 }
             });
         }
-
-        // ── Filter: Color
-        if ($color = $request->get('color')) {
-            $query->where($color);
-        }
+    // ── Filter: Color
+    if ($color = $request->get('color')) {
+    $query->where('p.color', $color);
+    }
 
         // ── Sort
         match ($request->get('sort', 'trending')) {

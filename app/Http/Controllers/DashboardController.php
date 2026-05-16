@@ -128,6 +128,19 @@ class DashboardController extends Controller
             $query->whereIn('c.slug', (array) $fields);
         }
 
+        // Filter: Tools (JSON search)
+        if ($tools = $request->get('tools')) {
+        $query->where(function ($q) use ($tools) {
+        foreach ((array) $tools as $tool) {
+            $q->orWhereRaw("JSON_SEARCH(p.tools, 'one', ?) IS NOT NULL", [$tool]);
+        }
+     });
+    }   
+        // Filter: Color
+        if ($color = $request->get('color')) {
+        $query->where('p.color', $color);
+        }
+
         // Sort
         match ($sort) {
             'newest'     => $query->orderByDesc('p.created_at'),

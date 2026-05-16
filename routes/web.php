@@ -65,3 +65,4 @@ Route::get('/hire/freelancers', [HireController::class, 'freelance'])->name('hir
 // ── Halaman statis
 Route::get('/jobs',        function() { return view('jobs'); })->name('jobs');
 Route::get('/client-work', function() { return view('client_work'); })->name('client-work');
+Route::get('/users/{username}', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');

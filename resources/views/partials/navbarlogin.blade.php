@@ -45,7 +45,7 @@
         
         @auth
     <a href="{{ route('projects.create') }}" class="border border-gray-200 px-4 py-2 rounded-full text-[14px] font-bold hover:text-gray-500 transition">+ Project</a>
-    <a href="{{ route('dashboard') }}" class="border border-gray-200 px-4 py-2 rounded-full text-[14px] font-bold hover:text-gray-500 transition">{{ auth()->user()->name }}</a>
+    <a href="{{ route('profile.show', auth()->user()->username) }}" class="border border-gray-200 px-4 py-2 rounded-full text-[14px] font-bold hover:text-gray-500 transition">{{ auth()->user()->name }}</a>
     <form method="POST" action="{{ route('logout') }}" class="inline">
         @csrf
         <button type="submit" class="border border-gray-200 px-4 py-2 rounded-full text-[14px] font-bold hover:text-gray-500 transition">Logout</button>
