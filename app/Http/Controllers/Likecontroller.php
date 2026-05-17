@@ -9,26 +9,26 @@ use App\Models\Like;
 class LikeController extends Controller
 {
     /** Toggle like/unlike — POST /projects/{id}/like */
-    public function toggle(int $projectId)
+    public function toggle(int $id)
     {
         $userId   = auth()->id();
         $existing = Like::where('user_id', $userId)
-                        ->where('project_id', $projectId)
+                        ->where('project_id', $id)
                         ->first();
 
         if ($existing) {
-            $existing->delete();            // → Trigger otomatis -1 likes_count
+            $existing->delete();
             $action = 'unliked';
         } else {
-            Like::create([                  // → Trigger otomatis +1 likes_count
+            Like::create([
                 'user_id'    => $userId,
-                'project_id' => $projectId,
+                'project_id' => $id,
             ]);
             $action = 'liked';
         }
 
         $likesCount = DB::table('projects')
-                        ->where('id', $projectId)
+                        ->where('id', $id)
                         ->value('likes_count');
 
         return response()->json([

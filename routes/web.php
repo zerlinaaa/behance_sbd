@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\RegisterTwoController;
 use App\Http\Controllers\HireController;
+use App\Http\Controllers\CommentController;
 
 // ── Halaman utama → explore
 Route::get('/', function() {
@@ -46,10 +47,16 @@ Route::middleware('auth')->group(function () {
     Route::put('/projects/{slug}',      [ProjectController::class, 'update'])->name('projects.update');
     Route::delete('/projects/{slug}',   [ProjectController::class, 'destroy'])->name('projects.destroy');
 
-    Route::post('/projects/{id}/like',     [LikeController::class,    'toggle'])->name('likes.toggle');
-    Route::post('/users/{id}/follow',      [FollowController::class,  'toggle'])->name('follows.toggle');
-    Route::post('/projects/{id}/bookmark', [BookmarkController::class,'toggle'])->name('bookmarks.toggle');
-});
+    Route::post('/projects/{id}/like',     [LikeController::class,     'toggle'])->name('likes.toggle');
+    Route::post('/users/{id}/follow',      [FollowController::class,   'toggle'])->name('follows.toggle');
+    Route::post('/projects/{id}/bookmark', [BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
+    Route::post('/projects/{id}/comments', [CommentController::class,  'store'])->name('comments.store');
+    Route::post('/users/{id}/hire',        [HireController::class,     'store'])->name('hire.store');
+
+    Route::post('/profile/avatar',        [App\Http\Controllers\ProfileController::class, 'updateAvatar'])->name('profile.updateAvatar');
+    Route::delete('/profile/avatar',      [App\Http\Controllers\ProfileController::class, 'removeAvatar'])->name('profile.removeAvatar');
+    Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'updateProfile'])->name('profile.update');
+    });
 
 // ── Resources (publik)
 Route::get('/resources',              function() { return view('resources.overview'); })->name('resources.overview');

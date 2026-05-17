@@ -1,38 +1,50 @@
 @extends('layouts.app')
 @section('title', $project->title)
 
+@php
+    $userLiked      = auth()->check() && DB::table('likes')->where('user_id', auth()->id())->where('project_id', $project->id)->exists();
+    $userBookmarked = auth()->check() && DB::table('bookmarks')->where('user_id', auth()->id())->where('project_id', $project->id)->exists();
+    $userFollowing  = auth()->check() && DB::table('follows')->where('follower_id', auth()->id())->where('following_id', $project->user_id)->exists();
+    $commentCount   = $comments->count();
+@endphp
+
 @section('content')
 
 <div style="max-width:900px;margin:0 auto;padding:0 16px;position:relative">
 
-    {{-- ══ FLOATING SIDEBAR KANAN (seperti Behance) ══ --}}
+    {{-- ══ FLOATING SIDEBAR KANAN ══ --}}
     <div style="position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:8px;align-items:center">
 
-        <button onclick="toggleFollow({{ $project->user_id }}, this)"
-            style="width:48px;height:48px;border-radius:50%;background:#fff;border:1px solid #e0e0e0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);flex-direction:column;font-size:9px;font-weight:600;color:#333;gap:2px">
-            <i class="fas fa-plus" style="font-size:14px"></i>
-            <span>Follow</span>
+        {{-- Follow --}}
+        <button id="btn-follow" onclick="toggleFollow({{ $project->user_id }}, this)"
+            style="width:48px;height:48px;border-radius:50%;background:{{ $userFollowing ? '#0057ff' : '#fff' }};border:1px solid #e0e0e0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);flex-direction:column;font-size:9px;font-weight:600;color:{{ $userFollowing ? '#fff' : '#333' }};gap:2px">
+            <i class="fas fa-{{ $userFollowing ? 'check' : 'plus' }}" style="font-size:14px"></i>
+            <span>{{ $userFollowing ? 'Following' : 'Follow' }}</span>
         </button>
 
+        {{-- Hire --}}
         <button style="width:48px;height:48px;border-radius:50%;background:#fff;border:1px solid #e0e0e0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);flex-direction:column;font-size:9px;font-weight:600;color:#333;gap:2px">
             <i class="fas fa-briefcase" style="font-size:14px"></i>
             <span>Hire</span>
         </button>
 
-        <button onclick="toggleBookmark({{ $project->id }}, this)"
-            style="width:48px;height:48px;border-radius:50%;background:#fff;border:1px solid #e0e0e0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);flex-direction:column;font-size:9px;font-weight:600;color:#333;gap:2px">
+        {{-- Save/Bookmark --}}
+        <button id="btn-bookmark" onclick="toggleBookmark({{ $project->id }}, this)"
+            style="width:48px;height:48px;border-radius:50%;background:{{ $userBookmarked ? '#0057ff' : '#fff' }};border:1px solid #e0e0e0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);flex-direction:column;font-size:9px;font-weight:600;color:{{ $userBookmarked ? '#fff' : '#333' }};gap:2px">
             <i class="fas fa-bookmark" style="font-size:14px"></i>
-            <span>Save</span>
+            <span>{{ $userBookmarked ? 'Saved' : 'Save' }}</span>
         </button>
 
-        <button style="width:48px;height:48px;border-radius:50%;background:#fff;border:1px solid #e0e0e0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);flex-direction:column;font-size:9px;font-weight:600;color:#333;gap:2px"
-            onclick="shareProject()">
+        {{-- Share --}}
+        <button onclick="shareProject()"
+            style="width:48px;height:48px;border-radius:50%;background:#fff;border:1px solid #e0e0e0;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);flex-direction:column;font-size:9px;font-weight:600;color:#333;gap:2px">
             <i class="fas fa-share-alt" style="font-size:14px"></i>
             <span>Share</span>
         </button>
 
-        <button onclick="toggleLike({{ $project->id }}, this)"
-            style="width:48px;height:48px;border-radius:50%;background:#0057ff;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,86,255,.3);flex-direction:column;font-size:9px;font-weight:600;color:#fff;gap:2px">
+        {{-- Like --}}
+        <button id="btn-like" onclick="toggleLike({{ $project->id }}, this)"
+            style="width:48px;height:48px;border-radius:50%;background:{{ $userLiked ? '#e74c3c' : '#0057ff' }};border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,86,255,.3);flex-direction:column;font-size:9px;font-weight:600;color:#fff;gap:2px">
             <i class="fas fa-thumbs-up" style="font-size:14px"></i>
             <span>{{ number_format($project->likes_count) }}</span>
         </button>
@@ -50,7 +62,7 @@
     {{-- Project Images --}}
     @if($images->count() > 1)
     <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
-        @foreach($images->skip(1) as $img)
+        @foreach(collect($images)->slice(1) as $img)
         <img src="{{ $img->image_path }}"
              alt="{{ $img->caption ?? $project->title }}"
              style="width:100%;border-radius:8px;display:block"
@@ -65,10 +77,15 @@
             {{ $project->title }}
         </h1>
 
-        <div style="display:flex;gap:20px;color:#aaa;font-size:14px;margin-bottom:16px">
+        <div style="display:flex;gap:20px;color:#aaa;font-size:14px;margin-bottom:16px;align-items:center">
             <span><i class="fas fa-eye"></i> {{ number_format($project->views_count) }} views</span>
             <span><i class="fas fa-heart" style="color:#e74c3c"></i> {{ number_format($project->likes_count) }} likes</span>
-            <span><i class="fas fa-comment"></i> {{ number_format($project->comments_count) }} comments</span>
+            @if($commentCount > 0)
+            <a href="#comments" style="color:#aaa;text-decoration:none" onclick="scrollToComments(event)">
+                <i class="fas fa-comment"></i>
+                {{ $commentCount === 1 ? '1 Comment' : $commentCount.' Comments' }}
+            </a>
+            @endif
         </div>
 
         {{-- Creator --}}
@@ -93,10 +110,12 @@
     @endif
 
     {{-- Comments --}}
-    <div style="margin-bottom:40px">
+    <div id="comments" style="margin-bottom:40px">
+        @if($commentCount > 0)
         <h3 style="font-size:18px;font-weight:700;margin-bottom:20px">
-            Komentar ({{ $comments->count() }})
+            {{ $commentCount === 1 ? '1 Comment' : $commentCount.' Comments' }}
         </h3>
+        @endif
 
         @auth
         <form method="POST" action="/projects/{{ $project->id }}/comments" style="margin-bottom:24px">
@@ -107,7 +126,7 @@
         </form>
         @endauth
 
-        @forelse($comments as $comment)
+        @foreach($comments as $comment)
         <div style="display:flex;gap:12px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #f0f0f0">
             <img src="{{ $comment->avatar ?? 'https://i.pravatar.cc/40?u='.$comment->username }}"
                  alt="{{ $comment->name }}"
@@ -119,12 +138,10 @@
                         · {{ \Carbon\Carbon::parse($comment->created_at)->diffForHumans() }}
                     </span>
                 </div>
-                <p style="color:#444;font-size:14px;margin-top:4px;line-height:1.6">{{ $comment->content }}</p>
+                <p style="color:#444;font-size:14px;margin-top:4px;line-height:1.6">{{ $comment->comment_text }}</p>
             </div>
         </div>
-        @empty
-        <p style="color:#aaa;text-align:center;padding:20px">Belum ada komentar.</p>
-        @endforelse
+        @endforeach
     </div>
 
     {{-- Related Projects --}}
@@ -158,11 +175,17 @@
 
 </div>
 
+
 @endsection
 
 @push('scripts')
 <script>
 const csrf = document.querySelector('meta[name="csrf-token"]').content;
+
+function scrollToComments(e) {
+    e.preventDefault();
+    document.getElementById('comments').scrollIntoView({ behavior: 'smooth' });
+}
 
 async function toggleLike(id, btn) {
     const res = await fetch(`/projects/${id}/like`, {
@@ -204,16 +227,14 @@ async function toggleFollow(userId, btn) {
         const following = d.action === 'followed';
         btn.style.background = following ? '#0057ff' : '#fff';
         btn.style.color = following ? '#fff' : '#333';
+        btn.querySelector('i').className = `fas fa-${following ? 'check' : 'plus'}`;
         btn.querySelector('span').textContent = following ? 'Following' : 'Follow';
     }
 }
 
 function shareProject() {
     if (navigator.share) {
-        navigator.share({
-            title: document.title,
-            url: window.location.href
-        });
+        navigator.share({ title: document.title, url: window.location.href });
     } else {
         navigator.clipboard.writeText(window.location.href).then(() => {
             alert('Link copied to clipboard!');
