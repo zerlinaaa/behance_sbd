@@ -128,7 +128,71 @@ class ExploreController extends Controller
         };
 
         $perPage = auth()->check() ? 24 : 30;
-$projects = $query->paginate($perPage)->withQueryString();
+        $projects = $query->paginate($perPage)->withQueryString();
+
+        // ══════════════════════════════════════════════════
+        // ASSETS
+        // ══════════════════════════════════════════════════
+        $assets = collect();
+
+        if ($type === 'assets') {
+            $assetQuery = DB::table('assets')
+                ->join('users', 'users.id', '=', 'assets.user_id')
+                ->select(
+                    'assets.id', 'assets.title', 'assets.slug', 'assets.cover_image', 'assets.description',
+                    'assets.asset_type', 'assets.license', 'assets.price', 'assets.currency',
+                    'assets.views_count', 'assets.likes_count', 'assets.status',
+                    'users.name as owner_name',
+                    'users.username as owner_username'
+                )
+                ->where('assets.status', 'published');
+
+            if ($keyword = $request->get('q')) {
+                $assetQuery->where(function ($q) use ($keyword) {
+                    $q->where('assets.title', 'like', "%{$keyword}%")
+                    ->orWhere('assets.description', 'like', "%{$keyword}%")
+                    ->orWhere('users.name', 'like', "%{$keyword}%")
+                    ->orWhere('assets.asset_type', 'like', "%{$keyword}%");
+                });
+        }
+
+    if ($fields = $request->get('fields')) {
+        $assetQuery->whereIn('assets.asset_type', (array) $fields);
+    }
+
+    if ($availabilities = $request->get('availability')) {
+        $assetQuery->whereIn('assets.license', (array) $availabilities);
+    }
+
+    match ($request->get('sort', 'trending')) {
+        'newest'     => $assetQuery->orderByDesc('assets.id'),
+        'popular'    => $assetQuery->orderByDesc('assets.views_count'),
+        'most_liked' => $assetQuery->orderByDesc('assets.likes_count'),
+        default      => $assetQuery->orderByDesc('assets.likes_count')->orderByDesc('assets.views_count'),
+    };
+
+    $assets = $assetQuery->paginate(40)->withQueryString();
+}
+
+// ══════════════════════════════════════════════════
+// IMAGES
+// ══════════════════════════════════════════════════
+$images_list = collect();
+
+if ($type === 'images') {
+    $images_list = DB::table('project_images as pi')
+        ->join('projects as p', 'p.id', '=', 'pi.project_id')
+        ->join('users as u', 'u.id', '=', 'p.user_id')
+        ->select(
+            'pi.id', 'pi.image_url', 'p.title', 'p.slug',
+            'p.likes_count', 'u.name as creator_name',
+            'u.username as creator_username', 'u.avatar as creator_avatar'
+        )
+        ->where('p.status', 'published')
+        ->orderByDesc('p.likes_count')
+        ->paginate(60)
+        ->withQueryString();
+}
 
         // ── Kategori untuk pill nav + sidebar
         $categories = DB::table('categories as c')
@@ -178,11 +242,11 @@ $projects = $query->paginate($perPage)->withQueryString();
     ]);
 }
 
-        return view('explore', compact(
-            'projects', 'categories', 'locations',
-            'availabilityOptions', 'toolOptions', 'colorOptions',
-            'people', 'type'
-        ));
+return view('explore', compact(
+    'projects', 'assets', 'images_list', 'categories', 'locations',
+    'availabilityOptions', 'toolOptions', 'colorOptions',
+    'people', 'type'
+));
     }
 
     /**
