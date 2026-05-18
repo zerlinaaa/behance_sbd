@@ -14,10 +14,10 @@ class ExploreController extends Controller
      */
     public function index(Request $request)
     {
-
-     if (auth()->check()) {
-        return redirect()->route('dashboard');
-    }
+        if (auth()->check()) {
+            return redirect()->route('dashboard');
+        }
+        
         $type = $request->get('type', 'projects');
 
         // ══════════════════════════════════════════════════
@@ -53,6 +53,14 @@ class ExploreController extends Controller
             $people = $peopleQuery
                 ->orderByDesc('followers_count')
                 ->get();
+
+            // Memastikan data followers pada list People tidak kosong (Dummy Data)
+            $people->transform(function ($person) {
+                if (!isset($person->followers_count) || $person->followers_count == 0) {
+                    $person->followers_count = rand(50, 1500);
+                }
+                return $person;
+            });
         }
 
         // ══════════════════════════════════════════════════
@@ -119,10 +127,11 @@ class ExploreController extends Controller
                 }
             });
         }
-    // ── Filter: Color
-    if ($color = $request->get('color')) {
-    $query->where('p.color', $color);
-    }
+
+        // ── Filter: Color
+        if ($color = $request->get('color')) {
+            $query->where('p.color', $color);
+        }
 
         // ── Sort
         match ($request->get('sort', 'trending')) {
@@ -134,6 +143,20 @@ class ExploreController extends Controller
 
         $perPage = auth()->check() ? 24 : 30;
         $projects = $query->paginate($perPage)->withQueryString();
+
+        // LOGIKA DUMMY UNTUK PROJECTS (Mencegah Angka 0 di UI)
+        $projects->getCollection()->transform(function ($project) {
+            if ($project->likes_count == 0) {
+                $project->likes_count = rand(8, 45); // Dummy likes acak antara 8 - 45
+            }
+            if ($project->comments_count == 0) {
+                $project->comments_count = rand(2, 12); // Dummy comments acak antara 2 - 12
+            }
+            if ($project->views_count == 0) {
+                $project->views_count = rand(100, 500); // Dummy views acak jika dibutuhkan di UI
+            }
+            return $project;
+        });
 
         // ══════════════════════════════════════════════════
         // ASSETS
@@ -159,45 +182,64 @@ class ExploreController extends Controller
                     ->orWhere('users.name', 'like', "%{$keyword}%")
                     ->orWhere('assets.asset_type', 'like', "%{$keyword}%");
                 });
+            }
+
+            if ($fields = $request->get('fields')) {
+                $assetQuery->whereIn('assets.asset_type', (array) $fields);
+            }
+
+            if ($availabilities = $request->get('availability')) {
+                $assetQuery->whereIn('assets.license', (array) $availabilities);
+            }
+
+            match ($request->get('sort', 'trending')) {
+                'newest'     => $assetQuery->orderByDesc('assets.id'),
+                'popular'    => $assetQuery->orderByDesc('assets.views_count'),
+                'most_liked' => $assetQuery->orderByDesc('assets.likes_count'),
+                default      => $assetQuery->orderByDesc('assets.likes_count')->orderByDesc('assets.views_count'),
+            };
+
+            $assets = $assetQuery->paginate(40)->withQueryString();
+
+            // LOGIKA DUMMY UNTUK ASSETS
+            $assets->getCollection()->transform(function ($asset) {
+                if ($asset->likes_count == 0) {
+                    $asset->likes_count = rand(5, 30);
+                }
+                if ($asset->views_count == 0) {
+                    $asset->views_count = rand(50, 300);
+                }
+                return $asset;
+            });
         }
 
-    if ($fields = $request->get('fields')) {
-        $assetQuery->whereIn('assets.asset_type', (array) $fields);
-    }
+        // ══════════════════════════════════════════════════
+        // IMAGES
+        // ══════════════════════════════════════════════════
+        $images_list = collect();
 
-    if ($availabilities = $request->get('availability')) {
-        $assetQuery->whereIn('assets.license', (array) $availabilities);
-    }
+        if ($type === 'images') {
+            $images_list = DB::table('project_images as pi')
+                ->join('projects as p', 'p.id', '=', 'pi.project_id')
+                ->join('users as u', 'u.id', '=', 'p.user_id')
+                ->select(
+                    'pi.id', 'pi.image_url', 'p.title', 'p.slug',
+                    'p.likes_count', 'u.name as creator_name',
+                    'u.username as creator_username', 'u.avatar as creator_avatar'
+                )
+                ->where('p.status', 'published')
+                ->orderByDesc('p.likes_count')
+                ->paginate(60)
+                ->withQueryString();
 
-    match ($request->get('sort', 'trending')) {
-        'newest'     => $assetQuery->orderByDesc('assets.id'),
-        'popular'    => $assetQuery->orderByDesc('assets.views_count'),
-        'most_liked' => $assetQuery->orderByDesc('assets.likes_count'),
-        default      => $assetQuery->orderByDesc('assets.likes_count')->orderByDesc('assets.views_count'),
-    };
-
-    $assets = $assetQuery->paginate(40)->withQueryString();
-}
-
-// ══════════════════════════════════════════════════
-// IMAGES
-// ══════════════════════════════════════════════════
-$images_list = collect();
-
-if ($type === 'images') {
-    $images_list = DB::table('project_images as pi')
-        ->join('projects as p', 'p.id', '=', 'pi.project_id')
-        ->join('users as u', 'u.id', '=', 'p.user_id')
-        ->select(
-            'pi.id', 'pi.image_url', 'p.title', 'p.slug',
-            'p.likes_count', 'u.name as creator_name',
-            'u.username as creator_username', 'u.avatar as creator_avatar'
-        )
-        ->where('p.status', 'published')
-        ->orderByDesc('p.likes_count')
-        ->paginate(60)
-        ->withQueryString();
-}
+            // LOGIKA DUMMY UNTUK IMAGES LIST
+            $images_list->getCollection()->transform(function ($img) {
+                if ($img->likes_count == 0) {
+                    $img->likes_count = rand(10, 60);
+                }
+                return $img;
+            });
+        }
 
         // ── Kategori untuk pill nav + sidebar
         $categories = DB::table('categories as c')
@@ -241,17 +283,17 @@ if ($type === 'images') {
         ];
 
         if ($request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
-    return response()->json([
-        'projects' => $projects->items(),
-        'has_more' => $projects->hasMorePages(),
-    ]);
-}
+            return response()->json([
+                'projects' => $projects->items(),
+                'has_more' => $projects->hasMorePages(),
+            ]);
+        }
 
-return view('explore', compact(
-    'projects', 'assets', 'images_list', 'categories', 'locations',
-    'availabilityOptions', 'toolOptions', 'colorOptions',
-    'people', 'type'
-));
+        return view('explore', compact(
+            'projects', 'assets', 'images_list', 'categories', 'locations',
+            'availabilityOptions', 'toolOptions', 'colorOptions',
+            'people', 'type'
+        ));
     }
 
     /**
@@ -272,6 +314,11 @@ return view('explore', compact(
             ')
             ->where('p.slug', $slug)
             ->firstOrFail();
+
+        // Memberikan follower dummy di detail project jika user pembuat masih memiliki 0 follower
+        if ($project->followers_count == 0) {
+            $project->followers_count = rand(150, 2500);
+        }
 
         $images = DB::table('project_images')
             ->where('project_id', $project->id)
