@@ -70,7 +70,12 @@ class ExploreController extends Controller
                 u.username AS creator_username, u.avatar AS creator_avatar,
                 u.location AS creator_location, u.availability AS creator_availability
             ')
-            ->where('p.status', 'published');
+            ->where('p.status', 'published')
+            ->groupBy(
+                'p.id', 'p.title', 'p.slug', 'p.cover_image',
+                'p.likes_count', 'p.views_count', 'p.comments_count', 'p.created_at',
+                'u.id', 'u.name', 'u.username', 'u.avatar', 'u.location', 'u.availability'
+            );
 
         // ── Filter: Keyword
         if ($keyword = $request->get('q')) {
