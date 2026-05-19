@@ -3,7 +3,7 @@
 
 @push('styles')
 <style>
-.p-banner { width:100%;height:200px;background:#2d3748;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.07);font-size:180px;font-weight:900;letter-spacing:-10px;user-select:none; }
+.p-banner { width:100%;height:200px;background:#2d3748;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.07);font-size:0;user-select:none; }
 .p-wrap { max-width:1100px;margin:0 auto;padding:0 24px 80px;display:flex;gap:40px;align-items:flex-start; }
 .p-sidebar { width:260px;flex-shrink:0;margin-top:-40px;position:relative; }
 .p-main { flex:1;min-width:0;padding-top:16px; }
@@ -126,7 +126,26 @@
 @endif
 
 {{-- Banner --}}
-<div class="p-banner">{{ strtoupper(substr($user->name, 0, 4)) }}</div>
+@auth
+@if(auth()->id() === $user->id)
+<form id="banner-form" method="POST" action="{{ route('profile.updateBanner') }}" enctype="multipart/form-data">
+    @csrf
+    <input type="file" id="banner-input" name="banner" accept="image/*" style="display:none" onchange="this.form.submit()">
+</form>
+<div class="p-banner" onclick="document.getElementById('banner-input').click()" style="cursor:pointer;flex-direction:column;gap:8px;color:rgba(255,255,255,0.6);font-size:14px;{{ $user->banner ? 'background-image:url('.asset($user->banner).');background-size:cover;background-position:center;' : '' }}">
+    @if(!$user->banner)
+    <i class="fas fa-camera" style="font-size:28px"></i>
+    <span style="font-weight:600">Add a Banner Image</span>
+    <span style="font-size:11px;opacity:.7">Optimal dimensions 3200 x 410px</span>
+    @endif
+</div>
+@else
+<div class="p-banner" style="font-size:0"></div>
+@endif
+@endauth
+@guest
+<div class="p-banner" style="font-size:0"></div>
+@endguest
 
 <div class="p-wrap">
 
@@ -573,3 +592,8 @@ function quickUpload() {
 }
 </script>
 @endpush
+
+
+
+
+
