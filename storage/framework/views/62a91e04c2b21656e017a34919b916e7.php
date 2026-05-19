@@ -230,7 +230,6 @@ unset($__errorArgs, $__bag); ?>
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;color:#6e6e6e">
                         <input type="checkbox" name="remember"> Remember me
                     </label>
-                    <a href="#" style="font-size:13px;color:#1473e6;text-decoration:none">Forgot password?</a>
                 </div>
 
                 <div style="display:flex;justify-content:flex-end;">

@@ -125,4 +125,27 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Foto profil berhasil dihapus!');
     }
+    public function updateBanner(Request $request)
+    {
+        $request->validate([
+            'banner' => 'required|image|max:5120',
+        ]);
+
+        $file = $request->file('banner');
+        $filename = Str::random(20) . '.' . $file->getClientOriginalExtension();
+
+        if (!file_exists(public_path('uploads/banners'))) {
+            mkdir(public_path('uploads/banners'), 0755, true);
+        }
+
+        $file->move(public_path('uploads/banners'), $filename);
+        $bannerPath = '/uploads/banners/' . $filename;
+
+        DB::table('users')
+            ->where('id', auth()->id())
+            ->update(['banner' => $bannerPath, 'updated_at' => now()]);
+
+        return back()->with('success', 'Banner berhasil diperbarui!');
+        }
+
 }
