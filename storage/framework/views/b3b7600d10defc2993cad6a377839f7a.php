@@ -1,7 +1,7 @@
-@extends('layouts.app')
-@section('title', $user->name)
 
-@push('styles')
+<?php $__env->startSection('title', $user->name); ?>
+
+<?php $__env->startPush('styles'); ?>
 <style>
 .p-banner { width:100%;height:200px;background:#2d3748;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.07);font-size:180px;font-weight:900;letter-spacing:-10px;user-select:none; }
 .p-wrap { max-width:1100px;margin:0 auto;padding:0 24px 80px;display:flex;gap:40px;align-items:flex-start; }
@@ -114,221 +114,222 @@
     .form-row-2{grid-template-columns:1fr;}
 }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
-{{-- Flash message --}}
-@if(session('success'))
+
+<?php if(session('success')): ?>
 <div style="max-width:1100px;margin:16px auto;padding:0 24px">
-    <div class="alert-success"><i class="fas fa-check-circle"></i> {{ session('success') }}</div>
+    <div class="alert-success"><i class="fas fa-check-circle"></i> <?php echo e(session('success')); ?></div>
 </div>
-@endif
+<?php endif; ?>
 
-{{-- Banner --}}
-<div class="p-banner">{{ strtoupper(substr($user->name, 0, 4)) }}</div>
+
+<div class="p-banner"><?php echo e(strtoupper(substr($user->name, 0, 4))); ?></div>
 
 <div class="p-wrap">
 
-    {{-- SIDEBAR --}}
+    
     <div class="p-sidebar">
 
-        {{-- Avatar --}}
-        @auth
-        @if(auth()->id() === $user->id)
+        
+        <?php if(auth()->guard()->check()): ?>
+        <?php if(auth()->id() === $user->id): ?>
         <div class="p-avatar-wrap" onclick="openAvatarModal()" style="cursor:pointer">
             <img id="main-avatar"
-                 src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username }}"
-                 alt="{{ $user->name }}" class="p-avatar"
-                 onerror="this.src='https://i.pravatar.cc/120?u={{ $user->username }}'">
+                 src="<?php echo e($user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username); ?>"
+                 alt="<?php echo e($user->name); ?>" class="p-avatar"
+                 onerror="this.src='https://i.pravatar.cc/120?u=<?php echo e($user->username); ?>'">
             <div class="p-avatar-edit" title="Change Photo">
                 <i class="fas fa-camera"></i>
                 <span>Change Photo</span>
             </div>
         </div>
-        @else
+        <?php else: ?>
         <div class="p-avatar-wrap" style="pointer-events:none">
-            <img src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username }}"
-                 alt="{{ $user->name }}" class="p-avatar"
-                 onerror="this.src='https://i.pravatar.cc/120?u={{ $user->username }}'">
+            <img src="<?php echo e($user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username); ?>"
+                 alt="<?php echo e($user->name); ?>" class="p-avatar"
+                 onerror="this.src='https://i.pravatar.cc/120?u=<?php echo e($user->username); ?>'">
         </div>
-        @endif
-        @else
+        <?php endif; ?>
+        <?php else: ?>
         <div class="p-avatar-wrap" style="pointer-events:none">
-            <img src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username }}"
-                 alt="{{ $user->name }}" class="p-avatar"
-                 onerror="this.src='https://i.pravatar.cc/120?u={{ $user->username }}'">
+            <img src="<?php echo e($user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username); ?>"
+                 alt="<?php echo e($user->name); ?>" class="p-avatar"
+                 onerror="this.src='https://i.pravatar.cc/120?u=<?php echo e($user->username); ?>'">
         </div>
-        @endauth
+        <?php endif; ?>
 
-        <div class="p-name">{{ $user->name }}</div>
+        <div class="p-name"><?php echo e($user->name); ?></div>
 
-        @if(!empty($user->availability) && $user->availability !== 'not_available')
-        <div class="p-avail"><div class="p-avail-dot"></div>{{ ucfirst(str_replace('_', ' ', $user->availability)) }}</div>
-        @endif
+        <?php if(!empty($user->availability) && $user->availability !== 'not_available'): ?>
+        <div class="p-avail"><div class="p-avail-dot"></div><?php echo e(ucfirst(str_replace('_', ' ', $user->availability))); ?></div>
+        <?php endif; ?>
 
-        @if(!empty($user->location))
-        <div class="p-location"><i class="fas fa-globe" style="color:#bbb;font-size:12px"></i>{{ $user->location }}</div>
-        @endif
+        <?php if(!empty($user->location)): ?>
+        <div class="p-location"><i class="fas fa-globe" style="color:#bbb;font-size:12px"></i><?php echo e($user->location); ?></div>
+        <?php endif; ?>
 
-        @auth
-            @if(auth()->id() === $user->id)
+        <?php if(auth()->guard()->check()): ?>
+            <?php if(auth()->id() === $user->id): ?>
             <button onclick="openEditModal()" class="p-btn p-btn-outline" style="cursor:pointer">Edit Profile Info</button>
-            @else
-            <button onclick="toggleFollowProfile({{ $user->id }}, this)"
-                class="p-btn p-btn-follow {{ $isFollowing ? 'following' : '' }}">
-                {{ $isFollowing ? 'Following' : '+ Follow' }}
+            <?php else: ?>
+            <button onclick="toggleFollowProfile(<?php echo e($user->id); ?>, this)"
+                class="p-btn p-btn-follow <?php echo e($isFollowing ? 'following' : ''); ?>">
+                <?php echo e($isFollowing ? 'Following' : '+ Follow'); ?>
+
             </button>
             <a href="#" class="p-btn p-btn-outline"><i class="fas fa-briefcase" style="margin-right:4px"></i>Hire</a>
-            @endif
-        @else
-        <a href="{{ route('login') }}" class="p-btn p-btn-follow">+ Follow</a>
-        @endauth
+            <?php endif; ?>
+        <?php else: ?>
+        <a href="<?php echo e(route('login')); ?>" class="p-btn p-btn-follow">+ Follow</a>
+        <?php endif; ?>
 
         <div class="p-stats">
-            <div class="p-stat-row"><span class="p-stat-label">Projects</span><span class="p-stat-val">{{ $projects->count() }}</span></div>
-            <div class="p-stat-row"><span class="p-stat-label">Followers</span><span class="p-stat-val">{{ number_format($user->followers_count ?? 0) }}</span></div>
-            <div class="p-stat-row"><span class="p-stat-label">Following</span><span class="p-stat-val">{{ number_format($user->following_count ?? 0) }}</span></div>
-            <div class="p-stat-row"><span class="p-stat-label">Appreciations</span><span class="p-stat-val">{{ number_format($projects->sum('likes_count')) }}</span></div>
-            <div class="p-stat-row"><span class="p-stat-label">Views</span><span class="p-stat-val">{{ number_format($projects->sum('views_count')) }}</span></div>
+            <div class="p-stat-row"><span class="p-stat-label">Projects</span><span class="p-stat-val"><?php echo e($projects->count()); ?></span></div>
+            <div class="p-stat-row"><span class="p-stat-label">Followers</span><span class="p-stat-val"><?php echo e(number_format($user->followers_count ?? 0)); ?></span></div>
+            <div class="p-stat-row"><span class="p-stat-label">Following</span><span class="p-stat-val"><?php echo e(number_format($user->following_count ?? 0)); ?></span></div>
+            <div class="p-stat-row"><span class="p-stat-label">Appreciations</span><span class="p-stat-val"><?php echo e(number_format($projects->sum('likes_count'))); ?></span></div>
+            <div class="p-stat-row"><span class="p-stat-label">Views</span><span class="p-stat-val"><?php echo e(number_format($projects->sum('views_count'))); ?></span></div>
         </div>
 
-        @if(!empty($user->bio))
-        <div class="p-bio">{{ $user->bio }}</div>
-        @endif
+        <?php if(!empty($user->bio)): ?>
+        <div class="p-bio"><?php echo e($user->bio); ?></div>
+        <?php endif; ?>
 
-        @if(!empty($user->created_at))
-        <div class="p-member">Member since: {{ \Carbon\Carbon::parse($user->created_at)->format('F j, Y') }}</div>
-        @endif
+        <?php if(!empty($user->created_at)): ?>
+        <div class="p-member">Member since: <?php echo e(\Carbon\Carbon::parse($user->created_at)->format('F j, Y')); ?></div>
+        <?php endif; ?>
     </div>
 
-    {{-- MAIN --}}
+    
     <div class="p-main">
         <div class="p-tabs">
             <button class="p-tab active" onclick="switchTab('work', this)">Work</button>
             <button class="p-tab" onclick="switchTab('appreciations', this)">Appreciations</button>
             <div class="p-tab-sep"></div>
-            @auth @if(auth()->id() === $user->id)
+            <?php if(auth()->guard()->check()): ?> <?php if(auth()->id() === $user->id): ?>
             <button class="p-tab" onclick="switchTab('stats', this)">Your Stats</button>
             <button class="p-tab" onclick="switchTab('drafts', this)">Drafts</button>
-            @endif @endauth
+            <?php endif; ?> <?php endif; ?>
         </div>
 
-        {{-- TAB: WORK --}}
+        
         <div id="panel-work" class="p-panel active">
-            @if($projects->isEmpty())
+            <?php if($projects->isEmpty()): ?>
             <div class="p-empty">
                 <div class="p-empty-plus"><i class="fas fa-plus"></i></div>
                 <p>Create a Project</p>
                 <small>Get feedback, views, and appreciations.</small>
-                @auth @if(auth()->id() === $user->id)
+                <?php if(auth()->guard()->check()): ?> <?php if(auth()->id() === $user->id): ?>
                 <br><br>
                 <button onclick="quickUpload()" class="p-btn p-btn-blue" style="display:inline-block;width:auto;padding:10px 24px">Create a Project</button>
-                @endif @endauth
+                <?php endif; ?> <?php endif; ?>
             </div>
-            @else
+            <?php else: ?>
             <div class="p-grid">
-                @foreach($projects as $project)
-                <a href="{{ route('projects.show', $project->slug) }}" class="p-card">
-                    <img src="{{ $project->cover_image ? (str_starts_with($project->cover_image, '/') ? asset($project->cover_image) : $project->cover_image) : 'https://picsum.photos/seed/'.$project->id.'/400/300' }}"
-                         alt="{{ $project->title }}" class="p-card-img"
-                         onerror="this.src='https://picsum.photos/seed/{{$project->id}}/400/300'">
+                <?php $__currentLoopData = $projects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <a href="<?php echo e(route('projects.show', $project->slug)); ?>" class="p-card">
+                    <img src="<?php echo e($project->cover_image ? (str_starts_with($project->cover_image, '/') ? asset($project->cover_image) : $project->cover_image) : 'https://picsum.photos/seed/'.$project->id.'/400/300'); ?>"
+                         alt="<?php echo e($project->title); ?>" class="p-card-img"
+                         onerror="this.src='https://picsum.photos/seed/<?php echo e($project->id); ?>/400/300'">
                     <div class="p-card-body">
-                        <div class="p-card-title">{{ $project->title }}</div>
+                        <div class="p-card-title"><?php echo e($project->title); ?></div>
                         <div class="p-card-meta">
-                            <span><i class="fas fa-heart" style="color:#e74c3c"></i> {{ number_format($project->likes_count) }}</span>
-                            <span><i class="fas fa-eye"></i> {{ number_format($project->views_count) }}</span>
+                            <span><i class="fas fa-heart" style="color:#e74c3c"></i> <?php echo e(number_format($project->likes_count)); ?></span>
+                            <span><i class="fas fa-eye"></i> <?php echo e(number_format($project->views_count)); ?></span>
                         </div>
                     </div>
                 </a>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
 
-        {{-- TAB: APPRECIATIONS --}}
+        
         <div id="panel-appreciations" class="p-panel">
-            @if($appreciations->isEmpty())
+            <?php if($appreciations->isEmpty()): ?>
             <div class="p-empty">
                 <div class="p-empty-plus"><i class="fas fa-heart"></i></div>
                 <p>No Appreciations Yet</p>
                 <small>Projects you like will appear here.</small>
             </div>
-            @else
+            <?php else: ?>
             <div class="p-grid">
-                @foreach($appreciations as $project)
-                <a href="{{ route('projects.show', $project->slug) }}" class="p-card">
-                    <img src="{{ $project->cover_image ? (str_starts_with($project->cover_image, '/') ? asset($project->cover_image) : $project->cover_image) : 'https://picsum.photos/seed/'.$project->id.'/400/300' }}"
-                         alt="{{ $project->title }}" class="p-card-img"
-                         onerror="this.src='https://picsum.photos/seed/{{$project->id}}/400/300'">
+                <?php $__currentLoopData = $appreciations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <a href="<?php echo e(route('projects.show', $project->slug)); ?>" class="p-card">
+                    <img src="<?php echo e($project->cover_image ? (str_starts_with($project->cover_image, '/') ? asset($project->cover_image) : $project->cover_image) : 'https://picsum.photos/seed/'.$project->id.'/400/300'); ?>"
+                         alt="<?php echo e($project->title); ?>" class="p-card-img"
+                         onerror="this.src='https://picsum.photos/seed/<?php echo e($project->id); ?>/400/300'">
                     <div class="p-card-body">
-                        <div class="p-card-title">{{ $project->title }}</div>
-                        <div class="p-card-sub">by {{ $project->creator_name }}</div>
+                        <div class="p-card-title"><?php echo e($project->title); ?></div>
+                        <div class="p-card-sub">by <?php echo e($project->creator_name); ?></div>
                         <div class="p-card-meta">
-                            <span><i class="fas fa-heart" style="color:#e74c3c"></i> {{ number_format($project->likes_count) }}</span>
-                            <span><i class="fas fa-eye"></i> {{ number_format($project->views_count) }}</span>
+                            <span><i class="fas fa-heart" style="color:#e74c3c"></i> <?php echo e(number_format($project->likes_count)); ?></span>
+                            <span><i class="fas fa-eye"></i> <?php echo e(number_format($project->views_count)); ?></span>
                         </div>
                     </div>
                 </a>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
 
-        @auth @if(auth()->id() === $user->id)
+        <?php if(auth()->guard()->check()): ?> <?php if(auth()->id() === $user->id): ?>
 
-        {{-- TAB: YOUR STATS --}}
+        
         <div id="panel-stats" class="p-panel">
-            @if($stats)
+            <?php if($stats): ?>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-num">{{ number_format($stats->total_projects) }}</div>
+                    <div class="stat-num"><?php echo e(number_format($stats->total_projects)); ?></div>
                     <div class="stat-lbl">Total Projects</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-num">{{ number_format($stats->total_likes) }}</div>
+                    <div class="stat-num"><?php echo e(number_format($stats->total_likes)); ?></div>
                     <div class="stat-lbl">Total Likes</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-num">{{ number_format($stats->total_views) }}</div>
+                    <div class="stat-num"><?php echo e(number_format($stats->total_views)); ?></div>
                     <div class="stat-lbl">Total Views</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-num">{{ number_format($stats->followers_count) }}</div>
+                    <div class="stat-num"><?php echo e(number_format($stats->followers_count)); ?></div>
                     <div class="stat-lbl">Followers</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-num">{{ number_format($stats->total_comments_received) }}</div>
+                    <div class="stat-num"><?php echo e(number_format($stats->total_comments_received)); ?></div>
                     <div class="stat-lbl">Comments Received</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-num">{{ number_format($stats->total_bookmarks_received) }}</div>
+                    <div class="stat-num"><?php echo e(number_format($stats->total_bookmarks_received)); ?></div>
                     <div class="stat-lbl">Bookmarks</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-num">{{ $stats->engagement_rate }}%</div>
+                    <div class="stat-num"><?php echo e($stats->engagement_rate); ?>%</div>
                     <div class="stat-lbl">Engagement Rate</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-num">{{ number_format($stats->best_project_likes) }}</div>
+                    <div class="stat-num"><?php echo e(number_format($stats->best_project_likes)); ?></div>
                     <div class="stat-lbl">Best Project Likes</div>
                 </div>
             </div>
-            @if($stats->last_posted_at)
-            <p style="color:#aaa;font-size:13px">Last posted: {{ \Carbon\Carbon::parse($stats->last_posted_at)->diffForHumans() }}</p>
-            @endif
-            @else
+            <?php if($stats->last_posted_at): ?>
+            <p style="color:#aaa;font-size:13px">Last posted: <?php echo e(\Carbon\Carbon::parse($stats->last_posted_at)->diffForHumans()); ?></p>
+            <?php endif; ?>
+            <?php else: ?>
             <div class="p-empty">
                 <div class="p-empty-plus"><i class="fas fa-chart-bar"></i></div>
                 <p>No stats yet</p>
                 <small>Upload your first project to see stats.</small>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
 
-        {{-- TAB: DRAFTS --}}
+        
         <div id="panel-drafts" class="p-panel">
-            @if($drafts->isEmpty())
+            <?php if($drafts->isEmpty()): ?>
             <div class="p-empty">
                 <div class="p-empty-plus"><i class="fas fa-file-alt"></i></div>
                 <p>No Drafts</p>
@@ -336,64 +337,65 @@
                 <br><br>
                 <button onclick="quickUpload()" class="p-btn p-btn-blue" style="display:inline-block;width:auto;padding:10px 24px">+ Create Project</button>
             </div>
-            @else
+            <?php else: ?>
             <div class="p-grid">
-                @foreach($drafts as $project)
-                <a href="{{ route('projects.edit', $project->slug) }}" class="p-card">
-                    <img src="{{ $project->cover_image ? (str_starts_with($project->cover_image, '/') ? asset($project->cover_image) : $project->cover_image) : 'https://picsum.photos/seed/'.$project->id.'/400/300' }}"
-                         alt="{{ $project->title }}" class="p-card-img"
-                         onerror="this.src='https://picsum.photos/seed/{{$project->id}}/400/300'">
+                <?php $__currentLoopData = $drafts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <a href="<?php echo e(route('projects.edit', $project->slug)); ?>" class="p-card">
+                    <img src="<?php echo e($project->cover_image ? (str_starts_with($project->cover_image, '/') ? asset($project->cover_image) : $project->cover_image) : 'https://picsum.photos/seed/'.$project->id.'/400/300'); ?>"
+                         alt="<?php echo e($project->title); ?>" class="p-card-img"
+                         onerror="this.src='https://picsum.photos/seed/<?php echo e($project->id); ?>/400/300'">
                     <div class="p-card-body">
                         <div class="p-card-title">
-                            {{ $project->title }}
+                            <?php echo e($project->title); ?>
+
                             <span class="draft-badge">DRAFT</span>
                         </div>
                         <div class="p-card-meta">
-                            <span><i class="fas fa-clock"></i> {{ \Carbon\Carbon::parse($project->created_at)->diffForHumans() }}</span>
+                            <span><i class="fas fa-clock"></i> <?php echo e(\Carbon\Carbon::parse($project->created_at)->diffForHumans()); ?></span>
                         </div>
                     </div>
                 </a>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
-            @endif
+            <?php endif; ?>
         </div>
 
-        @endif @endauth
+        <?php endif; ?> <?php endif; ?>
 
     </div>
 </div>
 
-{{-- ===== MODAL: EDIT PROFILE ===== --}}
-@auth
-@if(auth()->id() === $user->id)
+
+<?php if(auth()->guard()->check()): ?>
+<?php if(auth()->id() === $user->id): ?>
 
 <div class="modal-overlay" id="modal-edit-profile">
     <div class="modal-box">
         <button class="modal-close" onclick="closeEditModal()">&times;</button>
         <div class="modal-title">Edit Profile</div>
-        <form method="POST" action="{{ route('profile.update') }}">
-            @csrf
-            @method('PUT')
+        <form method="POST" action="<?php echo e(route('profile.update')); ?>">
+            <?php echo csrf_field(); ?>
+            <?php echo method_field('PUT'); ?>
             <div class="form-row-2 form-row">
                 <div>
                     <label>First Name *</label>
-                    @php
+                    <?php
                         $nameParts = explode(' ', $user->name, 2);
                         $firstName = $nameParts[0] ?? '';
                         $lastName  = $nameParts[1] ?? '';
-                    @endphp
-                    <input type="text" name="first_name" value="{{ $firstName }}" required placeholder="First name">
+                    ?>
+                    <input type="text" name="first_name" value="<?php echo e($firstName); ?>" required placeholder="First name">
                 </div>
                 <div>
                     <label>Last Name</label>
-                    <input type="text" name="last_name" value="{{ $lastName }}" placeholder="Last name">
+                    <input type="text" name="last_name" value="<?php echo e($lastName); ?>" placeholder="Last name">
                 </div>
             </div>
             <div class="form-row">
                 <label>Location</label>
                 <select name="location" style="width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:6px;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box">
                     <option value="">— Select Country —</option>
-                    @foreach([
+                    <?php $__currentLoopData = [
                         'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia',
                         'Austria','Azerbaijan','Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin',
                         'Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
@@ -415,21 +417,21 @@
                         'Syria','Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo','Tonga','Trinidad and Tobago',
                         'Tunisia','Turkey','Turkmenistan','Tuvalu','Uganda','Ukraine','United Arab Emirates','United Kingdom',
                         'United States','Uruguay','Uzbekistan','Vanuatu','Vatican City','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe'
-                    ] as $country)
-                    <option value="{{ $country }}" {{ $user->location === $country ? 'selected' : '' }}>{{ $country }}</option>
-                    @endforeach
+                    ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $country): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <option value="<?php echo e($country); ?>" <?php echo e($user->location === $country ? 'selected' : ''); ?>><?php echo e($country); ?></option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
             <div class="form-row">
                 <label>Bio</label>
-                <textarea name="bio" placeholder="Tell us about yourself...">{{ $user->bio }}</textarea>
+                <textarea name="bio" placeholder="Tell us about yourself..."><?php echo e($user->bio); ?></textarea>
             </div>
             <button type="submit" class="btn-submit">Save Changes</button>
         </form>
     </div>
 </div>
 
-{{-- ===== MODAL: AVATAR ===== --}}
+
 <div class="modal-overlay" id="modal-avatar">
     <div class="modal-box" style="max-width:360px">
         <button class="modal-close" onclick="closeAvatarModal()">&times;</button>
@@ -437,21 +439,21 @@
 
         <div class="avatar-preview-wrap">
             <img id="avatar-preview"
-                 src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username }}"
+                 src="<?php echo e($user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username); ?>"
                  alt="Preview"
-                 onerror="this.src='https://i.pravatar.cc/120?u={{ $user->username }}'">
+                 onerror="this.src='https://i.pravatar.cc/120?u=<?php echo e($user->username); ?>'">
         </div>
 
-        {{-- Upload form --}}
-        <form id="avatar-upload-form" method="POST" action="{{ route('profile.updateAvatar') }}" enctype="multipart/form-data">
-            @csrf
+        
+        <form id="avatar-upload-form" method="POST" action="<?php echo e(route('profile.updateAvatar')); ?>" enctype="multipart/form-data">
+            <?php echo csrf_field(); ?>
             <input type="file" name="avatar" id="avatar-file-input" accept="image/*" style="display:none" onchange="previewAndSubmit(this)">
         </form>
 
-        {{-- Remove form --}}
-        <form id="avatar-remove-form" method="POST" action="{{ route('profile.removeAvatar') }}">
-            @csrf
-            @method('DELETE')
+        
+        <form id="avatar-remove-form" method="POST" action="<?php echo e(route('profile.removeAvatar')); ?>">
+            <?php echo csrf_field(); ?>
+            <?php echo method_field('DELETE'); ?>
         </form>
 
         <div class="avatar-actions">
@@ -465,19 +467,19 @@
     </div>
 </div>
 
-@endif
-@endauth
+<?php endif; ?>
+<?php endif; ?>
 
-{{-- Hidden file input for quick project upload --}}
-@auth
-@if(auth()->id() === $user->id)
+
+<?php if(auth()->guard()->check()): ?>
+<?php if(auth()->id() === $user->id): ?>
 <input type="file" id="quick-upload-input" accept="image/*" style="display:none">
-@endif
-@endauth
+<?php endif; ?>
+<?php endif; ?>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
 const csrf = document.querySelector('meta[name="csrf-token"]').content;
 
@@ -556,7 +558,7 @@ async function toggleFollowProfile(userId, btn) {
 
 function quickUpload() {
     const input = document.getElementById('quick-upload-input');
-    if (!input) { window.location = '{{ route("projects.create") }}'; return; }
+    if (!input) { window.location = '<?php echo e(route("projects.create")); ?>'; return; }
     input.click();
     input.onchange = function() {
         if (!input.files || !input.files[0]) return;
@@ -566,10 +568,12 @@ function quickUpload() {
             sessionStorage.setItem('quick_upload_data', e.target.result);
             sessionStorage.setItem('quick_upload_name', file.name);
             sessionStorage.setItem('quick_upload_type', file.type);
-            window.location = '{{ route("projects.create") }}';
+            window.location = '<?php echo e(route("projects.create")); ?>';
         };
         reader.readAsDataURL(file);
     };
 }
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\behance_sbd\resources\views/profile/show.blade.php ENDPATH**/ ?>
