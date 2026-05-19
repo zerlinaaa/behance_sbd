@@ -172,7 +172,6 @@
 
         <?php if(auth()->guard()->check()): ?>
             <?php if(auth()->id() === $user->id): ?>
-            <button onclick="quickUpload()" class="p-btn p-btn-blue">+ Add Project</button>
             <button onclick="openEditModal()" class="p-btn p-btn-outline" style="cursor:pointer">Edit Profile Info</button>
             <?php else: ?>
             <button onclick="toggleFollowProfile(<?php echo e($user->id); ?>, this)"

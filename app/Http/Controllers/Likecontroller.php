@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Like;
 
 class LikeController extends Controller
 {
-    /** Toggle like/unlike — POST /projects/{id}/like */
     public function toggle(int $id)
     {
         $userId   = auth()->id();
@@ -18,22 +16,31 @@ class LikeController extends Controller
 
         if ($existing) {
             $existing->delete();
+            DB::table('projects')->where('id', $id)->decrement('likes_count');
             $action = 'unliked';
         } else {
             Like::create([
                 'user_id'    => $userId,
                 'project_id' => $id,
             ]);
+            DB::table('projects')->where('id', $id)->increment('likes_count');
             $action = 'liked';
         }
 
-        $likesCount = DB::table('projects')
-                        ->where('id', $id)
-                        ->value('likes_count');
+        // ✅ Hitung langsung dari tabel likes (akurat)
+        $likesCount = DB::table('likes')
+                        ->where('project_id', $id)
+                        ->count();
+
+        // ✅ Sync kolom likes_count agar selalu akurat
+        DB::table('projects')
+            ->where('id', $id)
+            ->update(['likes_count' => $likesCount]);
 
         return response()->json([
             'action'      => $action,
             'likes_count' => $likesCount,
         ]);
     }
+
 }
