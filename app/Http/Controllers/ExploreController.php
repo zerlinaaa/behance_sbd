@@ -14,9 +14,9 @@ class ExploreController extends Controller
      */
     public function index(Request $request)
     {
-        if (auth()->check()) {
-            return redirect()->route('dashboard');
-        }
+        // if (auth()->check()) {
+            // return redirect()->route('dashboard');
+        // }
         
         $type = $request->get('type', 'projects');
 

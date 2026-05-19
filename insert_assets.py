@@ -3,13 +3,13 @@
 INSERT ASSETS — Baca dari behance_assets.json → DB
 ============================================================
 Insert:
-- users    (owner asset, skip kalau sudah ada)
-- assets
+- users          (owner asset, skip kalau sudah ada)
+- assets         (termasuk owner_name, owner_username)
 - asset_categories
 ============================================================
 """
 
-import json, re, random
+import json, random
 import mysql.connector
 import bcrypt
 
@@ -37,7 +37,7 @@ def get_or_create_user(conn, username: str, name: str) -> int:
         hashed = bcrypt.hashpw(b"password123", bcrypt.gensalt()).decode()
         cursor.execute("""
             INSERT INTO users (name, username, email, password, role, followers_count, following_count, created_at, updated_at)
-            VALUES (%s, %s, %s, %s, 'scraped', 0, 0, NOW(), NOW())
+            VALUES (%s, %s, %s, %s, 'user', 0, 0, NOW(), NOW())
         """, (name or username, username, f"{username}@behance-scraped.com", hashed))
         conn.commit()
         return cursor.lastrowid
@@ -64,16 +64,28 @@ def insert_asset(conn, item: dict, user_id: int) -> int | None:
         row = cursor.fetchone()
         if row:
             return row[0]
+
         cursor.execute("""
             INSERT INTO assets (user_id, title, slug, description, cover_image,
-                                asset_type, license, price, currency,
-                                status, views_count, likes_count, created_at, updated_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'published', %s, %s, NOW(), NOW())
+                                asset_type, license, price, currency, status,
+                                owner_name, owner_username,
+                                views_count, likes_count, created_at, updated_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'published',
+                    %s, %s, %s, %s, NOW(), NOW())
         """, (
-            user_id, item['title'], item['slug'], item.get('description'),
-            item.get('cover_image'), item.get('asset_type', 'other'),
-            item.get('license', 'free'), item.get('price'), item.get('currency', 'USD'),
-            item.get('views_count', 0), item.get('likes_count', 0)
+            user_id,
+            item['title'],
+            item['slug'],
+            item.get('description'),
+            item.get('cover_image'),
+            item.get('asset_type', 'other'),
+            item.get('license', 'free'),
+            item.get('price'),
+            item.get('currency', 'USD'),
+            item.get('owner_name', 'Unknown'),
+            item.get('owner_username', ''),
+            item.get('views_count', 0),
+            item.get('likes_count', 0),
         ))
         conn.commit()
         return cursor.lastrowid

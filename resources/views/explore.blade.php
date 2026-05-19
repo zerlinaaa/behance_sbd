@@ -723,7 +723,7 @@
         @else
         <div class="bh-grid" id="projects-grid">
             @foreach($assets as $asset)
-            <a href="{{ $asset->_source_url ?? '#' }}" class="bh-card" target="_blank" rel="noopener">
+            <a href="{{ route('assets.show', $asset->slug) }}" class="bh-card">
                 <div class="bh-card-img-wrap">
                     <img src="{{ $asset->cover_image
                                 ? (Str::startsWith($asset->cover_image, 'http')

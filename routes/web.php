@@ -23,6 +23,8 @@ Route::get('/', function() {
 // ── Explore & detail project (publik)
 Route::get('/explore', [ExploreController::class, 'index'])->name('explore');
 Route::get('/projects/{slug}', [ExploreController::class, 'show'])->name('projects.show');
+Route::get('/assets/{slug}', [App\Http\Controllers\AssetController::class, 'show'])->name('assets.show');
+
 
 // ── Auth (guest only)
 Route::middleware('guest')->group(function () {
