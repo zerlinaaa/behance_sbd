@@ -671,7 +671,7 @@
         {{-- Info --}}
         <div style="flex:1">
             <h2 style="font-size:20px;font-weight:800;margin-bottom:4px">{{ auth()->user()->name }}</h2>
-            <div style="color:#888;font-size:13px;margin-bottom:6px">@{{ auth()->user()->username }}</div>
+            <div style="color:#888;font-size:13px;margin-bottom:6px">{{ auth()->user()->username }}</div>
             <div style="display:flex;gap:14px;flex-wrap:wrap">
                 @if(auth()->user()->location)
                 <span style="font-size:13px;color:#666"><i class="fas fa-map-marker-alt" style="color:#aaa"></i> {{ auth()->user()->location }}</span>
