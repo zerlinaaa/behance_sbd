@@ -13,6 +13,15 @@
              alt="{{ $project->title }}"
              class="dash-card-img" loading="lazy"
              onerror="this.src='https://picsum.photos/seed/{{ $project->id }}x/480/300'">
+
+        {{-- ✅ BADGE HARGA ASSET (AJAX) --}}
+        @if(request('type') === 'assets' && !empty($project->price) && $project->price > 0)
+        <div style="position:absolute;top:8px;left:8px;background:#0057ff;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:4px;display:flex;align-items:center;gap:4px;z-index:2;">
+            <i class="fas fa-shopping-cart" style="font-size:9px"></i>
+            US ${{ number_format($project->price / 100, 0) }}
+        </div>
+        @endif
+
         <div class="dash-card-overlay">
             <div class="dash-overlay-row">
                 <span class="dash-overlay-views">
@@ -427,7 +436,6 @@
                 </div>
             </div>
 
-
             {{-- ④ Tools --}}
             <div class="dash-sidebar-section">
                 <button type="button" class="dash-sidebar-section-btn" onclick="dashToggleSection(this)">
@@ -716,6 +724,15 @@
                      alt="{{ $project->title }}"
                      class="dash-card-img" loading="lazy"
                      onerror="this.src='https://picsum.photos/seed/{{ $project->id }}x/480/300'">
+
+                {{-- ✅ BADGE HARGA ASSET --}}
+                @if($type === 'assets' && !empty($project->price) && $project->price > 0)
+                <div style="position:absolute;top:8px;left:8px;background:#0057ff;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:4px;display:flex;align-items:center;gap:4px;z-index:2;">
+                    <i class="fas fa-shopping-cart" style="font-size:9px"></i>
+                    US ${{ number_format($project->price / 100, 0) }}
+                </div>
+                @endif
+
                 <div class="dash-card-overlay">
                     <div class="dash-overlay-row">
                         <button class="dash-overlay-btn {{ ($project->is_liked ?? false) ? 'liked' : '' }}"
@@ -861,6 +878,7 @@ async function dashToggleBookmark(id, btn) {
                 hasMore = false;
             } else {
                 const grid = document.getElementById('dash-projects-container');
+                const type = '{{ $type }}';
                 data.projects.forEach(p => {
                     const cover  = p.cover_image
                         ? (p.cover_image.startsWith('http') ? p.cover_image : `/storage/${p.cover_image}`)
@@ -869,11 +887,20 @@ async function dashToggleBookmark(id, btn) {
                         ? (p.creator_avatar.startsWith('http') ? p.creator_avatar : `/storage/${p.creator_avatar}`)
                         : `https://i.pravatar.cc/44?u=${p.creator_username}`;
 
+                    // Badge harga untuk asset
+                    const priceBadge = (type === 'assets' && p.price > 0)
+                        ? `<div style="position:absolute;top:8px;left:8px;background:#0057ff;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:4px;display:flex;align-items:center;gap:4px;z-index:2;">
+                               <i class="fas fa-shopping-cart" style="font-size:9px"></i>
+                               US $${Math.floor(p.price / 100).toLocaleString()}
+                           </div>`
+                        : '';
+
                     grid.insertAdjacentHTML('beforeend', `
                         <a href="/projects/${p.slug}" class="dash-card">
                             <div class="dash-card-img-wrap">
                                 <img src="${cover}" class="dash-card-img" loading="lazy"
                                      onerror="this.src='https://picsum.photos/seed/${p.id}x/480/300'">
+                                ${priceBadge}
                                 <div class="dash-card-overlay">
                                     <div class="dash-overlay-row">
                                         <span class="dash-overlay-views">

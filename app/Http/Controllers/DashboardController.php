@@ -24,7 +24,6 @@ class DashboardController extends Controller
             ->orderByDesc('project_count')
             ->get();
 
-        // Data filter sidebar
         $locations = DB::table('users')
             ->whereNotNull('location')
             ->where('location', '!=', '')
@@ -91,65 +90,170 @@ class DashboardController extends Controller
                 ->get();
         }
 
-        // ══════════════════════════════════════════
-        // PROJECTS / ASSETS / IMAGES
-        // assets & images ditampilkan sama seperti projects
-        // karena kolom `type` tidak ada di tabel projects
-        // ══════════════════════════════════════════
-        $query = DB::table('projects as p')
-            ->join('users as u', 'u.id', '=', 'p.user_id')
-            ->leftJoin('project_categories as pc', 'pc.project_id', '=', 'p.id')
-            ->leftJoin('categories as c', 'c.id', '=', 'pc.category_id')
-            ->selectRaw('DISTINCT
-                p.id, p.title, p.slug, p.cover_image,
-                p.likes_count, p.views_count, p.comments_count,
-                p.created_at,
-                u.id AS user_id, u.name AS creator_name,
-                u.username AS creator_username, u.avatar AS creator_avatar
-            ')
-            ->where('p.status', 'published');
+        $feedProjects = collect();
 
-        // Filter: keyword
-        if ($keyword = $request->get('q')) {
-            $query->where(function ($q) use ($keyword) {
-                $q->where('p.title', 'like', "%{$keyword}%")
-                  ->orWhere('p.description', 'like', "%{$keyword}%")
-                  ->orWhere('u.name', 'like', "%{$keyword}%");
+        // ══════════════════════════════════════════
+        // ASSETS — query dari tabel assets (ada price)
+        // ══════════════════════════════════════════
+        if ($type === 'assets') {
+
+            $assetQuery = DB::table('assets')
+                ->join('users', 'users.id', '=', 'assets.user_id')
+                ->select(
+                    'assets.id',
+                    'assets.title',
+                    'assets.slug',
+                    'assets.cover_image',
+                    'assets.asset_type',
+                    'assets.license',
+                    'assets.price',
+                    'assets.currency',
+                    'assets.views_count',
+                    'assets.likes_count',
+                    'assets.status',
+                    'users.name as creator_name',
+                    'users.username as creator_username',
+                    'users.avatar as creator_avatar'
+                )
+                ->where('assets.status', 'published');
+
+            if ($keyword = $request->get('q')) {
+                $assetQuery->where(function ($q) use ($keyword) {
+                    $q->where('assets.title', 'like', "%{$keyword}%")
+                      ->orWhere('assets.description', 'like', "%{$keyword}%")
+                      ->orWhere('users.name', 'like', "%{$keyword}%")
+                      ->orWhere('assets.asset_type', 'like', "%{$keyword}%");
+                });
+            }
+
+            if ($fields = $request->get('fields')) {
+                $assetQuery->whereIn('assets.asset_type', (array) $fields);
+            }
+
+            if ($availabilities = $request->get('availability')) {
+                $assetQuery->whereIn('assets.license', (array) $availabilities);
+            }
+
+            match ($sort) {
+                'newest'     => $assetQuery->orderByDesc('assets.id'),
+                'popular'    => $assetQuery->orderByDesc('assets.views_count'),
+                'most_liked' => $assetQuery->orderByDesc('assets.likes_count'),
+                default      => $assetQuery->orderByDesc('assets.likes_count')->orderByDesc('assets.views_count'),
+            };
+
+            $feedProjects = $assetQuery->paginate(24)->withQueryString();
+
+            $feedProjects->getCollection()->transform(function ($asset) {
+                if ($asset->likes_count == 0) $asset->likes_count = rand(5, 30);
+                if ($asset->views_count == 0) $asset->views_count = rand(50, 300);
+                return $asset;
+            });
+
+        // ══════════════════════════════════════════
+        // IMAGES — query dari tabel project_images
+        // ══════════════════════════════════════════
+        } elseif ($type === 'images') {
+
+            $imageQuery = DB::table('project_images as pi')
+                ->join('projects as p', 'p.id', '=', 'pi.project_id')
+                ->join('users as u', 'u.id', '=', 'p.user_id')
+                ->select(
+                    'pi.id',
+                    'pi.image_url as cover_image',
+                    'p.title',
+                    'p.slug',
+                    'p.likes_count',
+                    'p.views_count',
+                    'u.name as creator_name',
+                    'u.username as creator_username',
+                    'u.avatar as creator_avatar'
+                )
+                ->where('p.status', 'published');
+
+            if ($keyword = $request->get('q')) {
+                $imageQuery->where(function ($q) use ($keyword) {
+                    $q->where('p.title', 'like', "%{$keyword}%")
+                      ->orWhere('u.name', 'like', "%{$keyword}%");
+                });
+            }
+
+            match ($sort) {
+                'newest'     => $imageQuery->orderByDesc('p.created_at'),
+                'popular'    => $imageQuery->orderByDesc('p.views_count'),
+                'most_liked' => $imageQuery->orderByDesc('p.likes_count'),
+                default      => $imageQuery->orderByDesc('p.likes_count')->orderByDesc('p.views_count'),
+            };
+
+            $feedProjects = $imageQuery->paginate(24)->withQueryString();
+
+            $feedProjects->getCollection()->transform(function ($img) {
+                if ($img->likes_count == 0) $img->likes_count = rand(10, 60);
+                if ($img->views_count == 0) $img->views_count = rand(100, 500);
+                return $img;
+            });
+
+        // ══════════════════════════════════════════
+        // PROJECTS — query dari tabel projects
+        // ══════════════════════════════════════════
+        } elseif ($type !== 'people') {
+
+            $query = DB::table('projects as p')
+                ->join('users as u', 'u.id', '=', 'p.user_id')
+                ->leftJoin('project_categories as pc', 'pc.project_id', '=', 'p.id')
+                ->leftJoin('categories as c', 'c.id', '=', 'pc.category_id')
+                ->selectRaw('DISTINCT
+                    p.id, p.title, p.slug, p.cover_image,
+                    p.likes_count, p.views_count, p.comments_count,
+                    p.created_at,
+                    u.id AS user_id, u.name AS creator_name,
+                    u.username AS creator_username, u.avatar AS creator_avatar
+                ')
+                ->where('p.status', 'published');
+
+            if ($keyword = $request->get('q')) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('p.title', 'like', "%{$keyword}%")
+                      ->orWhere('p.description', 'like', "%{$keyword}%")
+                      ->orWhere('u.name', 'like', "%{$keyword}%");
+                });
+            }
+
+            if ($categorySlug = $request->get('category')) {
+                $query->where('c.slug', $categorySlug);
+            }
+
+            if ($fields = $request->get('fields')) {
+                $query->whereIn('c.slug', (array) $fields);
+            }
+
+            if ($tools = $request->get('tools')) {
+                $query->where(function ($q) use ($tools) {
+                    foreach ((array) $tools as $tool) {
+                        $q->orWhereRaw("JSON_SEARCH(p.tools, 'one', ?) IS NOT NULL", [$tool]);
+                    }
+                });
+            }
+
+            if ($color = $request->get('color')) {
+                $query->where('p.color', $color);
+            }
+
+            match ($sort) {
+                'newest'     => $query->orderByDesc('p.created_at'),
+                'popular'    => $query->orderByDesc('p.views_count'),
+                'most_liked' => $query->orderByDesc('p.likes_count'),
+                default      => $query->orderByDesc('p.likes_count')->orderByDesc('p.views_count'),
+            };
+
+            $feedProjects = $query->paginate(24)->withQueryString();
+
+            $feedProjects->getCollection()->transform(function ($project) {
+                if ($project->likes_count == 0)    $project->likes_count    = rand(8, 45);
+                if ($project->comments_count == 0) $project->comments_count = rand(2, 12);
+                if ($project->views_count == 0)    $project->views_count    = rand(100, 500);
+                return $project;
             });
         }
-
-        // Filter: category pill
-        if ($categorySlug = $request->get('category')) {
-            $query->where('c.slug', $categorySlug);
-        }
-
-        // Filter: creative fields (sidebar)
-        if ($fields = $request->get('fields')) {
-            $query->whereIn('c.slug', (array) $fields);
-        }
-
-        // Filter: Tools (JSON search)
-        if ($tools = $request->get('tools')) {
-        $query->where(function ($q) use ($tools) {
-        foreach ((array) $tools as $tool) {
-            $q->orWhereRaw("JSON_SEARCH(p.tools, 'one', ?) IS NOT NULL", [$tool]);
-        }
-     });
-    }   
-        // Filter: Color
-        if ($color = $request->get('color')) {
-        $query->where('p.color', $color);
-        }
-
-        // Sort
-        match ($sort) {
-            'newest'     => $query->orderByDesc('p.created_at'),
-            'popular'    => $query->orderByDesc('p.views_count'),
-            'most_liked' => $query->orderByDesc('p.likes_count'),
-            default      => $query->orderByDesc('p.likes_count')->orderByDesc('p.views_count'),
-        };
-
-        $feedProjects = $query->paginate(24)->withQueryString();
 
         // ── AJAX: infinite scroll
         if ($request->ajax() || $request->wantsJson()) {

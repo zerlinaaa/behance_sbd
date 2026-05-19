@@ -52,7 +52,8 @@ class ExploreController extends Controller
 
             $people = $peopleQuery
                 ->orderByDesc('followers_count')
-                ->get();
+                ->paginate(20)
+                ->withQueryString();
 
             // Memastikan data followers pada list People tidak kosong (Dummy Data)
             $people->transform(function ($person) {
