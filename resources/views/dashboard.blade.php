@@ -3,7 +3,7 @@
      AJAX: Infinite scroll — hanya project cards
 ═══════════════════════════════════════ --}}
 @foreach($feedProjects as $project)
-<a href="{{ $type === 'assets' ? route('assets.show', $project->slug) : route('projects.show', $project->slug) }}" class="dash-card">
+<a href="{{ route('projects.show', $project->slug) }}" class="dash-card">
     <div class="dash-card-img-wrap">
         <img src="{{ $project->cover_image
                     ? (Str::startsWith($project->cover_image, 'http')
@@ -16,7 +16,14 @@
 
         {{-- ✅ BADGE HARGA ASSET (AJAX) --}}
         @if(request('type') === 'assets' && !empty($project->price) && $project->price > 0)
-        <div style="position:absolute;top:8px;left:8px;background:#0057ff;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:4px;display:flex;align-items:center;gap:4px;z-index:2;">
+        <div class="dash-asset-buy-btn"
+             style="position:absolute;top:8px;left:8px;background:#0057ff;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:4px;display:flex;align-items:center;gap:4px;z-index:2;cursor:pointer;"
+             data-title="{{ $project->title }}"
+             data-cover="{{ $project->cover_image ? (Str::startsWith($project->cover_image,'http') ? $project->cover_image : asset('storage/'.$project->cover_image)) : 'https://picsum.photos/seed/'.$project->id.'/480/300' }}"
+             data-price="{{ $project->price }}"
+             data-license="{{ $project->license ?? 'Standard Commercial License' }}"
+             data-size="{{ $project->file_size ?? '' }}"
+             data-type="{{ strtoupper($project->asset_type ?? 'ZIP') }}">
             <i class="fas fa-shopping-cart" style="font-size:9px"></i>
             US ${{ number_format($project->price / 100, 0) }}
         </div>
@@ -714,7 +721,7 @@
     @else
     <div class="dash-projects-grid" id="dash-projects-container">
         @foreach($feedProjects as $project)
-        <a href="{{ $type === 'assets' ? route('assets.show', $project->slug) : route('projects.show', $project->slug) }}" class="dash-card">
+        <a href="{{ route('projects.show', $project->slug) }}" class="dash-card">
             <div class="dash-card-img-wrap">
                 <img src="{{ $project->cover_image
                             ? (Str::startsWith($project->cover_image, 'http')
@@ -727,7 +734,14 @@
 
                 {{-- ✅ BADGE HARGA ASSET --}}
                 @if($type === 'assets' && !empty($project->price) && $project->price > 0)
-                <div style="position:absolute;top:8px;left:8px;background:#0057ff;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:4px;display:flex;align-items:center;gap:4px;z-index:2;">
+                <div class="dash-asset-buy-btn"
+                     style="position:absolute;top:8px;left:8px;background:#0057ff;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:4px;display:flex;align-items:center;gap:4px;z-index:2;cursor:pointer;"
+                     data-title="{{ $project->title }}"
+                     data-cover="{{ $project->cover_image ? (Str::startsWith($project->cover_image,'http') ? $project->cover_image : asset('storage/'.$project->cover_image)) : 'https://picsum.photos/seed/'.$project->id.'/480/300' }}"
+                     data-price="{{ $project->price }}"
+                     data-license="{{ $project->license ?? 'Standard Commercial License' }}"
+                     data-size="{{ $project->file_size ?? '' }}"
+                     data-type="{{ strtoupper($project->asset_type ?? 'ZIP') }}">
                     <i class="fas fa-shopping-cart" style="font-size:9px"></i>
                     US ${{ number_format($project->price / 100, 0) }}
                 </div>
@@ -782,7 +796,79 @@
         <a href="#">Help</a>
         <a href="#">Cookie Preferences</a>
     </div>
-    <div style="font-size:12px;color:#bbb;">© {{ date('Y') }} Adobe Inc. All rights reserved.</div>
+    <div style="font-size:12px;color:#bbb;">©️ {{ date('Y') }} Adobe Inc. All rights reserved.</div>
+</div>
+
+{{-- ══ PURCHASE MODAL ══ --}}
+<div id="dash-purchase-modal"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:12px;width:640px;max-width:95vw;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25);">
+        <div style="display:grid;grid-template-columns:1fr 1fr;">
+
+            {{-- Kiri: info asset --}}
+            <div style="padding:24px;border-right:1px solid #f0f0f0;">
+                <div style="background:#f5f5f5;border-radius:8px;height:180px;overflow:hidden;margin-bottom:16px;position:relative;">
+                    <img id="pm-cover" src="" alt="" style="width:100%;height:100%;object-fit:cover;">
+                    <div id="pm-price-badge"
+                         style="position:absolute;top:8px;left:8px;background:#0057ff;color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:20px;display:none;">
+                    </div>
+                </div>
+                <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:14px;" id="pm-title"></div>
+                <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:#555;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <i class="fas fa-file-archive" style="width:16px;color:#aaa"></i>
+                        Filetype: <span id="pm-filetype" style="color:#111;font-weight:700">ZIP</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <i class="fas fa-weight-hanging" style="width:16px;color:#aaa"></i>
+                        Size: <span id="pm-size" style="color:#111;font-weight:700">—</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <i class="fas fa-shield-alt" style="width:16px;color:#aaa"></i>
+                        License: <span id="pm-license" style="color:#111;font-weight:700">Standard Commercial License</span>
+                        <a href="#" style="color:#0057ff;font-size:11px;">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Kanan: payment --}}
+            <div style="padding:24px;display:flex;flex-direction:column;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+                    <div style="font-size:18px;font-weight:800;color:#111;">Download File</div>
+                    <button onclick="dashClosePurchase()"
+                            style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;line-height:1;padding:4px;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div style="flex:1;display:flex;flex-direction:column;gap:10px;justify-content:center;">
+                    <button onclick="dashPayWithPaypal()"
+                            style="width:100%;padding:14px;border-radius:8px;background:#003087;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                        <svg width="90" height="22" viewBox="0 0 90 22" xmlns="http://www.w3.org/2000/svg">
+                            <text x="0" y="18" font-size="20" font-family="Arial" font-weight="bold" fill="#009cde">Pay</text>
+                            <text x="34" y="18" font-size="20" font-family="Arial" font-weight="bold" fill="#fff">Pal</text>
+                        </svg>
+                    </button>
+
+                    <button onclick="dashPayWithCard()"
+                            style="width:100%;padding:14px;border-radius:8px;background:#1a1a1a;border:none;cursor:pointer;color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Nunito',sans-serif;">
+                        <i class="fas fa-credit-card"></i> Debit or Credit Card
+                    </button>
+
+                    <div style="text-align:center;font-size:11px;color:#aaa;margin-top:4px;">
+                        Powered by <strong style="color:#003087;">PayPal</strong>
+                    </div>
+
+                    <p style="font-size:11px;color:#aaa;text-align:center;line-height:1.6;margin-top:8px;">
+                        By continuing you agree to be charged by PayPal, Inc.
+                        <a href="#" style="color:#0057ff;">Learn more</a>. You also agree to the
+                        <a href="#" style="color:#0057ff;">Adobe Terms of Use</a> and
+                        <a href="#" style="color:#0057ff;">Behance Additional Terms</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @endsection
@@ -887,9 +973,15 @@ async function dashToggleBookmark(id, btn) {
                         ? (p.creator_avatar.startsWith('http') ? p.creator_avatar : `/storage/${p.creator_avatar}`)
                         : `https://i.pravatar.cc/44?u=${p.creator_username}`;
 
-                    // Badge harga untuk asset
                     const priceBadge = (type === 'assets' && p.price > 0)
-                        ? `<div style="position:absolute;top:8px;left:8px;background:#0057ff;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:4px;display:flex;align-items:center;gap:4px;z-index:2;">
+                        ? `<div class="dash-asset-buy-btn"
+                                style="position:absolute;top:8px;left:8px;background:#0057ff;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:4px;display:flex;align-items:center;gap:4px;z-index:2;cursor:pointer;"
+                                data-title="${p.title}"
+                                data-cover="${cover}"
+                                data-price="${p.price}"
+                                data-license="${p.license || 'Standard Commercial License'}"
+                                data-size="${p.file_size || ''}"
+                                data-type="${(p.asset_type || 'ZIP').toUpperCase()}">
                                <i class="fas fa-shopping-cart" style="font-size:9px"></i>
                                US $${Math.floor(p.price / 100).toLocaleString()}
                            </div>`
@@ -939,6 +1031,53 @@ async function dashToggleBookmark(id, btn) {
     });
 })();
 @endif
+
+// ── PURCHASE MODAL ──
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.dash-asset-buy-btn');
+    if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        dashOpenPurchase({
+            title:   btn.dataset.title,
+            cover:   btn.dataset.cover,
+            price:   parseInt(btn.dataset.price),
+            license: btn.dataset.license,
+            size:    btn.dataset.size,
+            type:    btn.dataset.type,
+        });
+    }
+});
+
+function dashOpenPurchase(data) {
+    document.getElementById('pm-title').textContent    = data.title;
+    document.getElementById('pm-cover').src            = data.cover;
+    document.getElementById('pm-license').textContent  = data.license;
+    document.getElementById('pm-filetype').textContent = data.type || 'ZIP';
+    document.getElementById('pm-size').textContent     = data.size ? data.size + ' MB' : '—';
+
+    const badge = document.getElementById('pm-price-badge');
+    if (data.price > 0) {
+        badge.textContent   = 'US $' + Math.floor(data.price / 100).toLocaleString();
+        badge.style.display = 'block';
+    } else {
+        badge.style.display = 'none';
+    }
+
+    const modal = document.getElementById('dash-purchase-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function dashClosePurchase() {
+    document.getElementById('dash-purchase-modal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+function dashPayWithPaypal() { alert('Redirect ke PayPal...'); }
+function dashPayWithCard()   { alert('Redirect ke Credit Card checkout...'); }
+
+document.getElementById('dash-purchase-modal').addEventListener('click', function(e) {
+    if (e.target === this) dashClosePurchase();
+});
 </script>
 @endpush
 
