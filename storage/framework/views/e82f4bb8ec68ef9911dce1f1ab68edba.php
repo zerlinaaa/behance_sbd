@@ -181,34 +181,49 @@
     <main class="page-main">
         <div class="auth-card">
             <h1>Sign in</h1>
-            <p class="subtitle">New user? <a href="{{ route('register') }}">Create an account</a></p>
+            <p class="subtitle">New user? <a href="<?php echo e(route('register')); ?>">Create an account</a></p>
 
-            @if($errors->any())
+            <?php if($errors->any()): ?>
             <div class="alert-error">
-                {{ $errors->first() }}
-            </div>
-            @endif
+                <?php echo e($errors->first()); ?>
 
-            <form method="POST" action="{{ route('login.post') }}">
-                @csrf
+            </div>
+            <?php endif; ?>
+
+            <form method="POST" action="<?php echo e(route('login.post')); ?>">
+                <?php echo csrf_field(); ?>
 
                 <div class="form-group">
                     <label for="email">Email address</label>
                     <input type="email" id="email" name="email"
                            autocomplete="email" autofocus
-                           value="{{ old('email') }}" required>
-                    @error('email')
-                        <p style="color:#eb1000;font-size:12px;margin-top:4px;">{{ $message }}</p>
-                    @enderror
+                           value="<?php echo e(old('email')); ?>" required>
+                    <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <p style="color:#eb1000;font-size:12px;margin-top:4px;"><?php echo e($message); ?></p>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                 </div>
 
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password"
                            autocomplete="current-password" required>
-                    @error('password')
-                        <p style="color:#eb1000;font-size:12px;margin-top:4px;">{{ $message }}</p>
-                    @enderror
+                    <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <p style="color:#eb1000;font-size:12px;margin-top:4px;"><?php echo e($message); ?></p>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                 </div>
 
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
@@ -225,7 +240,7 @@
     </main>
 
     <footer class="page-footer">
-        <span>Copyright &copy; {{ date('Y') }} Adobe. All rights reserved.</span>
+        <span>Copyright &copy; <?php echo e(date('Y')); ?> Adobe. All rights reserved.</span>
         <span class="page-footer-sep">|</span>
         <a href="#">Terms of Use</a>
         <span class="page-footer-sep">|</span>
@@ -237,4 +252,4 @@
     </footer>
 
 </body>
-</html>
+</html><?php /**PATH C:\Semester2\SBD\behance_sbd\resources\views/auth/login.blade.php ENDPATH**/ ?>
