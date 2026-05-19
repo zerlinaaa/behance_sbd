@@ -672,42 +672,6 @@
 </div>
 
 @else
-{{-- ══ PROFILE SECTION ══ --}}
-@if($type !== 'people')
-<div style="max-width:1100px;margin:32px auto 0;padding:0 32px">
-    <div style="display:flex;align-items:center;gap:20px;margin-bottom:28px;flex-wrap:wrap">
-
-        {{-- Avatar --}}
-        <img src="{{ auth()->user()->avatar ?? 'https://i.pravatar.cc/80?u='.auth()->user()->username }}"
-             alt="{{ auth()->user()->name }}"
-             style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 12px rgba(0,0,0,.15);flex-shrink:0"
-             onerror="this.src='https://i.pravatar.cc/80?u={{ auth()->user()->username }}'">
-
-        {{-- Info --}}
-        <div style="flex:1">
-            <h2 style="font-size:20px;font-weight:800;margin-bottom:4px">{{ auth()->user()->name }}</h2>
-            <div style="color:#888;font-size:13px;margin-bottom:6px">{{ auth()->user()->username }}</div>
-            <div style="display:flex;gap:14px;flex-wrap:wrap">
-                @if(auth()->user()->location)
-                <span style="font-size:13px;color:#666"><i class="fas fa-map-marker-alt" style="color:#aaa"></i> {{ auth()->user()->location }}</span>
-                @endif
-                @if(auth()->user()->availability)
-                <span style="font-size:13px;color:#27ae60;font-weight:700"><i class="fas fa-circle" style="font-size:8px"></i> {{ ucfirst(str_replace('_', ' ', auth()->user()->availability)) }}</span>
-                @endif
-            </div>
-        </div>
-
-        {{-- Actions --}}
-        <div style="display:flex;gap:8px">
-            <a href="{{ route('projects.create') }}"
-               style="padding:8px 18px;border-radius:20px;font-size:13px;font-weight:700;background:#0057ff;color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:6px">
-                <i class="fas fa-plus"></i> Add Project
-            </a>
-        </div>
-    </div>
-    <hr style="border:none;border-top:1px solid #eee;margin-bottom:0">
-</div>
-@endif
 
 {{-- ─────────── PROJECTS / ASSETS / IMAGES ─────────── --}}
 <section class="dash-projects-section">
