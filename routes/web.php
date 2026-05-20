@@ -51,9 +51,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/profile/avatar',   [App\Http\Controllers\ProfileController::class, 'updateAvatar'])->name('profile.updateAvatar');
     Route::delete('/profile/avatar', [App\Http\Controllers\ProfileController::class, 'removeAvatar'])->name('profile.removeAvatar');
+    Route::post('/profile/banner',   [App\Http\Controllers\ProfileController::class, 'updateBanner'])->name('profile.updateBanner');
+    Route::delete('/profile/banner', [App\Http\Controllers\ProfileController::class, 'removeBanner'])->name('profile.removeBanner');
     Route::put('/profile',           [App\Http\Controllers\ProfileController::class, 'updateProfile'])->name('profile.update');
-    Route::post('/profile/banner',   [App\Http\Controllers\ProfileController::class, 'updateBanner'])->name('profile.updateBanner');
-    Route::post('/profile/banner',   [App\Http\Controllers\ProfileController::class, 'updateBanner'])->name('profile.updateBanner');
 });
 
 Route::get('/resources',              function() { return view('resources.overview'); })->name('resources.overview');
@@ -71,4 +71,3 @@ Route::get('/users/{username}', [App\Http\Controllers\ProfileController::class, 
 
 // Harus PALING BAWAH
 Route::get('/projects/{slug}', [ExploreController::class, 'show'])->name('projects.show');
-

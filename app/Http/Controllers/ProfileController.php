@@ -22,20 +22,17 @@ class ProfileController extends Controller
         $stats = null;
 
         if (auth()->check() && auth()->id() === $user->id) {
-            // Drafts: project milik user dengan status draft
             $drafts = DB::table('projects')
                 ->where('user_id', $user->id)
                 ->where('status', 'draft')
                 ->orderByDesc('created_at')
                 ->get();
 
-            // Stats dari creator_stats view
             $stats = DB::table('creator_stats')
                 ->where('user_id', $user->id)
                 ->first();
         }
 
-        // Appreciations: project yang di-like oleh user ini
         if (auth()->check()) {
             $appreciations = DB::table('projects')
                 ->join('likes', 'projects.id', '=', 'likes.project_id')
@@ -84,9 +81,9 @@ class ProfileController extends Controller
         DB::table('users')
             ->where('id', auth()->id())
             ->update([
-                'name'     => $name,
-                'location' => $request->location,
-                'bio'      => $request->bio,
+                'name'       => $name,
+                'location'   => $request->location,
+                'bio'        => $request->bio,
                 'updated_at' => now(),
             ]);
 
@@ -102,7 +99,6 @@ class ProfileController extends Controller
         $file = $request->file('avatar');
         $filename = Str::random(20) . '.' . $file->getClientOriginalExtension();
 
-        // Buat folder jika belum ada
         if (!file_exists(public_path('uploads/avatars'))) {
             mkdir(public_path('uploads/avatars'), 0755, true);
         }
@@ -125,6 +121,7 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Foto profil berhasil dihapus!');
     }
+
     public function updateBanner(Request $request)
     {
         $request->validate([
@@ -146,6 +143,14 @@ class ProfileController extends Controller
             ->update(['banner' => $bannerPath, 'updated_at' => now()]);
 
         return back()->with('success', 'Banner berhasil diperbarui!');
-        }
+    }
 
+    public function removeBanner()
+    {
+        DB::table('users')
+            ->where('id', auth()->id())
+            ->update(['banner' => null, 'updated_at' => now()]);
+
+        return back()->with('success', 'Banner berhasil dihapus!');
+    }
 }

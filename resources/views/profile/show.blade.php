@@ -11,6 +11,7 @@
 /* Avatar */
 .p-avatar-wrap { position:relative;width:120px;margin-bottom:16px; }
 .p-avatar { width:120px;height:120px;border-radius:50%;border:4px solid #fff;object-fit:cover;display:block;box-shadow:0 2px 12px rgba(0,0,0,.15);background:#eee; }
+.p-avatar-initial { width:120px;height:120px;border-radius:50%;border:4px solid #fff;box-shadow:0 2px 12px rgba(0,0,0,.15);background:#e0e0e0;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:800;color:#999; }
 .p-avatar-edit { position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.5);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;cursor:pointer;gap:4px;border:4px solid #fff; }
 .p-avatar-wrap:hover .p-avatar-edit { opacity:1; }
 .p-avatar-edit span { color:#fff;font-size:11px;font-weight:700; }
@@ -92,7 +93,7 @@
 .btn-submit { background:#0057ff;color:#fff;border:none;border-radius:6px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;transition:background .15s; }
 .btn-submit:hover { background:#0041cc; }
 
-/* Avatar modal section */
+/* Avatar/Banner modal section */
 .avatar-actions { display:flex;gap:10px;margin-top:16px; }
 .avatar-actions label, .avatar-actions button {
     flex:1;padding:10px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;text-align:center;font-family:inherit;border:1.5px solid #ddd;background:#fff;color:#333;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;
@@ -102,6 +103,7 @@
 .avatar-actions .btn-remove-av:hover { background:#e74c3c;color:#fff; }
 .avatar-preview-wrap { text-align:center;margin-bottom:8px; }
 .avatar-preview-wrap img { width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #eee; }
+.avatar-preview-initial { width:90px;height:90px;border-radius:50%;background:#e0e0e0;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#999;margin:0 auto; }
 
 /* Alert */
 .alert-success { background:#d4edda;color:#155724;padding:12px 16px;border-radius:6px;margin-bottom:20px;font-size:14px;font-weight:600; }
@@ -128,23 +130,27 @@
 {{-- Banner --}}
 @auth
 @if(auth()->id() === $user->id)
-<form id="banner-form" method="POST" action="{{ route('profile.updateBanner') }}" enctype="multipart/form-data">
+<form id="banner-upload-form" method="POST" action="{{ route('profile.updateBanner') }}" enctype="multipart/form-data">
     @csrf
-    <input type="file" id="banner-input" name="banner" accept="image/*" style="display:none" onchange="this.form.submit()">
+    <input type="file" name="banner" id="banner-file-input" accept="image/*" style="display:none" onchange="previewAndSubmitBanner(this)">
 </form>
-<div class="p-banner" onclick="document.getElementById('banner-input').click()" style="cursor:pointer;flex-direction:column;gap:8px;color:rgba(255,255,255,0.6);font-size:14px;{{ $user->banner ? 'background-image:url('.asset($user->banner).');background-size:cover;background-position:center;' : '' }}">
-    @if(!$user->banner)
+<form id="banner-remove-form2" method="POST" action="{{ route('profile.removeBanner') }}">
+    @csrf
+    @method('DELETE')
+</form>
+<div class="p-banner" onclick="openBannerModal()" style="cursor:pointer;flex-direction:column;gap:8px;color:rgba(255,255,255,0.6);font-size:14px;{{ !empty($user->banner) ? 'background-image:url('.asset($user->banner).');background-size:cover;background-position:center;' : '' }}">
+    @if(empty($user->banner))
     <i class="fas fa-camera" style="font-size:28px"></i>
     <span style="font-weight:600">Add a Banner Image</span>
     <span style="font-size:11px;opacity:.7">Optimal dimensions 3200 x 410px</span>
     @endif
 </div>
 @else
-<div class="p-banner" style="font-size:0"></div>
+<div class="p-banner" style="font-size:0;{{ !empty($user->banner) ? 'background-image:url('.asset($user->banner).');background-size:cover;background-position:center;' : '' }}"></div>
 @endif
 @endauth
 @guest
-<div class="p-banner" style="font-size:0"></div>
+<div class="p-banner" style="font-size:0;{{ !empty($user->banner) ? 'background-image:url('.asset($user->banner).');background-size:cover;background-position:center;' : '' }}"></div>
 @endguest
 
 <div class="p-wrap">
@@ -156,10 +162,11 @@
         @auth
         @if(auth()->id() === $user->id)
         <div class="p-avatar-wrap" onclick="openAvatarModal()" style="cursor:pointer">
-            <img id="main-avatar"
-                 src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username }}"
-                 alt="{{ $user->name }}" class="p-avatar"
-                 onerror="this.src='https://i.pravatar.cc/120?u={{ $user->username }}'">
+            @if(!empty($user->avatar))
+            <img src="{{ asset($user->avatar) }}" alt="{{ $user->name }}" class="p-avatar">
+            @else
+            <div class="p-avatar-initial">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
+            @endif
             <div class="p-avatar-edit" title="Change Photo">
                 <i class="fas fa-camera"></i>
                 <span>Change Photo</span>
@@ -167,16 +174,20 @@
         </div>
         @else
         <div class="p-avatar-wrap" style="pointer-events:none">
-            <img src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username }}"
-                 alt="{{ $user->name }}" class="p-avatar"
-                 onerror="this.src='https://i.pravatar.cc/120?u={{ $user->username }}'">
+            @if(!empty($user->avatar))
+            <img src="{{ asset($user->avatar) }}" alt="{{ $user->name }}" class="p-avatar">
+            @else
+            <div class="p-avatar-initial">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
+            @endif
         </div>
         @endif
         @else
         <div class="p-avatar-wrap" style="pointer-events:none">
-            <img src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username }}"
-                 alt="{{ $user->name }}" class="p-avatar"
-                 onerror="this.src='https://i.pravatar.cc/120?u={{ $user->username }}'">
+            @if(!empty($user->avatar))
+            <img src="{{ asset($user->avatar) }}" alt="{{ $user->name }}" class="p-avatar">
+            @else
+            <div class="p-avatar-initial">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
+            @endif
         </div>
         @endauth
 
@@ -382,10 +393,11 @@
     </div>
 </div>
 
-{{-- ===== MODAL: EDIT PROFILE ===== --}}
+{{-- ===== MODALS ===== --}}
 @auth
 @if(auth()->id() === $user->id)
 
+{{-- MODAL: EDIT PROFILE --}}
 <div class="modal-overlay" id="modal-edit-profile">
     <div class="modal-box">
         <button class="modal-close" onclick="closeEditModal()">&times;</button>
@@ -448,31 +460,50 @@
     </div>
 </div>
 
-{{-- ===== MODAL: AVATAR ===== --}}
+{{-- MODAL: BANNER --}}
+<div class="modal-overlay" id="modal-banner">
+    <div class="modal-box" style="max-width:360px">
+        <button class="modal-close" onclick="closeBannerModal()">&times;</button>
+        <div class="modal-title">Banner Image</div>
+        <div style="text-align:center;margin-bottom:8px;">
+            <img id="banner-preview"
+                 src="{{ !empty($user->banner) ? asset($user->banner) : 'https://via.placeholder.com/320x100/2d3748/ffffff?text=No+Banner' }}"
+                 alt="Banner Preview"
+                 style="width:100%;height:100px;object-fit:cover;border-radius:8px;border:2px solid #eee;">
+        </div>
+        <div class="avatar-actions">
+            <label for="banner-file-input">
+                <i class="fas fa-upload"></i> Change Photo
+            </label>
+            <button class="btn-remove-av" onclick="removeBanner()">
+                <i class="fas fa-trash"></i> Remove Photo
+            </button>
+        </div>
+    </div>
+</div>
+
+{{-- MODAL: AVATAR --}}
 <div class="modal-overlay" id="modal-avatar">
     <div class="modal-box" style="max-width:360px">
         <button class="modal-close" onclick="closeAvatarModal()">&times;</button>
         <div class="modal-title">Profile Photo</div>
-
         <div class="avatar-preview-wrap">
-            <img id="avatar-preview"
-                 src="{{ $user->avatar ? asset($user->avatar) : 'https://i.pravatar.cc/120?u='.$user->username }}"
-                 alt="Preview"
-                 onerror="this.src='https://i.pravatar.cc/120?u={{ $user->username }}'">
+            @if(!empty($user->avatar))
+            <img id="avatar-preview" src="{{ asset($user->avatar) }}" alt="Preview">
+            @else
+            <div class="avatar-preview-initial" id="avatar-preview-initial">
+                {{ strtoupper(substr($user->name, 0, 1)) }}
+            </div>
+            @endif
         </div>
-
-        {{-- Upload form --}}
         <form id="avatar-upload-form" method="POST" action="{{ route('profile.updateAvatar') }}" enctype="multipart/form-data">
             @csrf
             <input type="file" name="avatar" id="avatar-file-input" accept="image/*" style="display:none" onchange="previewAndSubmit(this)">
         </form>
-
-        {{-- Remove form --}}
         <form id="avatar-remove-form" method="POST" action="{{ route('profile.removeAvatar') }}">
             @csrf
             @method('DELETE')
         </form>
-
         <div class="avatar-actions">
             <label for="avatar-file-input">
                 <i class="fas fa-upload"></i> Change Photo
@@ -487,7 +518,6 @@
 @endif
 @endauth
 
-{{-- Hidden file input for quick project upload --}}
 @auth
 @if(auth()->id() === $user->id)
 <input type="file" id="quick-upload-input" accept="image/*" style="display:none">
@@ -500,7 +530,7 @@
 <script>
 const csrf = document.querySelector('meta[name="csrf-token"]').content;
 
-// ── Tab switching ──────────────────────────────────────────────
+// ── Tab switching ──
 function switchTab(name, btn) {
     document.querySelectorAll('.p-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.p-tab').forEach(t => t.classList.remove('active'));
@@ -509,7 +539,7 @@ function switchTab(name, btn) {
     btn.classList.add('active');
 }
 
-// ── Edit Profile Modal ─────────────────────────────────────────
+// ── Edit Profile Modal ──
 function openEditModal() {
     document.getElementById('modal-edit-profile').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -519,7 +549,7 @@ function closeEditModal() {
     document.body.style.overflow = '';
 }
 
-// ── Avatar Modal ───────────────────────────────────────────────
+// ── Avatar Modal ──
 function openAvatarModal() {
     document.getElementById('modal-avatar').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -528,26 +558,51 @@ function closeAvatarModal() {
     document.getElementById('modal-avatar').classList.remove('open');
     document.body.style.overflow = '';
 }
-
 function previewAndSubmit(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById('avatar-preview').src = e.target.result;
+            const preview = document.getElementById('avatar-preview');
+            const initial = document.getElementById('avatar-preview-initial');
+            if (preview) preview.src = e.target.result;
+            if (initial) initial.style.display = 'none';
         };
         reader.readAsDataURL(input.files[0]);
-        // Submit langsung setelah pilih file
         setTimeout(() => document.getElementById('avatar-upload-form').submit(), 300);
     }
 }
-
 function removeAvatar() {
     if (confirm('Hapus foto profil?')) {
         document.getElementById('avatar-remove-form').submit();
     }
 }
 
-// ── Close modal saat klik overlay ─────────────────────────────
+// ── Banner Modal ──
+function openBannerModal() {
+    document.getElementById('modal-banner').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeBannerModal() {
+    document.getElementById('modal-banner').classList.remove('open');
+    document.body.style.overflow = '';
+}
+function previewAndSubmitBanner(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('banner-preview').src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+        setTimeout(() => document.getElementById('banner-upload-form').submit(), 300);
+    }
+}
+function removeBanner() {
+    if (confirm('Hapus banner?')) {
+        document.getElementById('banner-remove-form2').submit();
+    }
+}
+
+// ── Close modal saat klik overlay ──
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', function(e) {
         if (e.target === this) {
@@ -557,7 +612,7 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
     });
 });
 
-// ── Follow toggle ──────────────────────────────────────────────
+// ── Follow toggle ──
 async function toggleFollowProfile(userId, btn) {
     const res = await fetch(`/users/${userId}/follow`, {
         method: 'POST',
@@ -572,7 +627,7 @@ async function toggleFollowProfile(userId, btn) {
     }
 }
 
-
+// ── Quick Upload ──
 function quickUpload() {
     const input = document.getElementById('quick-upload-input');
     if (!input) { window.location = '{{ route("projects.create") }}'; return; }
@@ -592,8 +647,3 @@ function quickUpload() {
 }
 </script>
 @endpush
-
-
-
-
-
