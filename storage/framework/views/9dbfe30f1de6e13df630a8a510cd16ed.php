@@ -32,7 +32,7 @@
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Nunito', sans-serif;
+            font-family: 'Inter', sans-serif;
             background: #fff;
             color: var(--gray-800);
             -webkit-font-smoothing: antialiased;
@@ -55,7 +55,7 @@
             padding: 6px 11px; font-size: 13px; font-weight: 700;
             color: #333; border-radius: 3px; transition: all .12s;
             white-space: nowrap; cursor: pointer; border: none;
-            background: none; font-family: 'Nunito', sans-serif;
+            background: none; font-family: 'Inter', sans-serif;
             position: relative; height: 52px;
         }
         .bh-nav1-link:hover { color: #111; background: #f7f7f7; }
@@ -99,7 +99,7 @@
             background: var(--blue); color: #fff !important;
             border: none; border-radius: 20px; padding: 8px 18px;
             font-size: 13px; font-weight: 800; cursor: pointer;
-            font-family: 'Nunito', sans-serif; transition: background .12s;
+            font-family: 'Inter', sans-serif; transition: background .12s;
             white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;
         }
         .btn-trial:hover { background: var(--blue-dark); color: #fff; }
@@ -107,7 +107,7 @@
             background: transparent; color: #111 !important;
             border: 1.5px solid #ccc; border-radius: 20px; padding: 7px 16px;
             font-size: 13px; font-weight: 800; cursor: pointer;
-            font-family: 'Nunito', sans-serif; transition: all .12s;
+            font-family: 'Inter', sans-serif; transition: all .12s;
             white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;
         }
         .btn-share:hover { border-color: #999; background: #f5f5f5; color: #111; }
@@ -153,7 +153,7 @@
             padding: 9px 16px; font-size: 13px; font-weight: 600;
             color: #222; width: 100%; text-align: left;
             border: none; background: none; cursor: pointer;
-            font-family: 'Nunito', sans-serif; transition: background .1s;
+            font-family: 'Inter', sans-serif; transition: background .1s;
         }
         .bh-user-dd a:hover, .bh-user-dd button:hover { background: #f5f5f5; }
         .bh-user-dd i { width: 14px; text-align: center; color: #aaa; font-size: 12px; }
@@ -177,7 +177,7 @@
             border: 1.5px solid #d0d0d0; border-radius: 4px;
             background: #fff; padding: 0 13px; height: 34px;
             font-size: 13px; font-weight: 700; cursor: pointer;
-            font-family: 'Nunito', sans-serif; color: #333;
+            font-family: 'Inter', sans-serif; color: #333;
             white-space: nowrap; transition: all .12s; flex-shrink: 0;
         }
         .bh-filter-btn:hover { border-color: #999; color: #111; }
@@ -197,7 +197,7 @@
         .bh-nav2-search-box input {
             border: none; background: none; font-size: 13px;
             outline: none; width: 100%;
-            font-family: 'Nunito', sans-serif; color: #111;
+            font-family: 'Inter', sans-serif; color: #111;
         }
         .bh-nav2-search-box input::placeholder { color: #aaa; }
 
@@ -231,7 +231,7 @@
             display: flex; align-items: center; gap: 6px;
             border: none; background: none; cursor: pointer;
             font-size: 13px; font-weight: 700; color: #333;
-            font-family: 'Nunito', sans-serif; padding: 6px 2px;
+            font-family: 'Inter', sans-serif; padding: 6px 2px;
             white-space: nowrap;
         }
         .bh-recommended-btn:hover { color: #111; }
@@ -270,7 +270,7 @@
             font-weight: 700; cursor: pointer; white-space: nowrap;
             transition: all .13s; text-decoration: none; flex-shrink: 0;
             color: #333; background: transparent; height: 34px;
-            border: none; font-family: 'Nunito', sans-serif;
+            border: none; font-family: 'Inter', sans-serif;
         }
         .bh-pill:hover { background: #f0f0f0; color: #111; }
         .bh-pill.active { background: #0057ff; color: #fff !important; }
@@ -301,7 +301,7 @@
             padding: 8px 18px; border-radius: var(--radius);
             font-size: 13px; font-weight: 700; cursor: pointer;
             border: none; transition: all .15s;
-            font-family: 'Nunito', sans-serif; white-space: nowrap;
+            font-family: 'Inter', sans-serif; white-space: nowrap;
         }
         .btn-primary  { background: var(--blue); color: #fff; }
         .btn-primary:hover { background: var(--blue-dark); color: #fff; }
@@ -332,7 +332,7 @@
             width: 100%; padding: 10px 13px;
             border: 1.5px solid var(--gray-200); border-radius: var(--radius);
             font-size: 14px; outline: none; transition: border .15s;
-            font-family: 'Nunito', sans-serif; background: #fff; color: var(--gray-800);
+            font-family: 'Inter', sans-serif; background: #fff; color: var(--gray-800);
         }
         .form-control:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,87,255,.08); }
         textarea.form-control { resize: vertical; min-height: 110px; }
@@ -352,7 +352,7 @@
             background: none; border: 1.5px solid var(--gray-200); border-radius: 20px;
             padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
             display: inline-flex; align-items: center; gap: 5px; transition: all .15s;
-            font-family: 'Nunito', sans-serif; color: var(--gray-800);
+            font-family: 'Inter', sans-serif; color: var(--gray-800);
         }
         .action-btn:hover  { border-color: var(--blue); color: var(--blue); }
         .action-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
@@ -368,7 +368,7 @@
             border-radius: var(--radius); padding: 6px 16px;
             font-size: 13px; font-weight: 700; display: flex;
             align-items: center; gap: 6px; cursor: pointer;
-            font-family: 'Nunito', sans-serif; transition: background .15s;
+            font-family: 'Inter', sans-serif; transition: background .15s;
         }
         .btn-upload:hover { background: var(--blue-dark); }
 

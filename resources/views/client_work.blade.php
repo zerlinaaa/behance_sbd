@@ -2,6 +2,12 @@
 @section('title', 'Freelance Overview :: Behance')
 
 @push('styles')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
 <style>
     *, *::before, *::after { box-sizing: border-box; }
 
@@ -43,7 +49,7 @@
         transition: all .12s;
         text-decoration: none;
         border-left: 3px solid transparent;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .cw-nav-item:hover { background: #f7f7f7; color: #111; }
     .cw-nav-item.active {
@@ -60,7 +66,7 @@
     .cw-checklist { padding: 0 16px 16px; }
     .cw-checklist-title {
         font-size: 13px; font-weight: 900; color: #111;
-        padding: 14px 4px 10px; font-family: 'Nunito', sans-serif;
+        padding: 14px 4px 10px; font-family: 'Inter', sans-serif;
     }
     .cw-checklist-item {
         display: flex; align-items: center;
@@ -81,7 +87,7 @@
     .cw-checklist-icon.warn { border-color: #f39c12; color: #f39c12; }
     .cw-checklist-text {
         font-size: 13px; font-weight: 700;
-        color: #0057ff; font-family: 'Nunito', sans-serif;
+        color: #0057ff; font-family: 'Inter', sans-serif;
     }
 
     /* Availability */
@@ -90,18 +96,18 @@
         display: flex; align-items: center;
         justify-content: space-between; padding: 4px 4px 10px;
     }
-    .cw-avail-title { font-size: 13px; font-weight: 900; color: #111; font-family: 'Nunito', sans-serif; }
-    .cw-avail-edit { font-size: 12px; font-weight: 800; color: #0057ff; cursor: pointer; font-family: 'Nunito', sans-serif; }
+    .cw-avail-title { font-size: 13px; font-weight: 900; color: #111; font-family: 'Inter', sans-serif; }
+    .cw-avail-edit { font-size: 12px; font-weight: 800; color: #0057ff; cursor: pointer; font-family: 'Inter', sans-serif; }
     .cw-avail-box { background: #f9f9f9; border-radius: 8px; padding: 12px; border: 1px solid #f0f0f0; }
-    .cw-avail-label { font-size: 11px; font-weight: 700; color: #aaa; font-family: 'Nunito', sans-serif; margin-bottom: 2px; }
-    .cw-avail-value { font-size: 13px; font-weight: 700; color: #777; font-family: 'Nunito', sans-serif; }
+    .cw-avail-label { font-size: 11px; font-weight: 700; color: #aaa; font-family: 'Inter', sans-serif; margin-bottom: 2px; }
+    .cw-avail-value { font-size: 13px; font-weight: 700; color: #777; font-family: 'Inter', sans-serif; }
     .cw-avail-sep { border: none; border-top: 1px solid #eee; margin: 8px 0; }
 
     /* ── MAIN ── */
     .cw-main { flex: 1; padding: 32px; min-width: 0; }
     .cw-page-title {
         font-size: 24px; font-weight: 900; color: #111;
-        margin-bottom: 28px; font-family: 'Nunito', sans-serif;
+        margin-bottom: 28px; font-family: 'Inter', sans-serif;
     }
 
     /* ── CARD ── */
@@ -116,7 +122,7 @@
     }
     .cw-card-header-left {
         display: flex; align-items: center; gap: 8px;
-        font-size: 15px; font-weight: 900; color: #111; font-family: 'Nunito', sans-serif;
+        font-size: 15px; font-weight: 900; color: #111; font-family: 'Inter', sans-serif;
     }
     .cw-card-header-left i { color: #555; font-size: 14px; }
     .cw-card-nav { display: flex; gap: 6px; }
@@ -137,13 +143,13 @@
         padding: 36px 40px; gap: 32px;
     }
     .cw-slide-text { flex: 1; }
-    .cw-slide-text h2 { font-size: 28px; font-weight: 900; color: #111; margin-bottom: 8px; font-family: 'Nunito', sans-serif; }
-    .cw-slide-text p { font-size: 14px; color: #777; font-weight: 600; margin-bottom: 22px; font-family: 'Nunito', sans-serif; }
+    .cw-slide-text h2 { font-size: 28px; font-weight: 900; color: #111; margin-bottom: 8px; font-family: 'Inter', sans-serif; }
+    .cw-slide-text p { font-size: 14px; color: #777; font-weight: 600; margin-bottom: 22px; font-family: 'Inter', sans-serif; }
     .cw-slide-btn {
         background: #0057ff; color: #fff; border: none;
         padding: 11px 26px; border-radius: 40px;
         font-size: 14px; font-weight: 800; cursor: pointer;
-        font-family: 'Nunito', sans-serif; transition: background .14s;
+        font-family: 'Inter', sans-serif; transition: background .14s;
     }
     .cw-slide-btn:hover { background: #0041cc; }
     .cw-slide-visual {
@@ -160,7 +166,7 @@
     }
     .cw-toggle-row {
         display: flex; align-items: center; justify-content: space-between;
-        font-size: 14px; font-weight: 700; color: #333; font-family: 'Nunito', sans-serif;
+        font-size: 14px; font-weight: 700; color: #333; font-family: 'Inter', sans-serif;
     }
     .cw-toggle {
         width: 40px; height: 22px; border-radius: 11px;
@@ -191,15 +197,15 @@
         border-right: 1px solid #f0f0f0;
     }
     .cw-earning-cell:last-child { border-right: none; }
-    .cw-earning-label { font-size: 12px; font-weight: 700; color: #aaa; margin-bottom: 8px; font-family: 'Nunito', sans-serif; }
-    .cw-earning-amount { font-size: 34px; font-weight: 900; color: #111; line-height: 1; font-family: 'Nunito', sans-serif; }
+    .cw-earning-label { font-size: 12px; font-weight: 700; color: #aaa; margin-bottom: 8px; font-family: 'Inter', sans-serif; }
+    .cw-earning-amount { font-size: 34px; font-weight: 900; color: #111; line-height: 1; font-family: 'Inter', sans-serif; }
     .cw-earning-amount sup { font-size: 12px; font-weight: 700; vertical-align: super; color: #888; }
 
     /* Pending */
     .cw-pending-body { padding: 60px 24px; text-align: center; }
     .cw-pending-icon { font-size: 36px; color: #ddd; margin-bottom: 16px; }
-    .cw-pending-title { font-size: 20px; font-weight: 900; color: #111; margin-bottom: 8px; font-family: 'Nunito', sans-serif; }
-    .cw-pending-sub { font-size: 14px; color: #888; font-weight: 600; font-family: 'Nunito', sans-serif; }
+    .cw-pending-title { font-size: 20px; font-weight: 900; color: #111; margin-bottom: 8px; font-family: 'Inter', sans-serif; }
+    .cw-pending-sub { font-size: 14px; color: #888; font-weight: 600; font-family: 'Inter', sans-serif; }
     .cw-pending-sub a { color: #0057ff; font-weight: 800; }
     .cw-pending-sub a:hover { text-decoration: underline; }
 </style>

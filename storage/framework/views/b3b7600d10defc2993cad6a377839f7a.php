@@ -2,6 +2,12 @@
 <?php $__env->startSection('title', $user->name); ?>
 
 <?php $__env->startPush('styles'); ?>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
 <style>
 .p-banner { width:100%;height:200px;background:#2d3748;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.07);font-size:0;user-select:none; }
 .p-wrap { max-width:1100px;margin:0 auto;padding:0 24px 80px;display:flex;gap:40px;align-items:flex-start; }

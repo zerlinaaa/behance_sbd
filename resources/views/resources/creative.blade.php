@@ -2,6 +2,12 @@
 @section('title', 'Creative Apprenticeship')
     
     @push('styles')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -127,36 +133,6 @@
             letter-spacing: -1.5px;
             color: #191919;
         }
-
-        /* ─── EMPLOYERS ─── */
-        .employers-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            max-width: 960px;
-            margin: 0 auto 36px;
-            align-items: center;
-        }
-
-        .employer-logo-cell {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 28px 16px;
-            cursor: pointer;
-            transition: opacity .2s;
-        }
-        .employer-logo-cell:hover { opacity: 0.5; }
-
-        .link-view-all {
-            display: block;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--color-text);
-            text-decoration: underline;
-            cursor: pointer;
-        }
-        .link-view-all:hover { color: var(--color-accent); }
 
         /* ─── HOW IT WORKS ─── */
         .how-desc {
@@ -390,12 +366,10 @@
             .step-cards { grid-template-columns: 1fr; }
             .mentors-grid { grid-template-columns: repeat(3, 1fr); }
             .host-section { grid-template-columns: 1fr; }
-            .employers-grid { grid-template-columns: repeat(3, 1fr); }
         }
         @media (max-width: 560px) {
             .hero-content h1 { font-size: 34px; }
             .mentors-grid { grid-template-columns: repeat(2, 1fr); }
-            .employers-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
     @endpush
@@ -429,87 +403,6 @@
         <p class="hero-art-credit">Art by <a href="#"><u>Mya Marie Beckles</u></a></p>
     </div>
 </div>
-
-<!-- EMPLOYERS -->
-<section class="section section-bg">
-    <div class="container">
-        <div class="section-header-center">
-            <span class="section-tag-label">Participating Employers</span>
-            <h2>Real-World Experience With The Best</h2>
-        </div>
-
-        <div class="employers-grid">
-            <!-- Row 1 -->
-            <div class="employer-logo-cell">
-                <svg viewBox="0 0 176 52" width="152" height="45" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="176" height="40" rx="3" fill="#1a1a1a"/>
-                    <text x="9" y="26" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="11.5" letter-spacing="1.2" fill="white">CREATIVE MORNINGS</text>
-                    <polygon points="14,40 26,40 14,52" fill="#1a1a1a"/>
-                </svg>
-            </div>
-
-            <div class="employer-logo-cell">
-                <svg viewBox="0 0 150 54" width="132" height="48" xmlns="http://www.w3.org/2000/svg">
-                    <text x="2" y="48" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="52" letter-spacing="-3" fill="none" stroke="#1a1a1a" stroke-width="2.5">BUCK</text>
-                </svg>
-            </div>
-
-            <div class="employer-logo-cell">
-                <svg viewBox="0 0 190 44" width="168" height="40" xmlns="http://www.w3.org/2000/svg">
-                    <text x="0" y="34" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="700" font-size="28" fill="#1a1a1a">It's Nice That</text>
-                </svg>
-            </div>
-
-            <div class="employer-logo-cell">
-                <svg viewBox="0 0 132 44" width="118" height="40" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="132" height="44" rx="4" fill="#1a1a1a"/>
-                    <text x="11" y="28" font-family="Inter,Arial,sans-serif" font-weight="700" font-size="13.5" letter-spacing="0.3" fill="white">DesertBasi</text>
-                </svg>
-            </div>
-
-            <div class="employer-logo-cell">
-                <svg viewBox="0 0 200 30" width="174" height="26" xmlns="http://www.w3.org/2000/svg">
-                    <text x="0" y="22" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="16" letter-spacing="5.5" fill="#1a1a1a">INSTRUMENT</text>
-                </svg>
-            </div>
-
-            <!-- Row 2 -->
-            <div class="employer-logo-cell">
-                <svg viewBox="0 0 96 58" width="82" height="50" xmlns="http://www.w3.org/2000/svg">
-                    <text x="0" y="50" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="700" font-size="50" fill="#1a1a1a">not</text>
-                </svg>
-            </div>
-
-            <div class="employer-logo-cell">
-                <div style="text-align:center;font-family:Inter,Arial,sans-serif;line-height:1.35;">
-                    <div style="font-weight:700;font-size:13px;color:#1a1a1a;">de Young \</div>
-                    <div style="font-weight:700;font-size:13px;color:#1a1a1a;">Legion of Honor</div>
-                    <div style="font-weight:400;font-size:10px;color:#888;margin-top:3px;">fine arts museums of san francisco</div>
-                </div>
-            </div>
-
-            <div class="employer-logo-cell">
-                <svg viewBox="0 0 200 50" width="174" height="44" xmlns="http://www.w3.org/2000/svg">
-                    <text x="0" y="42" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="36" letter-spacing="-1.5" fill="#e85d04">72andSunny</text>
-                </svg>
-            </div>
-
-            <div class="employer-logo-cell">
-                <svg viewBox="0 0 172 40" width="150" height="36" xmlns="http://www.w3.org/2000/svg">
-                    <text x="0" y="31" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="26" letter-spacing="-0.5" fill="#1a1a1a">Monotype.</text>
-                </svg>
-            </div>
-
-            <div class="employer-logo-cell">
-                <svg viewBox="0 0 172 42" width="150" height="38" xmlns="http://www.w3.org/2000/svg">
-                    <text x="0" y="33" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="700" font-size="30" fill="#eb1000">Pentagram</text>
-                </svg>
-            </div>
-        </div>
-
-        <a href="#" class="link-view-all">View All</a>
-    </div>
-</section>
 
 <!-- HOW IT WORKS -->
 <section class="section" id="how-it-works">
@@ -709,6 +602,8 @@
         Yes! All career opportunities and freelance opportunities are paid positions, anywhere from part-to full-time, with the pay rate determined by the individual employer. Each position will vary; refer to the career opportunity job post for the exact pay for any given opportunity.
     </div>
 </div>
+</div>
+    </div>
 </section>
 
 <!-- CTA BANNER -->

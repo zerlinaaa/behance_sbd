@@ -1,7 +1,6 @@
-@extends('layouts.app')
-@section('title', 'Guides')
+<?php $__env->startSection('title', 'Guides'); ?>
 
-    @push('styles')
+    <?php $__env->startPush('styles'); ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -374,29 +373,29 @@
 }
     </style>
 
-    @endpush
+    <?php $__env->stopPush(); ?>
 </head>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 <body class="antialiased tracking-tight">
 
-{{-- ─── SUB NAV (TABS) ─── --}}
+
 <div class="subnav">
-    <a href="{{ route('resources.overview') }}">Overview</a>
-    <a href="{{ route('resources.guides') }}" class="active">Career Guides</a>
-    <a href="{{ route('resources.commissioned') }}">Commissioned Projects</a>
-    <a href="{{ route('resources.creative') }}">Creative Apprenticeship</a>
+    <a href="<?php echo e(route('resources.overview')); ?>">Overview</a>
+    <a href="<?php echo e(route('resources.guides')); ?>" class="active">Career Guides</a>
+    <a href="<?php echo e(route('resources.commissioned')); ?>">Commissioned Projects</a>
+    <a href="<?php echo e(route('resources.creative')); ?>">Creative Apprenticeship</a>
 </div>
 
-{{-- ─── HERO ─── --}}
+
 <div class="hero">
     <p class="hero-label" style="color: #eb1000 !important;">Career Guides</p>
     <h1>Learn, grow, and thrive in your creative career</h1>
     <p>Explore resources designed to help you reach new professional heights.</p>
 </div>
 
-{{-- ─── COURSES ─── --}}
+
 <section class="section">
     <div class="container">
         <div class="section-header">
@@ -407,7 +406,7 @@
             </div>
         </div>
 
-        @php
+        <?php
             $courses = [
                 ['img' => 'https://cpcontents.adobe.com/protected/account/131569/thumbnails/courses/16125709/2026-05-15_18_49_29.651968363Screenshot_2026-05-15_at_11.48.57_AM_e5637ca4f49a465bbccc1029b524e402_gw34f429a3c709bf808a487f69c5fb9464.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk4NDI2MDUsImlhdCI6MTc3OTIzNzgwNSwicmlkIjoiMjQzNDQ3MDAiLCJjaWQiOiIyNzk3IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImI5ZDI4YTAyZThhMGQzZTBkZTdmNWZmNTQwZjA5Mzk5Iiwib3JpZ2luYWxVcmxIYXNoIjoiZjc2NzRkODU0NjMyMDE3MjU4ZjIwZTc0NTgxYzVlNmY4N2M3OWJjNyJ9.bHIFBp77rMrBkzeeJHsv_di3gdeW8Ps5vE5ygoEIYmk', 'title' => 'AI Foundations wuth Creativity', 'parts' => '6 parts', 'mins' => '44 minutes left', 'progress' => true],
                 ['img' => 'https://cpcontents.adobe.com/protected/account/131569/thumbnails/courses/14995494/2025-12-03%2020:29:12.727146916Kieron_16d8143281a143f7b24d6694b8ebb4ba.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk4NDI2MDUsImlhdCI6MTc3OTIzNzgwNSwicmlkIjoiMjQzNDQ3MDAiLCJjaWQiOiIyNzk3IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImI5ZDI4YTAyZThhMGQzZTBkZTdmNWZmNTQwZjA5Mzk5Iiwib3JpZ2luYWxVcmxIYXNoIjoiNTQ3NmRmMzM2NmMzNDI1MGIxNWU1NjY0MmU4MjA2YzUxNmQwMmVmZiJ9.ZXwwDb-Nw8014fQZzw8uB90yljeB8uKFm_vk6Muf_lo', 'title' => 'Producing Projects with Purpose', 'parts' => '6 parts', 'mins' => '32 minutes', 'progress' => false],
@@ -418,22 +417,22 @@
                 ['img' => 'https://cpcontents.adobe.com/protected/account/131569/thumbnails/courses/13637075/2025-06-05%2022:01:48.409366994NickCover_1d06ca55dbc44d34a6c62f5ccba86e23.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk4NDI2MDYsImlhdCI6MTc3OTIzNzgwNiwicmlkIjoiMjQzNDQ3MDAiLCJjaWQiOiIyNzk3IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6IjU0ZmMxZjllNGJhMmQzMzk4YmE3NDI4YjEzMTJhNjNiIiwib3JpZ2luYWxVcmxIYXNoIjoiNWU0NjJiYmI1YjNiZTZjMWM4MTYyMmM0NWE3YmFkOTJlYWZmYzZlZCJ9.O9BYGl7AoO-qtvbPA-FqgrGfeHZogz8Q4VemZ9KRkMo', 'title' => 'Presenting Your Work Like A Pro With Nick Longo', 'parts' => '6 parts', 'mins' => '56 minutes', 'progress' => false],
                 ['img' => 'https://cpcontents.adobe.com/protected/account/131569/thumbnails/courses/13552175/2025-05-19%2017:15:05.796843182AndrewCover_06c407ffbb5b4d72ba6af5c5a9cc2d19.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk4NDI2MDYsImlhdCI6MTc3OTIzNzgwNiwicmlkIjoiMjQzNDQ3MDAiLCJjaWQiOiIyNzk3IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6IjU0ZmMxZjllNGJhMmQzMzk4YmE3NDI4YjEzMTJhNjNiIiwib3JpZ2luYWxVcmxIYXNoIjoiMzQwZTU0OWMwN2QzZTk3ZDBkODc5ZDNkN2U2ZWEwMDdmNDg0MTZjYyJ9.detrsjbUGZo8LNms5-veAYcAx19KtaVQuLJg5FOd4jo', 'title' => 'Turn Personal Project Into Dream Clients With Andrew Hochradel', 'parts' => '6 parts', 'mins' => '39 minutes', 'progress' => false],
             ];
-        @endphp
+        ?>
 
         <div id="course-wrapper" style="overflow: hidden; width: 100%;">
             <div id="course-track" style="display: flex; gap: 24px; transition: transform 0.4s ease; will-change: transform;">
-                @foreach($courses as $i => $course)
-                <div id="course-card-{{ $i }}" style="flex-shrink: 0; cursor: pointer;">
+                <?php $__currentLoopData = $courses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $course): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div id="course-card-<?php echo e($i); ?>" style="flex-shrink: 0; cursor: pointer;">
                     <div style="position: relative;">
-                        <img src="{{ $course['img'] }}" alt="{{ $course['title'] }}"
+                        <img src="<?php echo e($course['img']); ?>" alt="<?php echo e($course['title']); ?>"
                              style="width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; display: block; margin-bottom: 14px;">
-                        @if($course['progress'])
-                        @endif
+                        <?php if($course['progress']): ?>
+                        <?php endif; ?>
                     </div>
-                    <h3 style="font-size: 17px; font-weight: 700; line-height: 1.3; margin-bottom: 6px;">{{ $course['title'] }}</h3>
-                    <p style="font-size: 14px; color: #6e6e6e;">{{ $course['parts'] }} · {{ $course['mins'] }}</p>
+                    <h3 style="font-size: 17px; font-weight: 700; line-height: 1.3; margin-bottom: 6px;"><?php echo e($course['title']); ?></h3>
+                    <p style="font-size: 14px; color: #6e6e6e;"><?php echo e($course['parts']); ?> · <?php echo e($course['mins']); ?></p>
                 </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
     </div>
@@ -442,7 +441,7 @@
 <script>
 (function() {
     var idx = 0;
-    var total = {{ count($courses) }};
+    var total = <?php echo e(count($courses)); ?>;
     var visible = 4;
     var gap = 24;
 
@@ -497,7 +496,7 @@
 })();
 </script>
 
-{{-- ─── LIVE EVENTS ─── --}}
+
 <section class="section">
     <div class="container">
         <div class="section-header">
@@ -508,7 +507,7 @@
             </div>
         </div>
 
-       @php
+       <?php
     $liveEvents = [
         [
             'thumb' => 'https://i.ytimg.com/vi/B95zJjJpYZA/maxresdefault_live.jpg',
@@ -567,26 +566,27 @@
             'duration' => '57:00',
         ],
     ];
-@endphp
+?>
         <div id="live-wrapper" style="overflow: hidden; width: 100%;">
             <div id="live-track" style="display: flex; gap: 24px; transition: transform 0.4s ease; will-change: transform;">
-                @foreach($liveEvents as $i => $ev)
-<a href="{{ $ev['url'] }}" target="_blank" id="live-card-{{ $i }}" style="flex-shrink: 0; cursor: pointer; text-decoration: none; color: inherit; display: block;">
+                <?php $__currentLoopData = $liveEvents; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $ev): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+<a href="<?php echo e($ev['url']); ?>" target="_blank" id="live-card-<?php echo e($i); ?>" style="flex-shrink: 0; cursor: pointer; text-decoration: none; color: inherit; display: block;">
     <div style="position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 16/9; background: #111; margin-bottom: 14px;">
-        <img src="{{ $ev['thumb'] }}" alt="{{ $ev['title'] }}"
+        <img src="<?php echo e($ev['thumb']); ?>" alt="<?php echo e($ev['title']); ?>"
              style="width: 100%; height: 100%; object-fit: cover; display: block;">
 
-        @if($ev['duration'])
+        <?php if($ev['duration']): ?>
         <div style="position:absolute; bottom:8px; left:8px; background:rgba(0,0,0,0.75); color:#fff; font-size:11px; font-weight:700; padding:2px 7px; border-radius:4px;">
-            {{ $ev['duration'] }}
+            <?php echo e($ev['duration']); ?>
+
         </div>
-        @endif
+        <?php endif; ?>
 
     </div>
-    <h3 style="font-size: 15px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; color: #2c2c2c;">{{ $ev['title'] }}</h3>
-    <p style="font-size: 13px; color: #6e6e6e;">{{ $ev['date'] }}</p>
+    <h3 style="font-size: 15px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; color: #2c2c2c;"><?php echo e($ev['title']); ?></h3>
+    <p style="font-size: 13px; color: #6e6e6e;"><?php echo e($ev['date']); ?></p>
 </a>
-@endforeach
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
     </div>
@@ -641,14 +641,14 @@
 })();
 </script>
 
-{{-- ─── ARTICLES ─── --}}
+
 <section class="section">
     <div class="container">
         <div class="section-header">
             <h2>Articles</h2>
         </div>
 
-        @php
+        <?php
             $articles = [
                 [
                     'thumb' => 'https://blog-assets.behance.net/assets/f41a8879-3cbf-4f49-830e-238d5bfa6f9d?format=webp&quality=90',
@@ -699,22 +699,22 @@
                     'desc'  => 'From fine artist to branding apprentice, Meredith\'s creative journey through the Adobe Creative Apprenticeship shows how embracing versatility leads to growth.',
                 ],
             ];
-        @endphp
+        ?>
 
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
-            @foreach($articles as $art)
-            <a href="{{ $art['url'] }}" target="_blank" style="text-decoration: none; color: inherit; cursor: pointer;">
-                <img src="{{ $art['thumb'] }}" alt="{{ $art['title'] }}"
+            <?php $__currentLoopData = $articles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $art): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <a href="<?php echo e($art['url']); ?>" target="_blank" style="text-decoration: none; color: inherit; cursor: pointer;">
+                <img src="<?php echo e($art['thumb']); ?>" alt="<?php echo e($art['title']); ?>"
                      style="width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; display: block; margin-bottom: 14px;">
-                <h3 style="font-size: 16px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; color: #2c2c2c;">{{ $art['title'] }}</h3>
-                <p style="font-size: 13px; color: #6e6e6e; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{ $art['desc'] }}</p>
+                <h3 style="font-size: 16px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; color: #2c2c2c;"><?php echo e($art['title']); ?></h3>
+                <p style="font-size: 13px; color: #6e6e6e; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;"><?php echo e($art['desc']); ?></p>
             </a>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
     </div>
 </section>
 
-{{-- ─── IN-PERSON EVENTS ─── --}}
+
 <section class="section">
     <div class="container">
         <div class="section-header">
@@ -741,7 +741,7 @@
     </div>
 </section>
 
-{{-- ─── DISCORD CTA ─── --}}
+
 <div class="discord-cta">
     <div class="discord-cta-bg"></div>
     <div class="discord-cta-content">
@@ -753,6 +753,7 @@
 
 </body>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
 </html>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\behance_sbd\resources\views/resources/guides.blade.php ENDPATH**/ ?>

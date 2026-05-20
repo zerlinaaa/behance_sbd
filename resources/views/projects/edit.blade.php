@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('title', 'Edit Project')
 
+@push('styles')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
+@endpush
+
 @section('content')
 <div style="max-width:720px;margin:40px auto;padding:0 16px 60px">
 

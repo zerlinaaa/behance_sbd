@@ -1,4 +1,11 @@
 <header class="flex items-center justify-between h-16 px-5 bg-white border-b border-gray-200 sticky top-0 z-[1001] font-['Inter'] tracking-normal">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
     <div class="flex items-center space-x-7">
         <div class="text-[22px] font-black tracking-tighter cursor-pointer" style="min-width: 89px;">Bēhance</div>
         <nav class="hidden md:flex items-center space-x-6 text-[15px] font-bold">

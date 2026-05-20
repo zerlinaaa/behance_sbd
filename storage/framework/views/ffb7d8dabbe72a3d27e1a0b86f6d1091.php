@@ -1,7 +1,6 @@
-@extends('layouts.app')
-@section('title', 'Freelance')
+<?php $__env->startSection('title', 'Freelance'); ?>
 
-    @push('styles')
+    <?php $__env->startPush('styles'); ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -679,11 +678,11 @@
         }
     </style>
 
-    @endpush
+    <?php $__env->stopPush(); ?>
     
 </head>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 <nav class="subnav">
     <a href="#">
@@ -694,14 +693,14 @@
         My Jobs
     </a>
      </a>
-    <a href="{{ route('hire.freelance') }}" class="active">
+    <a href="<?php echo e(route('hire.freelance')); ?>" class="active">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <circle cx="12" cy="12" r="10"/>
             <path d="M12 8v4M12 16h.01" stroke-linecap="round"/>
         </svg>
        Freelancers
     </a>
-    <a href="{{ route('hire.hiring') }}">
+    <a href="<?php echo e(route('hire.hiring')); ?>">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
         </svg>
@@ -718,12 +717,12 @@
 
 <body class="antialiased tracking-tight">
 
-{{-- ─── MAIN PAGE LAYOUT ─── --}}
+
 <div class="page-wrap">
 
-    {{-- ─── SIDEBAR ─── --}}
+    
     <aside class="sidebar">
-    <a href="{{ route('jobs') }}" class="btn-new-job">
+    <a href="<?php echo e(route('jobs')); ?>" class="btn-new-job">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="8" cy="8" r="7"/>
             <path d="M8 5v6M5 8h6" stroke-linecap="round"/>
@@ -733,7 +732,7 @@
 
     <div class="sidebar-scroll-area">
 
-        {{-- Type filter --}}
+        
         <div class="filter-section">
             <div class="filter-header">
                 <h3>
@@ -748,7 +747,7 @@
             <button class="type-btn">Services</button>
         </div>
 
-        {{-- Categories filter --}}
+        
         <div class="filter-section">
             <div class="filter-header" onclick="toggleFilter(this)">
                 <h3>
@@ -769,17 +768,18 @@
 
             <p class="popular-label" style="margin-top:12px;">Popular</p>
             <div class="radio-list">
-                @php $popularCats = ['Logo Design','Branding Services','Social Media Design','Website Design','Illustrations','Packaging Design','Landing Page Design','UI/UX Design','Architecture & Interior Design']; @endphp
-                @foreach($popularCats as $cat)
+                <?php $popularCats = ['Logo Design','Branding Services','Social Media Design','Website Design','Illustrations','Packaging Design','Landing Page Design','UI/UX Design','Architecture & Interior Design']; ?>
+                <?php $__currentLoopData = $popularCats; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <label class="radio-item">
-                    <input type="radio" name="category" value="{{ Str::slug($cat) }}"> {{ $cat }}
+                    <input type="radio" name="category" value="<?php echo e(Str::slug($cat)); ?>"> <?php echo e($cat); ?>
+
                 </label>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
 
-            {{-- All categories collapsible --}}
+            
             <div class="collapsible-content collapsed" id="all-categories">
-                @php
+                <?php
                 $allCats = [
                     'Graphic Design' => ['Logo Design','Stationery Design','Fonts & Typography','Branding Services','Book Design','Packaging Design','Album Cover Design','Signage Design','Invitation Design','T-Shirt & Merchandise','Flyer & Brochure Design','Poster Design','Identity Design','Brand Guidelines'],
                     'Web & App Design' => ['Website Design','App Design','UI/UX Design','Landing Page Design','Icon Design'],
@@ -794,17 +794,18 @@
                     'Animation & Motion Graphics' => ['Animated Gifs','Logo Animation','Motion Graphics'],
                     'Video Production & Editing' => ['Video Production & Editing','Explainer Videos','Short Video Ads'],
                 ];
-                @endphp
-                @foreach($allCats as $group => $items)
-                <p class="cat-group-label">{{ $group }}</p>
+                ?>
+                <?php $__currentLoopData = $allCats; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group => $items): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <p class="cat-group-label"><?php echo e($group); ?></p>
                 <div class="radio-list" style="margin-bottom:8px;">
-                    @foreach($items as $item)
+                    <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <label class="radio-item">
-                        <input type="radio" name="category" value="{{ Str::slug($item) }}"> {{ $item }}
+                        <input type="radio" name="category" value="<?php echo e(Str::slug($item)); ?>"> <?php echo e($item); ?>
+
                     </label>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
 
             <button class="view-toggle-link" onclick="toggleCategories(this)">
@@ -812,7 +813,7 @@
             </button>
         </div>
 
-      {{-- Location filter --}}
+      
 <div class="filter-section">
     <div class="filter-header" onclick="toggleFilter(this)">
         <h3>
@@ -828,17 +829,17 @@
         <div class="selected-tags" id="selected-locations"></div>
         <select class="location-search" onchange="addLocationFromSelect(this)" id="location-select">
             <option value="">Select a country...</option>
-            @php
+            <?php
             $countries = ['United States','United Kingdom','Canada','Australia','Germany','France','India','Brazil','Netherlands','Spain','Italy','Sweden','Norway','Denmark','Poland','Portugal','Mexico','Argentina','Japan','South Korea','Singapore','UAE','South Africa','Nigeria','Indonesia','Philippines'];
-            @endphp
-            @foreach($countries as $country)
-            <option value="{{ Str::slug($country) }}" data-label="{{ $country }}">{{ $country }}</option>
-            @endforeach
+            ?>
+            <?php $__currentLoopData = $countries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $country): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <option value="<?php echo e(Str::slug($country)); ?>" data-label="<?php echo e($country); ?>"><?php echo e($country); ?></option>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </select>
     </div>
 </div>
 
-      {{-- Tools filter --}}
+      
 <div class="filter-section">
     <div class="filter-header" onclick="toggleFilter(this)">
         <h3>
@@ -851,14 +852,15 @@
     </div>
     <div class="collapsible-content collapsed" id="tools-content">
         <div class="checkbox-list">
-            @php
+            <?php
             $tools = ['Adobe Photoshop','Adobe Illustrator','Adobe InDesign','Adobe After Effects','Adobe Photoshop Lightroom'];
-            @endphp
-            @foreach($tools as $tool)
+            ?>
+            <?php $__currentLoopData = $tools; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tool): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <label class="tool-item">
-                <input type="checkbox" name="tool" value="{{ Str::slug($tool) }}"> {{ $tool }}
+                <input type="checkbox" name="tool" value="<?php echo e(Str::slug($tool)); ?>"> <?php echo e($tool); ?>
+
             </label>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
     </div>
 </div>
@@ -866,10 +868,10 @@
     </div>
 </aside>
 
-    {{-- ─── MAIN CONTENT ─── --}}
+    
     <main class="main-content">
 
-        {{-- Top bar --}}
+        
         <div class="content-topbar">
             <h2>Available Freelancers</h2>
             <div class="search-sort">
@@ -890,48 +892,51 @@
             </div>
         </div>
 
-        {{-- Category pills --}}
+        
         <div class="cat-pills">
             <button class="cat-pill active"><span>All</span></button>
-            @php
+            <?php
                 $pillCats = [
                     'Logo Design','Branding Services','Social Media Design',
                     'Website Design','Illustrations','Packaging Design','UI/UX Design'
                 ];
-            @endphp
-            @foreach($pillCats as $pill)
+            ?>
+            <?php $__currentLoopData = $pillCats; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pill): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
     <button class="cat-pill">
-        <span>{{ $pill }}</span>
+        <span><?php echo e($pill); ?></span>
     </button>
-@endforeach
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             <button class="pill-nav">›</button>
         </div>
 
-        {{-- Freelancer Cards --}}
+        
         <div class="freelancer-list">
 
 
-           @foreach($freelancers as $f)
+           <?php $__currentLoopData = $freelancers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $f): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 <div class="freelancer-card">
     <div class="freelancer-header">
         <div class="freelancer-info">
 
-            {{-- Avatar --}}
+            
             <div class="avatar">
-                @if($f->profilephoto)
-                    <img src="{{ $f->profilephoto }}">
-                @else
-                    {{ strtoupper(substr($f->name, 0, 2)) }}
-                @endif
+                <?php if($f->profilephoto): ?>
+                    <img src="<?php echo e($f->profilephoto); ?>">
+                <?php else: ?>
+                    <?php echo e(strtoupper(substr($f->name, 0, 2))); ?>
+
+                <?php endif; ?>
             </div>
 
             <div class="freelancer-meta">
                 <h3>
-                    {{ $f->name }}
+                    <?php echo e($f->name); ?>
+
                 </h3>
 
                 <div class="freelancer-location">
-                    {{ $f->locate }}
+                    <?php echo e($f->locate); ?>
+
                 </div>
             </div>
         </div>
@@ -941,17 +946,17 @@
         </a>
     </div>
 
-    {{-- SKILLS (kategori1 - kategori5) --}}
+    
     <div class="skill-tags">
-        @for($i = 1; $i <= 5; $i++)
-            @php $field = 'kategori'.$i; @endphp
-            @if($f->$field)
-                <span class="skill-tag">{{ $f->$field }}</span>
-            @endif
-        @endfor
+        <?php for($i = 1; $i <= 5; $i++): ?>
+            <?php $field = 'kategori'.$i; ?>
+            <?php if($f->$field): ?>
+                <span class="skill-tag"><?php echo e($f->$field); ?></span>
+            <?php endif; ?>
+        <?php endfor; ?>
     </div>
 
-    {{-- WORK IMAGES --}}
+    
     <div class="work-section">
     <div class="work-header">
         <span>Work</span>
@@ -964,32 +969,32 @@
 
     <div class="work-gallery-wrap">
         <div class="work-gallery" data-index="0">
-            @for($i = 1; $i <= 10; $i++)
-                @php $img = 'image'.$i; @endphp
-                @if($f->$img)
+            <?php for($i = 1; $i <= 10; $i++): ?>
+                <?php $img = 'image'.$i; ?>
+                <?php if($f->$img): ?>
                     <div class="work-thumb">
-                        <img src="{{ $f->$img }}">
+                        <img src="<?php echo e($f->$img); ?>">
                     </div>
-                @endif
-            @endfor
+                <?php endif; ?>
+            <?php endfor; ?>
         </div>
     </div>
 </div>
 
-    {{-- JOBS --}}
+    
    <div class="jobs-completed">
-    <span class="jobs-num">{{ $f->freelancenumber }}</span>
+    <span class="jobs-num"><?php echo e($f->freelancenumber); ?></span>
     <span class="jobs-text">Freelance Jobs completed on Behance</span>
 </div>
 
 </div>
-@endforeach
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
         </div>
     </main>
 </div>
 
-{{-- ─── FOOTER ─── --}}
+
 <div class="footer-bar">
     <span>More Behance ▾</span>
     <span>🌐 English ▾</span>
@@ -1072,6 +1077,7 @@ function slideWork(button, direction) {
 
 </body>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
 </html>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\behance_sbd\resources\views/hire/freelance.blade.php ENDPATH**/ ?>

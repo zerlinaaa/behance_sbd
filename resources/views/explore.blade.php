@@ -116,6 +116,12 @@
 @endpush
 
 @push('styles')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
 <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { background: #fff; }
@@ -176,7 +182,7 @@
         padding: 18px 24px; display: flex; align-items: center;
         justify-content: space-between; cursor: pointer;
         font-size: 14px; font-weight: 700; color: #111;
-        font-family: 'Nunito', sans-serif; transition: background .14s;
+        font-family: 'Inter', sans-serif; transition: background .14s;
     }
     .bh-filter-section-btn:hover { background: #f8f8f8; }
     .bh-filter-section-btn i { font-size: 12px; color: #999; transition: transform .2s; }
@@ -199,7 +205,7 @@
 
     .bh-filter-search {
         width: 100%; padding: 8px 12px; border: 1.5px solid #e0e0e0;
-        border-radius: 8px; font-size: 13px; font-family: 'Nunito', sans-serif;
+        border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif;
         margin-bottom: 10px; outline: none; transition: border-color .14s;
     }
     .bh-filter-search:focus { border-color: #0057ff; }
@@ -228,14 +234,14 @@
     .bh-filter-apply {
         flex: 1; padding: 11px; background: #0057ff; color: #fff;
         border: none; border-radius: 40px; font-size: 14px; font-weight: 800;
-        cursor: pointer; font-family: 'Nunito', sans-serif; transition: background .14s;
+        cursor: pointer; font-family: 'Inter', sans-serif; transition: background .14s;
     }
     .bh-filter-apply:hover { background: #0041cc; }
     .bh-filter-reset {
         padding: 11px 20px; background: none; color: #666;
         border: 1.5px solid #e0e0e0; border-radius: 40px;
         font-size: 14px; font-weight: 700; cursor: pointer;
-        font-family: 'Nunito', sans-serif; transition: all .14s;
+        font-family: 'Inter', sans-serif; transition: all .14s;
     }
     .bh-filter-reset:hover { border-color: #999; color: #111; }
 
@@ -333,7 +339,7 @@
         background: rgba(255,255,255,.96); border: none; border-radius: 20px;
         padding: 5px 11px; font-size: 12px; font-weight: 700; cursor: pointer;
         display: flex; align-items: center; gap: 4px;
-        font-family: 'Nunito', sans-serif; color: #111; line-height: 1; transition: all .14s;
+        font-family: 'Inter', sans-serif; color: #111; line-height: 1; transition: all .14s;
     }
     .bh-overlay-btn:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,.25); }
     .bh-overlay-btn.liked      { background: #e74c3c; color: #fff; }

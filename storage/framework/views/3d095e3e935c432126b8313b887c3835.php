@@ -58,6 +58,12 @@
 <?php $__env->startSection('title', 'Dashboard'); ?>
 
 <?php $__env->startPush('styles'); ?>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
 <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { background: #f8f8f8; }
@@ -79,7 +85,7 @@
         padding: 8px 18px; border: 1.5px solid #d0d0d0;
         border-radius: 50px; background: #fff;
         font-size: 13px; font-weight: 700; color: #333;
-        cursor: pointer; font-family: 'Nunito', sans-serif;
+        cursor: pointer; font-family: 'Inter', sans-serif;
         white-space: nowrap; transition: all .14s; flex-shrink: 0;
         box-shadow: 0 1px 4px rgba(0,0,0,.08);
     }
@@ -98,7 +104,7 @@
     .dash-search-pill input {
         border: none; background: transparent; outline: none;
         flex: 1; font-size: 14px; font-weight: 500;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
 
     .dash-inner-tabs { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
@@ -106,7 +112,7 @@
         padding: 6px 14px; border-radius: 50px;
         font-size: 13px; font-weight: 700; color: #555;
         text-decoration: none; transition: all .2s; white-space: nowrap;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .dash-inner-tab:hover { color: #111; }
     .dash-inner-tab.active {
@@ -120,7 +126,7 @@
         display: flex; align-items: center; gap: 6px;
         background: none; border: none; cursor: pointer;
         font-size: 14px; font-weight: 700; color: #111;
-        font-family: 'Nunito', sans-serif; padding: 8px 0; white-space: nowrap;
+        font-family: 'Inter', sans-serif; padding: 8px 0; white-space: nowrap;
     }
     .dash-sort-dd {
         display: none; position: absolute; top: 100%; right: 0;
@@ -133,7 +139,7 @@
     .dash-sort-dd a {
         display: block; padding: 10px 20px; color: #444;
         font-size: 14px; font-weight: 600; transition: background .2s;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .dash-sort-dd a:hover { background: #f5f5f5; color: #000; }
 
@@ -197,7 +203,7 @@
         background: rgba(255,255,255,.95); border: none; border-radius: 20px;
         padding: 5px 11px; font-size: 12px; font-weight: 700; cursor: pointer;
         display: flex; align-items: center; gap: 4px;
-        font-family: 'Nunito', sans-serif; color: #111; transition: all .14s;
+        font-family: 'Inter', sans-serif; color: #111; transition: all .14s;
     }
     .dash-overlay-btn:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,.2); }
     .dash-overlay-btn.liked      { background: #e74c3c; color: #fff; }
@@ -275,7 +281,7 @@
         width: 100%; padding: 10px; border: 1.5px solid #e0e0e0;
         border-radius: 6px; background: #fff; font-size: 13px;
         font-weight: 700; color: #111; cursor: pointer;
-        font-family: 'Nunito', sans-serif; transition: all .14s;
+        font-family: 'Inter', sans-serif; transition: all .14s;
     }
     .dash-people-msg-btn:hover { border-color: #0057ff; color: #0057ff; background: #f0f5ff; }
 
@@ -335,7 +341,7 @@
         padding: 18px 24px; display: flex; align-items: center;
         justify-content: space-between; cursor: pointer;
         font-size: 14px; font-weight: 700; color: #111;
-        font-family: 'Nunito', sans-serif; transition: background .14s;
+        font-family: 'Inter', sans-serif; transition: background .14s;
     }
     .dash-sidebar-section-btn:hover { background: #f8f8f8; }
     .dash-sidebar-section-btn i { font-size: 12px; color: #999; transition: transform .2s; }
@@ -372,19 +378,19 @@
     .dash-sidebar-apply {
         flex: 1; padding: 11px; background: #0057ff; color: #fff;
         border: none; border-radius: 40px; font-size: 14px; font-weight: 800;
-        cursor: pointer; font-family: 'Nunito', sans-serif; transition: background .14s;
+        cursor: pointer; font-family: 'Inter', sans-serif; transition: background .14s;
     }
     .dash-sidebar-apply:hover { background: #0041cc; }
     .dash-sidebar-reset {
         padding: 11px 20px; background: none; color: #666;
         border: 1.5px solid #e0e0e0; border-radius: 40px;
         font-size: 14px; font-weight: 700; cursor: pointer;
-        font-family: 'Nunito', sans-serif; transition: all .14s;
+        font-family: 'Inter', sans-serif; transition: all .14s;
     }
     .dash-sidebar-reset:hover { border-color: #999; color: #111; }
     .dash-filter-search {
         width: 100%; padding: 8px 12px; border: 1.5px solid #e0e0e0;
-        border-radius: 8px; font-size: 13px; font-family: 'Nunito', sans-serif;
+        border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif;
         margin-bottom: 10px; outline: none; transition: border-color .14s;
     }
     .dash-filter-search:focus { border-color: #0057ff; }
@@ -817,7 +823,7 @@
                     </button>
 
                     <button onclick="dashPayWithCard()"
-                            style="width:100%;padding:14px;border-radius:8px;background:#1a1a1a;border:none;cursor:pointer;color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Nunito',sans-serif;">
+                            style="width:100%;padding:14px;border-radius:8px;background:#1a1a1a;border:none;cursor:pointer;color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;font-family: 'Inter', sans-serif;">
                         <i class="fas fa-credit-card"></i> Debit or Credit Card
                     </button>
 

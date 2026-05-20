@@ -2,6 +2,12 @@
 @section('title', 'Resources')
 
     @push('styles')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -485,7 +491,7 @@
              alt="Creative career illustration" 
              style="width: 100%; max-width: 600px; height: auto; display: block; border-radius: 50%;">
         
-        <p class="hero-art-credit">Art by <a href="#">Julia Brazeil</a></p>
+        <p class="hero-art-credit">Art by Julia Brazeil</p>
     </div>
 
     <div class="hero-content">
@@ -677,22 +683,22 @@
             @php
                 $courses = [
                     [
-                        'img'      => 'https://cpcontents.adobe.com/protected/account/131569/thumbnails/courses/14995494/2025-12-03%2020:29:12.727146916Kieron_16d8143281a143f7b24d6694b8ebb4ba.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgwMDY0ODgsImlhdCI6MTc3NzQwMTY4OCwicmlkIjoiMjQzNDQ3MDAiLCJjaWQiOiIyNzk3IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY2ODRmYzcxYmRkYmE3NGI1OThhNDU5OGExOTEzMGRiIiwib3JpZ2luYWxVcmxIYXNoIjoiNTQ3NmRmMzM2NmMzNDI1MGIxNWU1NjY0MmU4MjA2YzUxNmQwMmVmZiJ9.8SG3YpY_RRLX9NJcQoWw4bHIFbzQdMQaprneogb9TLQ',
-                        'title'    => 'Producing Projects with Purpose',
+                        'img'      => 'https://cpcontents.adobe.com/protected/account/131569/thumbnails/courses/16125709/2026-05-15_18_49_29.651968363Screenshot_2026-05-15_at_11.48.57_AM_e5637ca4f49a465bbccc1029b524e402_gw34f429a3c709bf808a487f69c5fb9464.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk4MTU5NjksImlhdCI6MTc3OTIxMTE2OSwicmlkIjoiMjQzNDQ3MDAiLCJjaWQiOiIyNzk3IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImE2MzA0MDA0ZjY1MDI3YThmMDVkNWNjYmExMWZhMWIyIiwib3JpZ2luYWxVcmxIYXNoIjoiZjc2NzRkODU0NjMyMDE3MjU4ZjIwZTc0NTgxYzVlNmY4N2M3OWJjNyJ9.Lsvyp9K0GEz2RuT14ajZNEfdkvPhQfN9XTuU-l5kZUA',
+                        'title'    => 'AI Foundations for Creativity',
                         'parts'    => '6 parts',
                         'mins'     => '44 minutes left',
                         'progress' => true,
                     ],
                     [
-                        'img'      => 'https://cpcontents.adobe.com/protected/account/131569/thumbnails/courses/14432887/2025-10-08%2020:30:00.579879055Basics_e415368db06543b2a1cadb9d1584bd18.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgwMDY0ODgsImlhdCI6MTc3NzQwMTY4OCwicmlkIjoiMjQzNDQ3MDAiLCJjaWQiOiIyNzk3IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY2ODRmYzcxYmRkYmE3NGI1OThhNDU5OGExOTEzMGRiIiwib3JpZ2luYWxVcmxIYXNoIjoiMzA3MjgyNjJiNjM3YTJhNjdlMWZjN2JjZmUwY2VjNTc5YjViYzg2ZiJ9.JicPPpJQta2TUVEnWiqa7A0EpowRNP7CK_5HiGniD4I',
-                        'title'    => 'Behance Basics with Nick Longo & Andrew Hochradel',
+                        'img'      => 'https://cpcontents.adobe.com/protected/account/131569/thumbnails/courses/14995494/2025-12-03%2020:29:12.727146916Kieron_16d8143281a143f7b24d6694b8ebb4ba.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk4NDI0NDIsImlhdCI6MTc3OTIzNzY0MiwicmlkIjoiMjQzNDQ3MDAiLCJjaWQiOiIyNzk3IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImVjYzA5ZWFkYjYzNzhhNTk0MTM4NjU0MTkzZTY1ZjFjIiwib3JpZ2luYWxVcmxIYXNoIjoiNTQ3NmRmMzM2NmMzNDI1MGIxNWU1NjY0MmU4MjA2YzUxNmQwMmVmZiJ9.uxO3pTkMxI5NnqTWAW1sp5tzFW9Hc1DKDZ8NlYvBU7E',
+                        'title'    => 'Producing Prohects wuth Purpose',
                         'parts'    => '6 parts',
                         'mins'     => '32 minutes',
                         'progress' => false,
                     ],
                     [
-                        'img'      => 'https://cpcontents.adobe.com/protected/account/131569/thumbnails/courses/14399610/2025-09-12%2019:36:47.839779699Goodtype_b7250ff3db4c4643ac7fb9964f8d7978.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzgwMDY0ODgsImlhdCI6MTc3NzQwMTY4OCwicmlkIjoiMjQzNDQ3MDAiLCJjaWQiOiIyNzk3IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImY2ODRmYzcxYmRkYmE3NGI1OThhNDU5OGExOTEzMGRiIiwib3JpZ2luYWxVcmxIYXNoIjoiNzFmOWVmOGQzZjQzZWNmZDhlNzAxYmQ5MzVmMTgxOGVkZDZmMDcyNyJ9.RqdySfQKeJ1fylJVw0Yh3N3coePAEQuY1-zPB7qnd2Q',
-                        'title'    => 'How to Price Your Work in the Creative Industry with Goodtype',
+                        'img'      => 'https://cpcontents.adobe.com/protected/account/131569/thumbnails/courses/14432887/2025-10-08%2020:30:00.579879055Basics_e415368db06543b2a1cadb9d1584bd18.png?cp_oauth_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk4NDI0NDIsImlhdCI6MTc3OTIzNzY0MiwicmlkIjoiMjQzNDQ3MDAiLCJjaWQiOiIyNzk3IiwidiI6IjEiLCJwIjoidXJsIiwicmFuZCI6ImVjYzA5ZWFkYjYzNzhhNTk0MTM4NjU0MTkzZTY1ZjFjIiwib3JpZ2luYWxVcmxIYXNoIjoiMzA3MjgyNjJiNjM3YTJhNjdlMWZjN2JjZmUwY2VjNTc5YjViYzg2ZiJ9.vaWHtOCVyXjcTQspI97N9i6pJXsVkoibv504u9bSzGY',
+                        'title'    => ' Behance Basic with Nick Longo & Andrew Hock',
                         'parts'    => '5 parts',
                         'mins'     => '40 minutes',
                         'progress' => false,
@@ -728,7 +734,7 @@
         <img src="https://a5.behance.net/1d4b085e77906aa848afc3e276b025402ba4542e/img/adobeprojects/asset-2-2x.webp" 
              alt="Creative Apprenticeship illustration"
              style="width:100%; max-width:500px; height:auto; display:block;">
-        <p class="cta-art-credit">Art by <a href="#">Mya Marie Beckles</a></p>
+        <p class="cta-art-credit">Art by Mya Marie Beckles</p>
     </div>
 </div>
 

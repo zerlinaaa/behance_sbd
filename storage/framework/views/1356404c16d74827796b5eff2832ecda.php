@@ -1,6 +1,12 @@
 <?php $__env->startSection('title', 'Find Creative Jobs :: Behance'); ?>
 
 <?php $__env->startPush('styles'); ?>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+</style>
 <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -34,13 +40,13 @@
         line-height: 1.0;
         letter-spacing: -2px;
         margin-bottom: 12px;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-hero-content p {
         font-size: 18px;
         font-weight: 600;
         opacity: .9;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-hero-credit {
         position: absolute;
@@ -99,7 +105,7 @@
         gap: 6px;
         margin-bottom: 28px;
         transition: background .14s;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
         text-decoration: none;
     }
     .jobs-new-btn:hover { background: #0041cc; color: #fff; }
@@ -115,7 +121,7 @@
         justify-content: space-between;
         margin-bottom: 14px;
         cursor: pointer;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-sidebar-title i { font-size: 12px; color: #999; transition: transform .2s; }
     .jobs-sidebar-title.open i { transform: rotate(180deg); }
@@ -137,7 +143,7 @@
         padding: 5px 0;
         cursor: pointer;
         transition: color .14s;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-cat-label:hover { color: #0057ff; }
     .jobs-cat-label input[type="radio"] {
@@ -154,7 +160,7 @@
         letter-spacing: .08em;
         text-transform: uppercase;
         margin: 14px 0 6px;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
 
     .jobs-view-all {
@@ -164,7 +170,7 @@
         margin-top: 12px;
         cursor: pointer;
         display: inline-block;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-view-all:hover { text-decoration: underline; }
 
@@ -188,7 +194,7 @@
         font-size: 15px;
         font-weight: 900;
         color: #111;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-section-title span { color: #aaa; font-weight: 700; margin-left: 6px; }
 
@@ -223,7 +229,7 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
         transition: background .14s;
     }
     .jobs-alert-btn:hover { background: #0041cc; }
@@ -255,7 +261,7 @@
         border-radius: 4px;
         display: inline-block;
         margin-bottom: 14px;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-pro-card h3 {
         font-size: 20px;
@@ -263,7 +269,7 @@
         margin-bottom: 18px;
         line-height: 1.2;
         color: #111;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-pro-list { list-style: none; padding: 0; margin: 0 0 16px; }
     .jobs-pro-list li {
@@ -274,7 +280,7 @@
         font-weight: 600;
         padding: 6px 0;
         color: #333;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-pro-list li .check-icon {
         width: 20px;
@@ -293,7 +299,7 @@
         color: #777;
         font-weight: 600;
         margin-bottom: 20px;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-pro-btn {
         background: #0057ff;
@@ -304,7 +310,7 @@
         font-weight: 800;
         border: none;
         cursor: pointer;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
         transition: background .14s;
     }
     .jobs-pro-btn:hover { background: #0041cc; }
@@ -329,13 +335,13 @@
         font-size: 12px;
         font-weight: 700;
         color: #555;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-deadline {
         font-size: 12px;
         font-weight: 700;
         color: #e67e22;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-deadline.urgent { color: #e74c3c; }
     .jobs-featured-card h3 {
@@ -344,14 +350,14 @@
         margin-bottom: 8px;
         line-height: 1.3;
         color: #111;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-budget {
         font-size: 14px;
         font-weight: 800;
         color: #0057ff;
         margin-bottom: 6px;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-budget-label {
         font-size: 9px;
@@ -366,7 +372,7 @@
         align-items: center;
         gap: 5px;
         margin-bottom: 10px;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-desc {
         font-size: 12px;
@@ -374,7 +380,7 @@
         font-weight: 500;
         line-height: 1.5;
         flex: 1;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
@@ -391,7 +397,7 @@
         font-size: 13px;
         font-weight: 800;
         cursor: pointer;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -420,7 +426,7 @@
         font-weight: 700;
         width: 240px;
         outline: none;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
         transition: background .14s;
     }
     .jobs-search-input:focus { background: #efefef; }
@@ -463,13 +469,13 @@
         font-size: 12px;
         font-weight: 900;
         flex-shrink: 0;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-card-company {
         font-size: 13px;
         font-weight: 800;
         color: #111;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-card-location {
         font-size: 11px;
@@ -479,7 +485,7 @@
         align-items: center;
         gap: 3px;
         margin-top: 2px;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-card-title {
         font-size: 15px;
@@ -488,7 +494,7 @@
         color: #111;
         margin-bottom: 8px;
         min-height: 40px;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
     .jobs-card-tag {
@@ -498,13 +504,13 @@
         background: #f5f5f5;
         padding: 3px 9px;
         border-radius: 20px;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     .jobs-card-time {
         font-size: 11px;
         color: #bbb;
         font-weight: 700;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
 
     /* ── VIEW MORE ── */
@@ -517,7 +523,7 @@
         font-size: 13px;
         font-weight: 800;
         cursor: pointer;
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Inter', sans-serif;
         color: #555;
         transition: all .14s;
     }
