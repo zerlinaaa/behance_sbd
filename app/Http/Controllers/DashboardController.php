@@ -40,11 +40,7 @@ class DashboardController extends Controller
             'not_available' => 'Not Available',
         ];
 
-        $toolOptions = [
-            'Figma', 'Adobe XD', 'Photoshop', 'Illustrator',
-            'Blender', 'After Effects', 'Sketch', 'Procreate',
-            'Cinema 4D', 'InDesign', 'Lightroom', 'Premiere Pro',
-        ];
+        $toolOptions = DB::table('tools')->orderBy('name')->pluck('name')->toArray();
 
         $colorOptions = [
             'red'    => '#e74c3c', 'orange' => '#e67e22',
@@ -226,13 +222,16 @@ class DashboardController extends Controller
                 $query->whereIn('c.slug', (array) $fields);
             }
 
-            if ($tools = $request->get('tools')) {
-                $query->where(function ($q) use ($tools) {
-                    foreach ((array) $tools as $tool) {
-                        $q->orWhereRaw("JSON_SEARCH(p.tools, 'one', ?) IS NOT NULL", [$tool]);
-                    }
-                });
+             if ($tools = $request->get('tools')) {
+                 $toolIds = DB::table('tools')->whereIn('name', (array) $tools)->pluck('id');
+                 $query->whereExists(function ($q) use ($toolIds) {
+                 $q->select(DB::raw(1))
+                     ->from('project_tools as pt')
+                     ->whereColumn('pt.project_id', 'p.id')
+                     ->whereIn('pt.tool_id', $toolIds);
+            });
             }
+
 
             if ($color = $request->get('color')) {
                 $query->where('p.color', $color);
