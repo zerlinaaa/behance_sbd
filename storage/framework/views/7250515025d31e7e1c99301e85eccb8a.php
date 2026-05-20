@@ -1,7 +1,6 @@
-@extends('layouts.app')
-@section('title', 'Creative Apprenticeship')
+<?php $__env->startSection('title', 'Creative Apprenticeship'); ?>
     
-    @push('styles')
+    <?php $__env->startPush('styles'); ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -372,18 +371,18 @@
             .mentors-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
-    @endpush
+    <?php $__env->stopPush(); ?>
 </head>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 <body class="antialiased tracking-tight">
 
 <div class="subnav" style="display:flex;justify-content:center;gap:8px;padding:12px 0;border-bottom:1px solid #e1e1e1;background:#fff;">
-    <a href="{{ route('resources.overview') }}" style="padding:8px 22px;border-radius:20px;font-size:14px;font-weight:600;color:#6e6e6e;text-decoration:none;">Overview</a>
-    <a href="{{ route('resources.guides') }}" style="padding:8px 22px;border-radius:20px;font-size:14px;font-weight:600;color:#6e6e6e;text-decoration:none;">Career Guides</a>
-    <a href="{{ route('resources.commissioned') }}" style="padding:8px 22px;border-radius:20px;font-size:14px;font-weight:600;color:#6e6e6e;text-decoration:none;">Commissioned Projects</a>
-    <a href="{{ route('resources.creative') }}" style="padding:8px 22px;border-radius:20px;font-size:14px;font-weight:600;color:#fff;background:#2c2c2c;text-decoration:none;">Creative Apprenticeship</a>
+    <a href="<?php echo e(route('resources.overview')); ?>" style="padding:8px 22px;border-radius:20px;font-size:14px;font-weight:600;color:#6e6e6e;text-decoration:none;">Overview</a>
+    <a href="<?php echo e(route('resources.guides')); ?>" style="padding:8px 22px;border-radius:20px;font-size:14px;font-weight:600;color:#6e6e6e;text-decoration:none;">Career Guides</a>
+    <a href="<?php echo e(route('resources.commissioned')); ?>" style="padding:8px 22px;border-radius:20px;font-size:14px;font-weight:600;color:#6e6e6e;text-decoration:none;">Commissioned Projects</a>
+    <a href="<?php echo e(route('resources.creative')); ?>" style="padding:8px 22px;border-radius:20px;font-size:14px;font-weight:600;color:#fff;background:#2c2c2c;text-decoration:none;">Creative Apprenticeship</a>
 </div>
 
 <!-- HERO -->
@@ -624,7 +623,8 @@ function toggleFaq(index) {
 </script>
 
 </body>
-@include
-@endsection
+
+<?php $__env->stopSection(); ?>
 
 </html>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\behance_sbd\resources\views/resources/creative.blade.php ENDPATH**/ ?>

@@ -8,6 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // CREATE TABLE project_tools (
+        //   id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        //   project_id  BIGINT UNSIGNED NOT NULL,
+        //   tool_id     BIGINT UNSIGNED NOT NULL,
+        //   created_at  TIMESTAMP NULL,
+        //   updated_at  TIMESTAMP NULL,
+        //   UNIQUE KEY uq_project_tool (project_id, tool_id),
+        //   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+        //   FOREIGN KEY (tool_id)    REFERENCES tools(id)    ON DELETE CASCADE
+        // );
+
         Schema::create('project_tools', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')

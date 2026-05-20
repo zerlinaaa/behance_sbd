@@ -1,7 +1,6 @@
-@extends('layouts.app')
-@section('title', 'Commissioned Projects')
+<?php $__env->startSection('title', 'Commissioned Projects'); ?>
 
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -377,23 +376,23 @@
 
         </style>
 
-@endpush
+<?php $__env->stopPush(); ?>
 
 </head>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 <body class="antialiased tracking-tight">
 
-{{-- ─── SUB NAV (TABS) ─── --}}
+
 <div class="subnav">
-    <a href="{{ route('resources.overview') }}">Overview</a>
-    <a href="{{ route('resources.guides') }}">Career Guides</a>
-    <a href="{{ route('resources.commissioned') }}" class="active">Commissioned Projects</a>
-    <a href="{{ route('resources.creative') }}">Creative Apprenticeship</a>
+    <a href="<?php echo e(route('resources.overview')); ?>">Overview</a>
+    <a href="<?php echo e(route('resources.guides')); ?>">Career Guides</a>
+    <a href="<?php echo e(route('resources.commissioned')); ?>" class="active">Commissioned Projects</a>
+    <a href="<?php echo e(route('resources.creative')); ?>">Creative Apprenticeship</a>
 </div>
 
-{{-- ─── HERO ─── --}}
+
 <div class="hero">
     <div class="hero-content">
         <p class="label">Adobe Commissioned Projects</p>
@@ -414,20 +413,20 @@
 </div>
 </div>
 
-{{-- ─── FILTER TABS ─── --}}
+
 <div class="filter-tabs">
-    <a href="{{ route('resources.commissioned') }}" class="filter-tab active">All</a>
+    <a href="<?php echo e(route('resources.commissioned')); ?>" class="filter-tab active">All</a>
     <a href="https://www.behance.net/resources/commissions?category=graphicDesign" target="_blank" class="filter-tab">Graphic Design</a>
     <a href="https://www.behance.net/resources/commissions?category=drawingIllustration" target="_blank" class="filter-tab">Drawing & Illustration</a>
     <a href="https://www.behance.net/resources/commissions?category=photographyEditing" target="_blank" class="filter-tab">Photography & Editing</a>
     <a href="https://www.behance.net/resources/commissions?category=videoEditing" target="_blank" class="filter-tab">Video & Editing</a>
 </div>
 
-{{-- ─── NEW COMMISSIONED PROJECTS ─── --}}
+
 <div class="container">
     <h2 class="section-title">New Commissioned Projects</h2>
 
-    @php
+    <?php
         $newProjects = [
             ['type' => 'eligibility'],
             [
@@ -486,11 +485,11 @@
                 'client'  => 'Creative Apprentice',
             ],
         ];
-    @endphp
+    ?>
 
     <div class="projects-grid">
-        @foreach($newProjects as $project)
-            @if($project['type'] === 'eligibility')
+        <?php $__currentLoopData = $newProjects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php if($project['type'] === 'eligibility'): ?>
                 <div class="eligibility-card">
                     <div class="eligibility-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -502,28 +501,30 @@
                     <p>Please log in to check your eligibility. Currently, commissions are only available in the United States, Canada and United Kingdom for now.</p>
                     <a href="#" class="btn-signin-card">Sign In</a>
                 </div>
-            @else
+            <?php else: ?>
                 <div class="job-card">
                     <div class="job-card-top">
-                        <span class="job-badge">{{ $project['badge'] }}</span>
-                        <span class="job-expires" style="color: {{ $project['expires_color'] }}">{{ $project['expires'] }}</span>
+                        <span class="job-badge"><?php echo e($project['badge']); ?></span>
+                        <span class="job-expires" style="color: <?php echo e($project['expires_color']); ?>"><?php echo e($project['expires']); ?></span>
                     </div>
-                    <h3 class="job-title">{{ $project['title'] }}</h3>
-                    <div class="job-price"><sup>US$</sup>{{ $project['price'] }}</div>
+                    <h3 class="job-title"><?php echo e($project['title']); ?></h3>
+                    <div class="job-price"><sup>US$</sup><?php echo e($project['price']); ?></div>
                     <div class="job-time">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/>
                         </svg>
-                        {{ $project['time'] }}
+                        <?php echo e($project['time']); ?>
+
                     </div>
-                    <p class="job-desc">{{ $project['desc'] }}</p>
+                    <p class="job-desc"><?php echo e($project['desc']); ?></p>
                     <div class="job-client">
                         <div class="client-icon">
                             <svg width="10" height="10" viewBox="0 0 100 120" fill="white">
                                 <path d="M60 0L100 120H70L60 90H40L30 120H0L40 0H60Z M50 30L38 72H62L50 30Z"/>
                             </svg>
                         </div>
-                        {{ $project['client'] }}
+                        <?php echo e($project['client']); ?>
+
                         <div class="verified-icon">
                             <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
                                 <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -532,16 +533,16 @@
                     </div>
                     <a href="#" class="btn-view-job">View Job</a>
                 </div>
-            @endif
-        @endforeach
+            <?php endif; ?>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>
 </div>
 
-{{-- ─── PAST COMMISSIONED PROJECTS ─── --}}
+
 <div class="container" style="margin-top: 20px;">
     <h2 class="section-title">Past Commissioned Projects</h2>
 
-    @php
+    <?php
         $pastProjects = [
             [
                 'badge'   => 'Photography & Editing',
@@ -598,31 +599,33 @@
                 'client'  => 'Adobe Community Content Strategy',
             ],
         ];
-    @endphp
+    ?>
 
     <div class="projects-grid" style="padding-bottom: 64px;">
-        @foreach($pastProjects as $project)
+        <?php $__currentLoopData = $pastProjects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <div class="job-card">
             <div class="job-card-top">
-                <span class="job-badge">{{ $project['badge'] }}</span>
-                <span style="font-size: 11px; font-weight: 700; color: #27a127;">{{ $project['expires'] }}</span>
+                <span class="job-badge"><?php echo e($project['badge']); ?></span>
+                <span style="font-size: 11px; font-weight: 700; color: #27a127;"><?php echo e($project['expires']); ?></span>
             </div>
-            <h3 class="job-title">{{ $project['title'] }}</h3>
-            <div class="job-price"><sup>US$</sup>{{ $project['price'] }}</div>
+            <h3 class="job-title"><?php echo e($project['title']); ?></h3>
+            <div class="job-price"><sup>US$</sup><?php echo e($project['price']); ?></div>
             <div class="job-time">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                     <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/>
                 </svg>
-                {{ $project['time'] }}
+                <?php echo e($project['time']); ?>
+
             </div>
-            <p class="job-desc">{{ $project['desc'] }}</p>
+            <p class="job-desc"><?php echo e($project['desc']); ?></p>
             <div class="job-client">
                 <div class="client-icon">
                     <svg width="10" height="10" viewBox="0 0 100 120" fill="white">
                         <path d="M60 0L100 120H70L60 90H40L30 120H0L40 0H60Z M50 30L38 72H62L50 30Z"/>
                     </svg>
                 </div>
-                {{ $project['client'] }}
+                <?php echo e($project['client']); ?>
+
                 <div class="verified-icon">
                     <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
                         <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -631,11 +634,12 @@
             </div>
             <a href="#" class="btn-view-job">View Job</a>
         </div>
-        @endforeach
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>
 </div>
 </body>
-@include
-@endsection
+
+<?php $__env->stopSection(); ?>
 
 </html>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\behance_sbd\resources\views/resources/commissioned.blade.php ENDPATH**/ ?>

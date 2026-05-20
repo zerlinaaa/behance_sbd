@@ -739,7 +739,7 @@
 </div>
 
 </body>
-
+@include('partials.footer')
 @endsection
 
 </html>
